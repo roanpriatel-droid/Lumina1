@@ -1,4 +1,4 @@
-import {redirect, useLoaderData} from 'react-router';
+import {useLoaderData} from 'react-router';
 import type {Route} from './+types/products.$handle';
 import {
   getSelectedProductOptions,
@@ -9,13 +9,15 @@ import {
   useSelectedOptionInUrlParam,
 } from '@shopify/hydrogen';
 import {ProductPrice} from '~/components/ProductPrice';
-import {ProductImage} from '~/components/ProductImage';
 import {ProductForm} from '~/components/ProductForm';
+import {PdpHero} from '~/components/lumina/pdp/PdpHero';
+import {IngredientTransparency} from '~/components/lumina/pdp/IngredientTransparency';
+import {getLuminaProductByHandle} from '~/lib/lumina-product';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 export const meta: Route.MetaFunction = ({data}) => {
   return [
-    {title: `Hydrogen | ${data?.product.title ?? ''}`},
+    {title: `Lumina | ${data?.product.title ?? ''}`},
     {
       rel: 'canonical',
       href: `/products/${data?.product.handle}`,
@@ -24,19 +26,11 @@ export const meta: Route.MetaFunction = ({data}) => {
 };
 
 export async function loader(args: Route.LoaderArgs) {
-  // Start fetching non-critical data without blocking time to first byte
   const deferredData = loadDeferredData(args);
-
-  // Await the critical data required to render initial state of the page
   const criticalData = await loadCriticalData(args);
-
   return {...deferredData, ...criticalData};
 }
 
-/**
- * Load data necessary for rendering content above the fold. This is the critical data
- * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
- */
 async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
   const {handle} = params;
   const {storefront} = context;
@@ -49,77 +43,82 @@ async function loadCriticalData({context, params, request}: Route.LoaderArgs) {
     storefront.query(PRODUCT_QUERY, {
       variables: {handle, selectedOptions: getSelectedProductOptions(request)},
     }),
-    // Add other queries here, so that they are loaded in parallel
   ]);
 
   if (!product?.id) {
     throw new Response(null, {status: 404});
   }
 
-  // The API handle might be localized, so redirect to the localized handle
   redirectIfHandleIsLocalized(request, {handle, data: product});
 
-  return {
-    product,
-  };
+  return {product};
 }
 
-/**
- * Load data for rendering content below the fold. This data is deferred and will be
- * fetched after the initial page load. If it's unavailable, the page should still 200.
- * Make sure to not throw any errors here, as it will cause the page to 500.
- */
-function loadDeferredData({context, params}: Route.LoaderArgs) {
-  // Put any API calls that is not critical to be available on first page render
-  // For example: product reviews, product recommendations, social feeds.
-
+function loadDeferredData(_args: Route.LoaderArgs) {
   return {};
 }
 
 export default function Product() {
   const {product} = useLoaderData<typeof loader>();
 
-  // Optimistically selects a variant with given available variant information
   const selectedVariant = useOptimisticVariant(
     product.selectedOrFirstAvailableVariant,
     getAdjacentAndFirstAvailableVariants(product),
   );
 
-  // Sets the search param to the selected variant without navigation
-  // only when no search params are set in the url
   useSelectedOptionInUrlParam(selectedVariant.selectedOptions);
 
-  // Get the product options array
   const productOptions = getProductOptions({
     ...product,
     selectedOrFirstAvailableVariant: selectedVariant,
   });
 
-  const {title, descriptionHtml} = product;
+  const {title, descriptionHtml, handle} = product;
+  const lumina = getLuminaProductByHandle(handle);
 
   return (
-    <div className="product">
-      <ProductImage image={selectedVariant?.image} />
-      <div className="product-main">
-        <h1>{title}</h1>
-        <ProductPrice
-          price={selectedVariant?.price}
-          compareAtPrice={selectedVariant?.compareAtPrice}
-        />
-        <br />
-        <ProductForm
-          productOptions={productOptions}
-          selectedVariant={selectedVariant}
-        />
-        <br />
-        <br />
-        <p>
-          <strong>Description</strong>
-        </p>
-        <br />
-        <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-        <br />
-      </div>
+    <div>
+      <PdpHero title={title} lumina={lumina} image={selectedVariant?.image} />
+
+      {/* Product purchase panel.
+          TODO(phase-3a): replace this block with the static Supply Tiers /
+          Subscribe & Save / Bundles flow + sticky Add to Cart, wired to
+          AddToCartButton with the real selectedVariant. */}
+      <section className="mx-auto max-w-[1200px] px-6 pb-10 md:px-8">
+        <div className="grid gap-10 md:grid-cols-[1fr_440px]">
+          <div className="prose-invert prose order-2 max-w-none md:order-1">
+            {descriptionHtml && (
+              <div
+                className="text-fg2 [&_a]:text-crimson-hi [&_h2]:font-light [&_h2]:text-fg1 [&_h3]:font-medium [&_h3]:text-fg1 [&_p]:my-3 [&_strong]:text-fg1"
+                style={{font: '300 16px/1.65 var(--font-sans)'}}
+                dangerouslySetInnerHTML={{__html: descriptionHtml}}
+              />
+            )}
+          </div>
+          <aside className="order-1 flex flex-col gap-6 rounded-xl border border-border bg-surface p-7 md:order-2 md:sticky md:top-28 md:self-start">
+            <div>
+              <p className="eyebrow mb-2 text-fg3">Single bottle</p>
+              <ProductPrice
+                price={selectedVariant?.price}
+                compareAtPrice={selectedVariant?.compareAtPrice}
+              />
+              {lumina && (
+                <p className="t-mono mt-2 text-xs text-fg4">
+                  Subscribe & Save flow in Phase 3a — purchase steps coming
+                  next.
+                </p>
+              )}
+            </div>
+            <ProductForm
+              productOptions={productOptions}
+              selectedVariant={selectedVariant}
+            />
+          </aside>
+        </div>
+      </section>
+
+      {lumina && <IngredientTransparency actives={lumina.actives} />}
+
       <Analytics.ProductView
         data={{
           products: [
