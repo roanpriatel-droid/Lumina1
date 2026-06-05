@@ -12,6 +12,10 @@ import {ProductPrice} from '~/components/ProductPrice';
 import {ProductForm} from '~/components/ProductForm';
 import {PdpHero} from '~/components/lumina/pdp/PdpHero';
 import {IngredientTransparency} from '~/components/lumina/pdp/IngredientTransparency';
+import {PurchaseProvider} from '~/components/lumina/pdp/PurchaseContext';
+import {PurchaseSteps} from '~/components/lumina/pdp/PurchaseSteps';
+import {PurchaseCta} from '~/components/lumina/pdp/PurchaseCta';
+import {StickyAddToCart} from '~/components/lumina/pdp/StickyAddToCart';
 import {getLuminaProductByHandle} from '~/lib/lumina-product';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
@@ -76,65 +80,76 @@ export default function Product() {
   const {title, descriptionHtml, handle} = product;
   const lumina = getLuminaProductByHandle(handle);
 
+  // Lumina-branded products get the full purchase-step + sticky-cart
+  // experience driven by placeholder pricing. Non-Lumina products fall
+  // back to the classic ProductForm so the storefront still works for
+  // unrelated items in the connected shop.
+  const isLumina = Boolean(lumina);
+
   return (
-    <div>
-      <PdpHero title={title} lumina={lumina} image={selectedVariant?.image} />
+    <PurchaseProvider>
+      <div>
+        <PdpHero title={title} lumina={lumina} image={selectedVariant?.image} />
 
-      {/* Product purchase panel.
-          TODO(phase-3a): replace this block with the static Supply Tiers /
-          Subscribe & Save / Bundles flow + sticky Add to Cart, wired to
-          AddToCartButton with the real selectedVariant. */}
-      <section className="mx-auto max-w-[1200px] px-6 pb-10 md:px-8">
-        <div className="grid gap-10 md:grid-cols-[1fr_440px]">
-          <div className="prose-invert prose order-2 max-w-none md:order-1">
-            {descriptionHtml && (
-              <div
-                className="text-fg2 [&_a]:text-crimson-hi [&_h2]:font-light [&_h2]:text-fg1 [&_h3]:font-medium [&_h3]:text-fg1 [&_p]:my-3 [&_strong]:text-fg1"
-                style={{font: '300 16px/1.65 var(--font-sans)'}}
-                dangerouslySetInnerHTML={{__html: descriptionHtml}}
+        {isLumina ? (
+          <>
+            <PurchaseSteps />
+            <PurchaseCta selectedVariant={selectedVariant} />
+          </>
+        ) : (
+          <section className="mx-auto max-w-[1200px] px-6 pb-12 md:px-8">
+            <aside className="mx-auto flex max-w-[480px] flex-col gap-6 rounded-xl border border-border bg-surface p-7">
+              <div>
+                <p className="eyebrow mb-2 text-fg3">Price</p>
+                <ProductPrice
+                  price={selectedVariant?.price}
+                  compareAtPrice={selectedVariant?.compareAtPrice}
+                />
+              </div>
+              <ProductForm
+                productOptions={productOptions}
+                selectedVariant={selectedVariant}
               />
-            )}
-          </div>
-          <aside className="order-1 flex flex-col gap-6 rounded-xl border border-border bg-surface p-7 md:order-2 md:sticky md:top-28 md:self-start">
-            <div>
-              <p className="eyebrow mb-2 text-fg3">Single bottle</p>
-              <ProductPrice
-                price={selectedVariant?.price}
-                compareAtPrice={selectedVariant?.compareAtPrice}
-              />
-              {lumina && (
-                <p className="t-mono mt-2 text-xs text-fg4">
-                  Subscribe & Save flow in Phase 3a — purchase steps coming
-                  next.
-                </p>
-              )}
-            </div>
-            <ProductForm
-              productOptions={productOptions}
-              selectedVariant={selectedVariant}
+            </aside>
+          </section>
+        )}
+
+        {descriptionHtml && (
+          <section className="mx-auto max-w-[840px] px-6 pb-16 md:px-8">
+            <div
+              className="text-fg2 [&_a]:text-crimson-hi [&_h2]:font-light [&_h2]:text-fg1 [&_h3]:font-medium [&_h3]:text-fg1 [&_p]:my-3 [&_strong]:text-fg1"
+              style={{font: '300 16px/1.65 var(--font-sans)'}}
+              dangerouslySetInnerHTML={{__html: descriptionHtml}}
             />
-          </aside>
-        </div>
-      </section>
+          </section>
+        )}
 
-      {lumina && <IngredientTransparency actives={lumina.actives} />}
+        {lumina && <IngredientTransparency actives={lumina.actives} />}
 
-      <Analytics.ProductView
-        data={{
-          products: [
-            {
-              id: product.id,
-              title: product.title,
-              price: selectedVariant?.price.amount || '0',
-              vendor: product.vendor,
-              variantId: selectedVariant?.id || '',
-              variantTitle: selectedVariant?.title || '',
-              quantity: 1,
-            },
-          ],
-        }}
-      />
-    </div>
+        {isLumina && (
+          <StickyAddToCart
+            productName={lumina?.name ?? title}
+            selectedVariant={selectedVariant}
+          />
+        )}
+
+        <Analytics.ProductView
+          data={{
+            products: [
+              {
+                id: product.id,
+                title: product.title,
+                price: selectedVariant?.price.amount || '0',
+                vendor: product.vendor,
+                variantId: selectedVariant?.id || '',
+                variantTitle: selectedVariant?.title || '',
+                quantity: 1,
+              },
+            ],
+          }}
+        />
+      </div>
+    </PurchaseProvider>
   );
 }
 
