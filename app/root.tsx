@@ -13,8 +13,6 @@ import {
 import type {Route} from './+types/root';
 import favicon from '~/assets/favicon.svg';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
-import resetStyles from '~/styles/reset.css?url';
-import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
 
@@ -151,8 +149,6 @@ export function Layout({children}: {children?: React.ReactNode}) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <link rel="stylesheet" href={tailwindCss}></link>
-        <link rel="stylesheet" href={resetStyles}></link>
-        <link rel="stylesheet" href={appStyles}></link>
         <Meta />
         <Links />
       </head>
@@ -198,13 +194,13 @@ export function ErrorBoundary() {
   }
 
   return (
-    <div className="route-error">
-      <h1>Oops</h1>
-      <h2>{errorStatus}</h2>
+    <div className="mx-auto max-w-2xl px-8 py-24 text-center">
+      <p className="eyebrow mb-4 text-crimson-hi">Error {errorStatus}</p>
+      <h1 className="text-3xl font-light text-fg1">Something went wrong.</h1>
       {errorMessage && (
-        <fieldset>
-          <pre>{errorMessage}</pre>
-        </fieldset>
+        <pre className="t-mono mt-8 overflow-auto rounded-lg border border-border bg-surface p-6 text-left text-sm text-fg3">
+          {errorMessage}
+        </pre>
       )}
     </div>
   );

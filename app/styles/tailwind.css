@@ -1,6 +1,212 @@
-/**
- * Configure Tailwind v4 in this file using CSS variables and directives:
- * https://tailwindcss.com/docs/v4-beta#css-first-configuration
- */
-
 @import 'tailwindcss';
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* =========================================================
+   LUMINA FORMULATIONS — design tokens (Tailwind v4 @theme)
+   Source: lumina-formulations-design-system/colors_and_type.css
+   ========================================================= */
+@theme {
+  /* Raw palette */
+  --color-black: #0b0b0c;
+  --color-surface: #141416;
+  --color-surface-2: #1b1b1e;
+  --color-hairline: #2a2a2e;
+  --color-hairline-2: #3a3a40;
+  --color-crimson: #d11a2a;
+  --color-crimson-hi: #e63143;
+  --color-crimson-lo: #a8121f;
+  --color-oxblood: #6e0b14;
+  --color-oxblood-deep: #3a060c;
+  --color-offwhite: #ededed;
+  --color-grey: #8a8a8a;
+  --color-grey-dim: #5a5a5e;
+
+  /* Semantic roles (alias the raw tokens) */
+  --color-bg: #0b0b0c;
+  --color-bg-elev: #141416;
+  --color-bg-elev-2: #1b1b1e;
+  --color-border: #2a2a2e;
+  --color-border-strong: #3a3a40;
+  --color-fg1: #ffffff;
+  --color-fg2: #ededed;
+  --color-fg3: #8a8a8a;
+  --color-fg4: #5a5a5e;
+  --color-accent: #d11a2a;
+  --color-accent-hover: #e63143;
+  --color-accent-press: #a8121f;
+  --color-accent-deep: #6e0b14;
+
+  /* Fonts */
+  --font-sans: 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.6);
+  --shadow-accent: 0 8px 30px rgba(209, 26, 42, 0.35);
+}
+
+/* =========================================================
+   Non-utility tokens (use via var() in style attrs)
+   ========================================================= */
+:root {
+  /* Hero glow — soft deep-red radial bloom behind the bottle */
+  --glow-hero: radial-gradient(
+    closest-side,
+    rgba(209, 26, 42, 0.55) 0%,
+    rgba(110, 11, 20, 0.45) 38%,
+    rgba(58, 6, 12, 0.18) 64%,
+    rgba(11, 11, 12, 0) 100%
+  );
+  --grad-oxblood: linear-gradient(180deg, #6e0b14 0%, #3a060c 100%);
+  --grad-crimson: linear-gradient(180deg, #e63143 0%, #d11a2a 100%);
+
+  /* Tracking presets */
+  --track-wordmark: 0.42em;
+  --track-label: 0.22em;
+  --track-tight: -0.01em;
+}
+
+/* =========================================================
+   Reset + base
+   ========================================================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-black);
+  color: var(--color-fg2);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+body > main {
+  flex: 1;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+ul,
+ol,
+figure,
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  color: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-fg4);
+}
+
+::selection {
+  background: rgba(209, 26, 42, 0.35);
+  color: #fff;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--color-hairline);
+  border-radius: 999px;
+}
+
+/* =========================================================
+   Brand text helpers
+   ========================================================= */
+.wordmark {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  letter-spacing: var(--track-wordmark);
+  text-transform: uppercase;
+  color: var(--color-fg1);
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: var(--track-label);
+  color: var(--color-fg3);
+}
+
+.t-mono {
+  font-family: var(--font-mono);
+  letter-spacing: 0.02em;
+}
+
+/* Hide native scrollbar but keep functionality (used in account etc) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border-width: 0;
+}

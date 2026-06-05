@@ -1,5 +1,6 @@
 import {Await, Link} from 'react-router';
 import {Suspense, useId} from 'react';
+import {Search} from 'lucide-react';
 import type {
   CartApiQueryFragment,
   FooterQuery,
@@ -45,7 +46,7 @@ export function PageLayout({
           publicStoreDomain={publicStoreDomain}
         />
       )}
-      <main>{children}</main>
+      <main className="flex-1">{children}</main>
       <Footer
         footer={footer}
         header={header}
@@ -57,12 +58,16 @@ export function PageLayout({
 
 function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
   return (
-    <Aside type="cart" heading="CART">
-      <Suspense fallback={<p>Loading cart ...</p>}>
+    <Aside type="cart" heading="Your Cart">
+      <Suspense
+        fallback={
+          <p className="px-6 py-8 text-sm text-fg3">Loading cart …</p>
+        }
+      >
         <Await resolve={cart}>
-          {(cart) => {
-            return <CartMain cart={cart} layout="aside" />;
-          }}
+          {(resolvedCart) => (
+            <CartMain cart={resolvedCart} layout="aside" />
+          )}
         </Await>
       </Suspense>
     </Aside>
@@ -72,80 +77,85 @@ function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
 function SearchAside() {
   const queriesDatalistId = useId();
   return (
-    <Aside type="search" heading="SEARCH">
-      <div className="predictive-search">
-        <br />
+    <Aside type="search" heading="Search">
+      <div className="flex h-full flex-col">
         <SearchFormPredictive>
           {({fetchResults, goToSearch, inputRef}) => (
-            <>
+            <div className="sticky top-0 z-10 flex items-center gap-2 border-b border-border bg-surface px-6 py-4">
+              <Search size={18} strokeWidth={2} className="text-fg3" />
               <input
                 name="q"
                 onChange={fetchResults}
                 onFocus={fetchResults}
-                placeholder="Search"
+                placeholder="Search formulas, ingredients, journal…"
                 ref={inputRef}
                 type="search"
                 list={queriesDatalistId}
+                className="flex-1 bg-transparent text-sm text-fg1 outline-none placeholder:text-fg4"
               />
-              &nbsp;
-              <button onClick={goToSearch}>Search</button>
-            </>
+              <button
+                onClick={goToSearch}
+                className="text-xs font-medium uppercase tracking-[0.1em] text-fg3 transition-colors hover:text-fg1"
+              >
+                Search
+              </button>
+            </div>
           )}
         </SearchFormPredictive>
 
-        <SearchResultsPredictive>
-          {({items, total, term, state, closeSearch}) => {
-            const {articles, collections, pages, products, queries} = items;
+        <div className="flex-1 overflow-y-auto px-6 py-4">
+          <SearchResultsPredictive>
+            {({items, total, term, state, closeSearch}) => {
+              const {articles, collections, pages, products, queries} = items;
 
-            if (state === 'loading' && term.current) {
-              return <div>Loading...</div>;
-            }
+              if (state === 'loading' && term.current) {
+                return <div className="py-6 text-sm text-fg3">Loading…</div>;
+              }
 
-            if (!total) {
-              return <SearchResultsPredictive.Empty term={term} />;
-            }
+              if (!total) {
+                return <SearchResultsPredictive.Empty term={term} />;
+              }
 
-            return (
-              <>
-                <SearchResultsPredictive.Queries
-                  queries={queries}
-                  queriesDatalistId={queriesDatalistId}
-                />
-                <SearchResultsPredictive.Products
-                  products={products}
-                  closeSearch={closeSearch}
-                  term={term}
-                />
-                <SearchResultsPredictive.Collections
-                  collections={collections}
-                  closeSearch={closeSearch}
-                  term={term}
-                />
-                <SearchResultsPredictive.Pages
-                  pages={pages}
-                  closeSearch={closeSearch}
-                  term={term}
-                />
-                <SearchResultsPredictive.Articles
-                  articles={articles}
-                  closeSearch={closeSearch}
-                  term={term}
-                />
-                {term.current && total ? (
-                  <Link
-                    onClick={closeSearch}
-                    to={`${SEARCH_ENDPOINT}?q=${term.current}`}
-                  >
-                    <p>
-                      View all results for <q>{term.current}</q>
-                      &nbsp; →
-                    </p>
-                  </Link>
-                ) : null}
-              </>
-            );
-          }}
-        </SearchResultsPredictive>
+              return (
+                <>
+                  <SearchResultsPredictive.Queries
+                    queries={queries}
+                    queriesDatalistId={queriesDatalistId}
+                  />
+                  <SearchResultsPredictive.Products
+                    products={products}
+                    closeSearch={closeSearch}
+                    term={term}
+                  />
+                  <SearchResultsPredictive.Collections
+                    collections={collections}
+                    closeSearch={closeSearch}
+                    term={term}
+                  />
+                  <SearchResultsPredictive.Pages
+                    pages={pages}
+                    closeSearch={closeSearch}
+                    term={term}
+                  />
+                  <SearchResultsPredictive.Articles
+                    articles={articles}
+                    closeSearch={closeSearch}
+                    term={term}
+                  />
+                  {term.current && total ? (
+                    <Link
+                      onClick={closeSearch}
+                      to={`${SEARCH_ENDPOINT}?q=${term.current}`}
+                      className="mt-4 inline-flex items-center gap-2 text-[13px] font-medium uppercase tracking-[0.1em] text-crimson-hi hover:text-fg1"
+                    >
+                      View all results for <q>{term.current}</q> →
+                    </Link>
+                  ) : null}
+                </>
+              );
+            }}
+          </SearchResultsPredictive>
+        </div>
       </div>
     </Aside>
   );
@@ -161,13 +171,15 @@ function MobileMenuAside({
   return (
     header.menu &&
     header.shop.primaryDomain?.url && (
-      <Aside type="mobile" heading="MENU">
-        <HeaderMenu
-          menu={header.menu}
-          viewport="mobile"
-          primaryDomainUrl={header.shop.primaryDomain.url}
-          publicStoreDomain={publicStoreDomain}
-        />
+      <Aside type="mobile" heading="Menu">
+        <div className="px-6 py-6">
+          <HeaderMenu
+            menu={header.menu}
+            viewport="mobile"
+            primaryDomainUrl={header.shop.primaryDomain.url}
+            publicStoreDomain={publicStoreDomain}
+          />
+        </div>
       </Aside>
     )
   );
