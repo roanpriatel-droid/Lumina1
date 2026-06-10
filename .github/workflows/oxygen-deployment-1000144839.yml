@@ -35,12 +35,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: List Oxygen environments
-        run: npx shopify hydrogen env list
-        env:
-          SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000144839 }}
-
       - name: Build and Publish to Oxygen
-        run: npx shopify hydrogen deploy --env production
+        run: npx shopify hydrogen deploy --env-branch ${{ github.ref_name }}
         env:
           SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000144839 }}
