@@ -1,7 +1,14 @@
 import {Suspense} from 'react';
 import {Await, NavLink} from 'react-router';
 import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
-import {ShieldCheck, Lock, Truck} from 'lucide-react';
+import {
+  ShieldCheck,
+  Lock,
+  Truck,
+  FlaskConical,
+  ListChecks,
+  Mail,
+} from 'lucide-react';
 import {Wordmark} from '~/components/lumina/Wordmark';
 import {EmailCapture} from '~/components/lumina/EmailCapture';
 
@@ -19,7 +26,7 @@ export function Footer({
   return (
     <>
       <EmailCapture />
-      <BenefitStrip />
+      <TheStandardStrip />
       <Suspense>
         <Await resolve={footerPromise}>
           {(footer) => (
@@ -38,19 +45,22 @@ export function Footer({
   );
 }
 
-function BenefitStrip() {
+/* The Standard mini-row — three brand promises with mono small-caps. */
+function TheStandardStrip() {
   const items = [
-    {Icon: ShieldCheck, label: '60-Day Money-Back Guarantee'},
-    {Icon: Lock, label: 'Secure Checkout'},
-    {Icon: Truck, label: 'Ships Free on Subscriptions'},
+    {Icon: ListChecks, label: 'Disclosed doses on every active'},
+    {Icon: FlaskConical, label: 'Third-party tested every lot'},
+    {Icon: ShieldCheck, label: '60-day money-back guarantee'},
+    {Icon: Truck, label: 'Free shipping on subscriptions'},
+    {Icon: Lock, label: 'Secure checkout'},
   ];
   return (
     <section className="border-y border-border bg-surface">
-      <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-center gap-x-14 gap-y-4 px-8 py-7">
+      <div className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-center gap-x-10 gap-y-3 px-8 py-6">
         {items.map(({Icon, label}) => (
-          <div key={label} className="flex items-center gap-3">
-            <Icon size={20} strokeWidth={2} className="text-crimson" />
-            <span className="text-[13px] font-medium uppercase tracking-[0.12em] text-fg2">
+          <div key={label} className="flex items-center gap-2.5">
+            <Icon size={15} strokeWidth={2.2} className="text-crimson" />
+            <span className="t-mono text-[10.5px] font-semibold uppercase tracking-[0.18em] text-fg2">
               {label}
             </span>
           </div>
@@ -70,13 +80,37 @@ function FooterGrid({
   publicStoreDomain: string;
 }) {
   return (
-    <div className="mx-auto grid max-w-[1100px] gap-10 px-8 py-14 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
-      <div>
+    <div className="mx-auto grid max-w-[1240px] gap-12 px-8 py-16 md:grid-cols-[1.4fr_1fr_1fr_1fr] md:gap-10">
+      <div className="flex flex-col gap-6">
         <Wordmark size={20} tm />
-        <p className="mt-5 max-w-[260px] text-sm font-light text-fg3">
+        <p className="max-w-[260px] text-sm font-light text-fg3">
           Clinically-studied daily formulas, dosed honestly and tested every
-          lot.
+          lot. Built for the customer who reads the label.
         </p>
+        <div className="flex items-center gap-4">
+          <SocialLink
+            href="https://instagram.com/luminaformulations"
+            label="Instagram"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" /></svg>
+          </SocialLink>
+          <SocialLink href="https://x.com/luminaformulations" label="X">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2H21l-6.51 7.44L22.5 22h-6.84l-5.36-7.04L4.2 22H1.44l6.95-7.95L1.5 2h6.99l4.83 6.41L18.244 2zm-2.4 18h1.91L7.27 4H5.24l10.604 16z"/></svg>
+          </SocialLink>
+          <SocialLink
+            href="https://youtube.com/@luminaformulations"
+            label="YouTube"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" /><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" /></svg>
+          </SocialLink>
+          <a
+            href="mailto:hello@luminaformulations.com"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-black text-fg3 transition-colors hover:border-crimson hover:text-crimson-hi"
+            aria-label="Email us"
+          >
+            <Mail size={14} strokeWidth={2} />
+          </a>
+        </div>
       </div>
       {FOOTER_COLUMNS.map((col) => (
         <div key={col.heading}>
@@ -105,6 +139,28 @@ function FooterGrid({
         />
       ) : null}
     </div>
+  );
+}
+
+function SocialLink({
+  href,
+  label,
+  children,
+}: {
+  href: string;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-border bg-black text-fg3 transition-colors hover:border-crimson hover:text-crimson-hi"
+      aria-label={label}
+    >
+      {children}
+    </a>
   );
 }
 
@@ -161,7 +217,7 @@ function ShopifyFooterMenu({
 function FooterMeta() {
   return (
     <div className="border-t border-border">
-      <div className="mx-auto flex max-w-[1100px] flex-wrap justify-between gap-3 px-8 py-5">
+      <div className="mx-auto flex max-w-[1240px] flex-wrap justify-between gap-3 px-8 py-5">
         <span className="text-xs text-fg4">
           © {new Date().getFullYear()} Lumina Formulations. All rights reserved.
         </span>
@@ -180,10 +236,11 @@ const FOOTER_COLUMNS: ReadonlyArray<{
   {
     heading: 'Formulas',
     links: [
+      {label: 'Catalog', to: '/collections/all'},
       {label: 'Male Enhancement', to: '/products/alpha-energy-3'},
       {label: 'Female Enhancement', to: '/products/female-enhancement-3'},
-      {label: 'Sleep', to: '/products/sleep'},
-      {label: 'Daily Multi', to: '/products/daily-multi'},
+      {label: 'Sleep — coming soon', to: '/products/sleep'},
+      {label: 'Daily Multi — coming soon', to: '/products/daily-multi'},
     ],
   },
   {
@@ -203,15 +260,7 @@ const FOOTER_COLUMNS: ReadonlyArray<{
       {label: 'Reviews', to: '/pages/reviews'},
       {label: 'Guarantee', to: '/pages/guarantee'},
       {label: 'Contact', to: '/pages/contact'},
-    ],
-  },
-  {
-    heading: 'Support',
-    links: [
       {label: 'FAQ', to: '/pages/faq'},
-      {label: 'Subscriptions', to: '/pages/subscriptions'},
-      {label: 'Shipping', to: '/pages/shipping'},
-      {label: 'Returns', to: '/pages/returns'},
     ],
   },
 ];

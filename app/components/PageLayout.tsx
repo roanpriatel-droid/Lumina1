@@ -11,6 +11,8 @@ import {Footer} from '~/components/Footer';
 import {Header, HeaderMenu} from '~/components/Header';
 import {AnnouncementBar} from '~/components/lumina/AnnouncementBar';
 import {LenisProvider} from '~/components/lumina/LenisProvider';
+import {PageTransition} from '~/components/lumina/PageTransition';
+import {CursorAccent} from '~/components/lumina/CursorAccent';
 import {CartMain} from '~/components/CartMain';
 import {
   SEARCH_ENDPOINT,
@@ -38,6 +40,8 @@ export function PageLayout({
   return (
     <Aside.Provider>
       <LenisProvider />
+      <PageTransition />
+      <CursorAccent />
       <CartAside cart={cart} />
       <SearchAside />
       <MobileMenuAside />
