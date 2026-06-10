@@ -8,7 +8,6 @@ import {
   Eye,
 } from 'lucide-react';
 import {PageCta} from '~/components/lumina/PageCta';
-import {EmailCapture} from '~/components/lumina/EmailCapture';
 import {PageHero, Section} from '~/components/lumina/PageChrome';
 
 export const meta: Route.MetaFunction = () => [
@@ -237,7 +236,6 @@ export default function TheSciencePage() {
         </div>
       </Section>
 
-      <EmailCapture />
       <PageCta />
     </div>
   );

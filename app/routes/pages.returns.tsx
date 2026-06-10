@@ -2,7 +2,6 @@ import type {Route} from './+types/pages.returns';
 import {Heart, Mail, ShieldCheck, Wallet, Calendar} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {PageHero, Section} from '~/components/lumina/PageChrome';
-import {EmailCapture} from '~/components/lumina/EmailCapture';
 import {PageCta} from '~/components/lumina/PageCta';
 
 export const meta: Route.MetaFunction = () => [
@@ -170,7 +169,6 @@ export default function ReturnsPage() {
         </div>
       </Section>
 
-      <EmailCapture />
       <PageCta />
     </div>
   );

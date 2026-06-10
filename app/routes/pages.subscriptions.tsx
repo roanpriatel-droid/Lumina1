@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {PageHero, Section} from '~/components/lumina/PageChrome';
-import {EmailCapture} from '~/components/lumina/EmailCapture';
 import {PageCta} from '~/components/lumina/PageCta';
 
 export const meta: Route.MetaFunction = () => [
@@ -175,7 +174,6 @@ export default function SubscriptionsPage() {
         </ol>
       </Section>
 
-      <EmailCapture />
       <PageCta
         title="Start the subscription. Save 15% on every bottle."
         body="Subscribe and save 15%, ships free, pause or cancel anytime. The formulas are dosed for 8–12 weeks of consistent use — this is how you actually take them."

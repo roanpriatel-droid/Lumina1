@@ -49,9 +49,9 @@ export function IngredientStory() {
             className="mt-6 max-w-[420px] text-fg2"
             style={{font: '300 18px/1.65 var(--font-sans)'}}
           >
-            Citrulline for blood flow. Ginseng for stamina. Ashwagandha for the
-            stress that blunts both. Each active earns its place — and we show
-            the dose.
+            Tribulus at 750&nbsp;mg. Zinc at 30&nbsp;mg. Magnesium at
+            200&nbsp;mg. Tongkat ali, epimedium, saw palmetto, hawthorn, and
+            more — each active earns its place, and we show the dose.
           </p>
           <div className="mt-9">
             <Link
@@ -85,7 +85,7 @@ export function IngredientStory() {
             className="px-6 py-[15px] text-center text-[13px] text-fg3"
             style={{background: 'rgba(20,20,22,0.78)'}}
           >
-            + 2 more actives, fully disclosed
+            + {LUMINA_PRODUCTS.male.actives.length - actives.length} more actives, fully disclosed
           </div>
         </div>
       </div>

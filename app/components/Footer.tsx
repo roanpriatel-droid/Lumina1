@@ -3,7 +3,7 @@ import {Await, NavLink} from 'react-router';
 import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
 import {ShieldCheck, Lock, Truck} from 'lucide-react';
 import {Wordmark} from '~/components/lumina/Wordmark';
-import {Button} from '~/components/lumina/Button';
+import {EmailCapture} from '~/components/lumina/EmailCapture';
 
 interface FooterProps {
   footer: Promise<FooterQuery | null>;
@@ -18,12 +18,12 @@ export function Footer({
 }: FooterProps) {
   return (
     <>
+      <EmailCapture />
       <BenefitStrip />
       <Suspense>
         <Await resolve={footerPromise}>
           {(footer) => (
             <footer className="border-t border-border bg-black">
-              <NewsletterBand />
               <FooterGrid
                 menu={footer?.menu}
                 primaryDomainUrl={header.shop.primaryDomain.url}
@@ -42,7 +42,7 @@ function BenefitStrip() {
   const items = [
     {Icon: ShieldCheck, label: '60-Day Money-Back Guarantee'},
     {Icon: Lock, label: 'Secure Checkout'},
-    {Icon: Truck, label: 'Ships Free'},
+    {Icon: Truck, label: 'Ships Free on Subscriptions'},
   ];
   return (
     <section className="border-y border-border bg-surface">
@@ -60,42 +60,6 @@ function BenefitStrip() {
   );
 }
 
-function NewsletterBand() {
-  return (
-    <div className="border-b border-border">
-      <div className="mx-auto grid max-w-[1100px] gap-10 px-8 py-14 md:grid-cols-2 md:items-center">
-        <div>
-          <h3 className="text-[26px] font-light leading-tight text-fg1 tracking-[-0.01em]">
-            Join the protocol
-          </h3>
-          <p className="mt-3 max-w-[360px] text-sm text-fg3">
-            Field notes on the science, sourcing, and what we test for. No spam,
-            plainly written.
-          </p>
-        </div>
-        <form
-          className="flex flex-col gap-3 sm:flex-row"
-          onSubmit={(e) => {
-            e.preventDefault();
-            // TODO(newsletter): wire up real subscription endpoint.
-          }}
-        >
-          <input
-            type="email"
-            required
-            placeholder="Email address"
-            className="flex-1 rounded-pill border border-border bg-surface px-5 py-3.5 text-[15px] text-fg1 outline-none transition-colors focus:border-crimson"
-            aria-label="Email address"
-          />
-          <Button type="submit" className="px-6 py-3.5">
-            Subscribe
-          </Button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
 function FooterGrid({
   menu,
   primaryDomainUrl,
@@ -109,7 +73,7 @@ function FooterGrid({
     <div className="mx-auto grid max-w-[1100px] gap-10 px-8 py-14 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
       <div>
         <Wordmark size={20} tm />
-        <p className="mt-5 max-w-[240px] text-sm font-light text-fg3">
+        <p className="mt-5 max-w-[260px] text-sm font-light text-fg3">
           Clinically-studied daily formulas, dosed honestly and tested every
           lot.
         </p>
@@ -218,15 +182,15 @@ const FOOTER_COLUMNS: ReadonlyArray<{
     links: [
       {label: 'Male Enhancement', to: '/products/male-enhancement'},
       {label: 'Female Enhancement', to: '/products/female-enhancement'},
-      {label: 'Sleep', to: '/collections'},
-      {label: 'Daily Multi', to: '/collections'},
+      {label: 'Sleep', to: '/products/sleep'},
+      {label: 'Daily Multi', to: '/products/daily-multi'},
     ],
   },
   {
     heading: 'Company',
     links: [
       {label: 'About', to: '/pages/about'},
-      {label: 'The Science', to: '/pages/science'},
+      {label: 'The Science', to: '/pages/the-science'},
       {label: 'Sourcing', to: '/pages/sourcing'},
       {label: 'Reviews', to: '/pages/reviews'},
     ],
@@ -235,9 +199,9 @@ const FOOTER_COLUMNS: ReadonlyArray<{
     heading: 'Support',
     links: [
       {label: 'Contact', to: '/pages/contact'},
-      {label: 'Subscriptions', to: '/account'},
-      {label: 'Shipping', to: '/policies/shipping-policy'},
-      {label: 'Returns', to: '/policies/refund-policy'},
+      {label: 'Subscriptions', to: '/pages/subscriptions'},
+      {label: 'Shipping', to: '/pages/shipping'},
+      {label: 'Returns', to: '/pages/returns'},
     ],
   },
 ];

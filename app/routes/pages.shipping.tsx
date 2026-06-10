@@ -2,7 +2,6 @@ import type {Route} from './+types/pages.shipping';
 import {Truck, Plane, Clock3, PackageCheck} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {PageHero, Section} from '~/components/lumina/PageChrome';
-import {EmailCapture} from '~/components/lumina/EmailCapture';
 import {PageCta} from '~/components/lumina/PageCta';
 
 export const meta: Route.MetaFunction = () => [
@@ -173,7 +172,6 @@ export default function ShippingPage() {
         </div>
       </Section>
 
-      <EmailCapture />
       <PageCta />
     </div>
   );

@@ -2,7 +2,6 @@ import type {Route} from './+types/pages.reviews';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {StarRating} from '~/components/lumina/StarRating';
 import {PageHero, Section} from '~/components/lumina/PageChrome';
-import {EmailCapture} from '~/components/lumina/EmailCapture';
 import {PageCta} from '~/components/lumina/PageCta';
 import {LUMINA_PRODUCTS} from '~/lib/lumina-data';
 
@@ -139,11 +138,6 @@ export default function ReviewsPage() {
         </div>
       </Section>
 
-      <EmailCapture
-        eyebrow="Get a heads-up"
-        title="Be there when verified reviews go live."
-        body="One email when the new review system is live — and one when each new formula drops. Nothing else."
-      />
       <PageCta />
     </div>
   );
