@@ -21,7 +21,7 @@ export function IngredientTransparency({
   otherIngredients,
 }: IngredientTransparencyProps) {
   return (
-    <section className="border-t border-border bg-black">
+    <section id="ingredients" className="border-t border-border bg-black">
       <div className="mx-auto max-w-[1200px] px-6 pb-20 pt-20 md:px-8">
         <Eyebrow className="mb-4">Full transparency</Eyebrow>
         <div className="grid gap-14 md:grid-cols-[1fr_1.4fr] md:items-start">

@@ -27,6 +27,7 @@ import {FaqAccordion} from '~/components/lumina/pdp/FaqAccordion';
 import {ReviewsPlaceholder} from '~/components/lumina/pdp/ReviewsPlaceholder';
 import {CrossSell} from '~/components/lumina/pdp/CrossSell';
 import {ComplianceFooter} from '~/components/lumina/pdp/ComplianceFooter';
+import {TransparencyCallout} from '~/components/lumina/pdp/TransparencyCallout';
 import {getLuminaProductByHandle} from '~/lib/lumina-product';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
@@ -158,6 +159,7 @@ function FullProduct({
             <PurchaseSteps />
             <PurchaseCta selectedVariant={selectedVariant} />
             <BenefitPillars pillars={lumina.benefitPillars} />
+            {lumina.blend && <TransparencyCallout blend={lumina.blend} />}
             <IngredientTransparency
               actives={lumina.actives}
               blend={lumina.blend}
@@ -241,6 +243,7 @@ function PreviewProduct({lumina}: {lumina: NonNullable<LoaderLumina>}) {
         <PurchaseSteps />
         <PurchaseCta selectedVariant={undefined} />
         <BenefitPillars pillars={lumina.benefitPillars} />
+        {lumina.blend && <TransparencyCallout blend={lumina.blend} />}
         <IngredientTransparency
           actives={lumina.actives}
           blend={lumina.blend}
