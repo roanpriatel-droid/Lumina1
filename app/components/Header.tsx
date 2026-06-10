@@ -5,7 +5,7 @@ import {
   useAnalytics,
   useOptimisticCart,
 } from '@shopify/hydrogen';
-import {Search, ShoppingBag, Menu as MenuIcon} from 'lucide-react';
+import {Search, ShoppingBag, Menu as MenuIcon, ChevronDown} from 'lucide-react';
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {Wordmark} from '~/components/lumina/Wordmark';
@@ -19,21 +19,56 @@ interface HeaderProps {
 
 type Viewport = 'desktop' | 'mobile';
 
+interface NavItem {
+  label: string;
+  to: string;
+  children?: ReadonlyArray<{label: string; to: string; note?: string}>;
+}
+
+const LUMINA_NAV: ReadonlyArray<NavItem> = [
+  {label: 'Catalog', to: '/collections/all'},
+  {
+    label: 'Science',
+    to: '/pages/the-science',
+    children: [
+      {label: 'The Science', to: '/pages/the-science', note: 'Formulation philosophy + 8 actives'},
+      {label: 'Ingredients', to: '/pages/ingredients', note: 'Filterable library'},
+      {label: 'Testing', to: '/pages/testing', note: 'cGMP + COA promise'},
+      {label: 'Protocol', to: '/pages/protocol', note: 'The 8-week arc, in editorial'},
+    ],
+  },
+  {label: 'Reviews', to: '/pages/reviews'},
+  {label: 'Guarantee', to: '/pages/guarantee'},
+  {label: 'About', to: '/pages/about'},
+];
+
 export function Header({
   header,
   isLoggedIn,
   cart,
   publicStoreDomain,
 }: HeaderProps) {
-  const {menu} = header;
   const [scrolled, setScrolled] = useState(false);
+  const [direction, setDirection] = useState<'up' | 'down'>('up');
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 20);
+      setDirection(y > lastY && y > 60 ? 'down' : 'up');
+      const max =
+        document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(max > 0 ? y / max : 0);
+      lastY = y;
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, {passive: true});
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  const condensed = scrolled && direction === 'down';
 
   return (
     <header
@@ -45,76 +80,162 @@ export function Header({
         borderBottom: `1px solid ${scrolled ? 'var(--color-border)' : 'transparent'}`,
       }}
     >
-      <div className="mx-auto flex h-[76px] max-w-[1240px] items-center gap-8 px-6 md:px-10">
+      <div
+        className="mx-auto flex items-center gap-8 px-6 transition-[height] duration-200 ease-out md:px-10"
+        style={{
+          height: condensed ? 56 : 76,
+          maxWidth: 1240,
+        }}
+      >
         <NavLink prefetch="intent" to="/" end aria-label="Lumina home">
-          <Wordmark size={21} />
+          <Wordmark size={condensed ? 18 : 21} />
         </NavLink>
-        <HeaderMenu
-          menu={menu}
-          viewport="desktop"
-          primaryDomainUrl={header.shop.primaryDomain.url}
-          publicStoreDomain={publicStoreDomain}
-        />
+        <HeaderMenu viewport="desktop" />
         <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
       </div>
+
+      {/* scroll progress hairline */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-[-1px] h-px"
+        style={{
+          background: 'var(--color-crimson)',
+          transformOrigin: 'left center',
+          transform: `scaleX(${progress})`,
+          opacity: scrolled ? 0.95 : 0.4,
+          transition: 'opacity 200ms ease',
+        }}
+      />
     </header>
   );
 }
 
-export function HeaderMenu({
-  menu,
-  primaryDomainUrl,
-  viewport,
-  publicStoreDomain,
-}: {
-  menu: HeaderProps['header']['menu'];
-  primaryDomainUrl: HeaderProps['header']['shop']['primaryDomain']['url'];
-  viewport: Viewport;
-  publicStoreDomain: HeaderProps['publicStoreDomain'];
-}) {
+export function HeaderMenu({viewport}: {viewport: Viewport}) {
   const {close} = useAside();
 
-  const navClass =
-    viewport === 'desktop'
-      ? 'hidden md:flex items-center gap-7 ml-4'
-      : 'flex flex-col gap-6 px-2 py-4';
-
-  const linkClass =
-    viewport === 'desktop'
-      ? 'text-sm tracking-[0.02em] text-fg3 hover:text-fg1 transition-colors'
-      : 'text-base text-fg2 hover:text-fg1 transition-colors';
-
-  return (
-    <nav className={navClass} role="navigation">
-      {viewport === 'mobile' && (
-        <NavLink end onClick={close} prefetch="intent" to="/" className={linkClass}>
+  if (viewport === 'mobile') {
+    return (
+      <nav className="flex flex-col gap-2 px-2 py-4" role="navigation">
+        <NavLink
+          end
+          onClick={close}
+          prefetch="intent"
+          to="/"
+          className="text-base text-fg2 hover:text-fg1 transition-colors"
+        >
           Home
         </NavLink>
-      )}
-      {(menu || FALLBACK_HEADER_MENU).items.map((item) => {
-        if (!item.url) return null;
+        {LUMINA_NAV.map((item) => (
+          <div key={item.label}>
+            <NavLink
+              end
+              onClick={close}
+              prefetch="intent"
+              to={item.to}
+              className="text-base text-fg2 hover:text-fg1 transition-colors"
+            >
+              {item.label}
+            </NavLink>
+            {item.children && (
+              <div className="mt-2 ml-4 flex flex-col gap-1.5">
+                {item.children.map((child) => (
+                  <NavLink
+                    key={child.label}
+                    end
+                    onClick={close}
+                    prefetch="intent"
+                    to={child.to}
+                    className="text-[13px] text-fg3 hover:text-fg1 transition-colors"
+                  >
+                    {child.label}
+                  </NavLink>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </nav>
+    );
+  }
 
-        const url =
-          item.url.includes('myshopify.com') ||
-          item.url.includes(publicStoreDomain) ||
-          item.url.includes(primaryDomainUrl)
-            ? new URL(item.url).pathname
-            : item.url;
-
-        return (
+  return (
+    <nav
+      className="hidden md:flex items-center gap-7 ml-4"
+      role="navigation"
+    >
+      {LUMINA_NAV.map((item) =>
+        item.children ? (
+          <NavDropdown key={item.label} item={item} />
+        ) : (
           <NavLink
-            key={item.id}
+            key={item.label}
             end
-            onClick={close}
             prefetch="intent"
-            to={url}
-            className={linkClass}
+            to={item.to}
+            className="text-sm tracking-[0.02em] text-fg3 hover:text-fg1 transition-colors"
           >
-            {item.title}
+            {item.label}
           </NavLink>
-        );
-      })}
+        ),
+      )}
     </nav>
+  );
+}
+
+function NavDropdown({item}: {item: NavItem}) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <NavLink
+        end
+        prefetch="intent"
+        to={item.to}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        className="inline-flex items-center gap-1 text-sm tracking-[0.02em] text-fg3 hover:text-fg1 transition-colors"
+      >
+        {item.label}
+        <ChevronDown
+          size={13}
+          strokeWidth={2}
+          className="transition-transform"
+          style={{transform: open ? 'rotate(180deg)' : 'rotate(0deg)'}}
+        />
+      </NavLink>
+      <div
+        className="absolute left-0 top-full z-50 mt-3 w-[320px] rounded-xl border border-border bg-black p-2 transition-[opacity,transform] duration-200"
+        style={{
+          background: 'rgba(11,11,12,0.95)',
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+          opacity: open ? 1 : 0,
+          transform: open ? 'translateY(0)' : 'translateY(-4px)',
+          pointerEvents: open ? 'auto' : 'none',
+          boxShadow: 'var(--shadow-md)',
+        }}
+      >
+        {item.children?.map((child) => (
+          <NavLink
+            key={child.label}
+            end
+            prefetch="intent"
+            to={child.to}
+            className="flex flex-col gap-1 rounded-lg px-4 py-3 transition-colors hover:bg-surface"
+          >
+            <span className="text-[13.5px] font-medium text-fg1">
+              {child.label}
+            </span>
+            {child.note && (
+              <span className="text-[12px] text-fg3">{child.note}</span>
+            )}
+          </NavLink>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -219,45 +340,3 @@ function CartBanner() {
   const cart = useOptimisticCart(originalCart);
   return <CartBadge count={cart?.totalQuantity ?? 0} />;
 }
-
-const FALLBACK_HEADER_MENU = {
-  id: 'gid://shopify/Menu/199655587896',
-  items: [
-    {
-      id: 'gid://shopify/MenuItem/1',
-      resourceId: null,
-      tags: [],
-      title: 'Formulas',
-      type: 'HTTP',
-      url: '/collections',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/2',
-      resourceId: null,
-      tags: [],
-      title: 'The Science',
-      type: 'HTTP',
-      url: '/pages/science',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/3',
-      resourceId: null,
-      tags: [],
-      title: 'Reviews',
-      type: 'HTTP',
-      url: '/pages/reviews',
-      items: [],
-    },
-    {
-      id: 'gid://shopify/MenuItem/4',
-      resourceId: null,
-      tags: [],
-      title: 'About',
-      type: 'PAGE',
-      url: '/pages/about',
-      items: [],
-    },
-  ],
-};

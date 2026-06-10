@@ -40,7 +40,7 @@ export function PageLayout({
       <LenisProvider />
       <CartAside cart={cart} />
       <SearchAside />
-      <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} />
+      <MobileMenuAside />
       <AnnouncementBar />
       {header && (
         <Header
@@ -202,26 +202,12 @@ function SearchAside() {
   );
 }
 
-function MobileMenuAside({
-  header,
-  publicStoreDomain,
-}: {
-  header: PageLayoutProps['header'];
-  publicStoreDomain: PageLayoutProps['publicStoreDomain'];
-}) {
+function MobileMenuAside() {
   return (
-    header.menu &&
-    header.shop.primaryDomain?.url && (
-      <Aside type="mobile" heading="Menu">
-        <div className="px-6 py-6">
-          <HeaderMenu
-            menu={header.menu}
-            viewport="mobile"
-            primaryDomainUrl={header.shop.primaryDomain.url}
-            publicStoreDomain={publicStoreDomain}
-          />
-        </div>
-      </Aside>
-    )
+    <Aside type="mobile" heading="Menu">
+      <div className="px-6 py-6">
+        <HeaderMenu viewport="mobile" />
+      </div>
+    </Aside>
   );
 }

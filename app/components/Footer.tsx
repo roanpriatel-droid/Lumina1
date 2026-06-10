@@ -187,18 +187,28 @@ const FOOTER_COLUMNS: ReadonlyArray<{
     ],
   },
   {
+    heading: 'Science',
+    links: [
+      {label: 'The Science', to: '/pages/the-science'},
+      {label: 'Ingredients', to: '/pages/ingredients'},
+      {label: 'Testing', to: '/pages/testing'},
+      {label: 'Protocol', to: '/pages/protocol'},
+      {label: 'Sourcing', to: '/pages/sourcing'},
+    ],
+  },
+  {
     heading: 'Company',
     links: [
       {label: 'About', to: '/pages/about'},
-      {label: 'The Science', to: '/pages/the-science'},
-      {label: 'Sourcing', to: '/pages/sourcing'},
       {label: 'Reviews', to: '/pages/reviews'},
+      {label: 'Guarantee', to: '/pages/guarantee'},
+      {label: 'Contact', to: '/pages/contact'},
     ],
   },
   {
     heading: 'Support',
     links: [
-      {label: 'Contact', to: '/pages/contact'},
+      {label: 'FAQ', to: '/pages/faq'},
       {label: 'Subscriptions', to: '/pages/subscriptions'},
       {label: 'Shipping', to: '/pages/shipping'},
       {label: 'Returns', to: '/pages/returns'},
