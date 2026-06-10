@@ -13,6 +13,7 @@ import {AnnouncementBar} from '~/components/lumina/AnnouncementBar';
 import {LenisProvider} from '~/components/lumina/LenisProvider';
 import {PageTransition} from '~/components/lumina/PageTransition';
 import {CursorAccent} from '~/components/lumina/CursorAccent';
+import {FilmGrain} from '~/components/graphics/FilmGrain';
 import {CartMain} from '~/components/CartMain';
 import {
   SEARCH_ENDPOINT,
@@ -40,6 +41,7 @@ export function PageLayout({
   return (
     <Aside.Provider>
       <LenisProvider />
+      <FilmGrain />
       <PageTransition />
       <CursorAccent />
       <CartAside cart={cart} />
