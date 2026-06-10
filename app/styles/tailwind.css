@@ -269,6 +269,34 @@ textarea::placeholder {
   pointer-events: none;
 }
 
+/* =========================================================
+   Marquee — opposite-direction loops for the proof wall.
+   ========================================================= */
+@keyframes marquee-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+@keyframes marquee-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none !important;
+  }
+}
+
 /* Hide native scrollbar but keep functionality (used in account etc) */
 .sr-only {
   position: absolute;

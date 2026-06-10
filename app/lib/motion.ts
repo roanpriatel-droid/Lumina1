@@ -54,7 +54,7 @@ export interface SceneOptions {
  * trigger fires; tweens to opacity 1 + y 0 when it enters the viewport.
  */
 export function fadeRise(
-  el: Element | null,
+  el: Element | null | undefined,
   {
     start = 'top 85%',
     distance = DEFAULT_DISTANCE,
@@ -87,7 +87,7 @@ export function fadeRise(
  * are the elements to animate; their parent is the trigger.
  */
 export function staggerChildren(
-  container: Element | null,
+  container: Element | null | undefined,
   selector: string,
   {
     start = 'top 80%',
@@ -123,7 +123,7 @@ export function staggerChildren(
  * dock animation and the horizontal "Standard" sequence.
  */
 export function pinScene(
-  el: Element | null,
+  el: Element | null | undefined,
   {
     start = 'top top',
     end = '+=100%',
@@ -148,13 +148,13 @@ export function pinScene(
  * scrolls; capped at 12% by design rule.
  */
 export function parallaxLayer(
-  el: Element | null,
+  el: Element | null | undefined,
   {
     yPercent = -8,
     trigger,
     start = 'top bottom',
     end = 'bottom top',
-  }: {yPercent?: number; trigger?: Element | null; start?: string; end?: string} = {},
+  }: {yPercent?: number; trigger?: Element | null | undefined; start?: string; end?: string} = {},
 ): gsap.core.Tween | null {
   if (!el || typeof window === 'undefined') return null;
   ensureRegistered();
@@ -178,7 +178,7 @@ export function parallaxLayer(
  * be present.
  */
 export function countUp(
-  el: Element | null,
+  el: Element | null | undefined,
   {
     end,
     start = 0,
@@ -236,7 +236,7 @@ export function countUp(
  * Expects: <h1><span class="line-mask"><span class="line-inner">...</span></span>...</h1>
  */
 export function textReveal(
-  container: Element | null,
+  container: Element | null | undefined,
   {
     start = 'top 80%',
     stagger = 0.09,
@@ -271,7 +271,7 @@ export function textReveal(
  * header's bottom hairline progress.
  */
 export function scrollProgress(
-  triggerEl: Element | null,
+  triggerEl: Element | null | undefined,
   cb: (p: number) => void,
   {
     start = 'top top',

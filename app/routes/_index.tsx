@@ -1,36 +1,52 @@
 import type {Route} from './+types/_index';
-import {HomeHero} from '~/components/lumina/home/Hero';
-import {ProductPair} from '~/components/lumina/home/ProductPair';
-import {WhyLumina} from '~/components/lumina/home/WhyLumina';
-import {IngredientStory} from '~/components/lumina/home/IngredientStory';
-import {TiersTeaser} from '~/components/lumina/home/TiersTeaser';
-import {SocialProof} from '~/components/lumina/home/SocialProof';
+import {useLoaderData} from 'react-router';
+import {Hero2} from '~/components/lumina/home/scenes/Hero2';
+import {Manifesto} from '~/components/lumina/home/scenes/Manifesto';
+import {TwoFormulas} from '~/components/lumina/home/scenes/TwoFormulas';
+import {Constellation} from '~/components/lumina/home/scenes/Constellation';
+import {TheStandard} from '~/components/lumina/home/scenes/TheStandard';
+import {SupplyLadderScene} from '~/components/lumina/home/scenes/SupplyLadderScene';
+import {Ritual} from '~/components/lumina/home/scenes/Ritual';
+import {ProofWall} from '~/components/lumina/home/scenes/ProofWall';
+import {FaqTeaser} from '~/components/lumina/home/scenes/FaqTeaser';
+import {FinalCta} from '~/components/lumina/home/scenes/FinalCta';
+import {entriesForGender} from '~/lib/savings';
+import {loadLuminaCatalog} from '~/lib/lumina-catalog.server';
 
 export const meta: Route.MetaFunction = () => {
   return [
-    {title: 'Lumina Formulations — Vitality, formulated.'},
+    {title: 'Lumina Formulations — Vitality, formulated honestly.'},
     {
       name: 'description',
       content:
-        'Two daily vitality formulas built from clinically-studied actives, dosed honestly and tested every lot.',
+        "Two daily vitality formulas built on disclosed doses, tested every lot, and a 60-Day Guarantee. The protocol begins here.",
     },
+    {property: 'og:title', content: 'Lumina Formulations — Vitality, formulated honestly.'},
+    {property: 'og:type', content: 'website'},
   ];
 };
 
-// TODO(shopify-wiring): when the real Lumina products land in Shopify, restore
-// a loader here that pulls the male/female products + a "from" price by
-// handle, then pass that through to <ProductPair /> instead of placeholders.
-// Until then the homepage is fully static.
+export async function loader({context}: Route.LoaderArgs) {
+  const entries = await loadLuminaCatalog(context.storefront);
+  return {entries};
+}
 
 export default function Homepage() {
+  const {entries} = useLoaderData<typeof loader>();
+  const male = entriesForGender(entries, 'male');
+
   return (
     <div>
-      <HomeHero />
-      <ProductPair />
-      <WhyLumina />
-      <IngredientStory />
-      <TiersTeaser />
-      <SocialProof />
+      <Hero2 />
+      <Manifesto />
+      <TwoFormulas entries={entries} />
+      <Constellation />
+      <TheStandard />
+      <SupplyLadderScene entries={male} gender="male" />
+      <Ritual />
+      <ProofWall />
+      <FaqTeaser />
+      <FinalCta entries={entries} />
     </div>
   );
 }

@@ -37,14 +37,12 @@ export function SavingsLadder({
 
   if (!baseline || entries.length === 0) return null;
 
-  const rows = entries
-    .filter((e) => e.availableForSale)
-    .map((entry) => ({
-      entry,
-      breakdown: computeSavings(entry, baseline),
-      isBest: entry.months === 6,
-      isMax: entry.months === 12,
-    }));
+  const rows = entries.map((entry) => ({
+    entry,
+    breakdown: computeSavings(entry, baseline),
+    isBest: entry.months === 6,
+    isMax: entry.months === 12,
+  }));
 
   if (rows.length === 0) return null;
 
