@@ -6,6 +6,10 @@ import {ArrowDown, ArrowUpRight, Calendar, Clock, Compass, Repeat} from 'lucide-
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {SplitLines} from '~/components/lumina/SplitLines';
 import {PageCta} from '~/components/lumina/PageCta';
+import {BotanicalEngraving} from '~/components/graphics/BotanicalEngraving';
+import {LightRays} from '~/components/graphics/LightRays';
+import {MonoWatermark} from '~/components/graphics/MonoWatermark';
+import {TopographicLines} from '~/components/graphics/TopographicLines';
 import {fadeRise, gsap, prefersReducedMotion, staggerChildren, textReveal} from '~/lib/motion';
 import {loadLuminaCatalog} from '~/lib/lumina-catalog.server';
 import {entriesForGender, findBaseline, money} from '~/lib/savings';
@@ -81,6 +85,11 @@ export default function ProtocolPage() {
             opacity: 0.5,
           }}
         />
+        <TopographicLines opacity={0.45} variant="broad" />
+        <LightRays origin="top" intensity={0.32} />
+        <MonoWatermark position="top-right" size={320} opacity={0.045}>
+          THE PROTOCOL
+        </MonoWatermark>
         <div className="relative mx-auto max-w-[1100px] px-6 pb-20 pt-32 md:px-10 md:pb-28 md:pt-48">
           <Eyebrow style={{color: 'var(--color-crimson-hi)'}}>
             The protocol · An editorial
@@ -118,6 +127,8 @@ export default function ProtocolPage() {
         eyebrow="Chapter 01 · Cadence"
         lede="Most botanical actives don't have a single-dose effect — they have an exposure curve. Eight weeks of consistent daily intake is what the research and the traditional practice both call for."
         icon={Repeat}
+        watermark="DAILY"
+        botanical="ginger"
       >
         <ChapterPoint
           k="Why daily, not loaded"
@@ -140,6 +151,8 @@ export default function ProtocolPage() {
         eyebrow="Chapter 02 · Arc"
         lede="What the protocol looks like, week by week. No promises — just the shape we expect customers to see when they run it consistently."
         icon={Calendar}
+        watermark="WEEK 08"
+        botanical="ashwagandha"
       >
         <ChapterPoint
           k="Week 1–2 · Routine sets"
@@ -166,6 +179,8 @@ export default function ProtocolPage() {
         eyebrow="Chapter 03 · Pair"
         lede="Same standard, two different biological assignments. The formulas are designed to be run separately or stacked as a duo."
         icon={Compass}
+        watermark="HIS · HERS"
+        botanical="epimedium"
       >
         <ChapterPoint
           k="His · the nightly stack"
@@ -188,6 +203,8 @@ export default function ProtocolPage() {
         eyebrow="Chapter 04 · Supply"
         lede="The 1-month is for evaluation. The 2-month is a cautious commitment. The 4 and 6-month are where the math and the arc start lining up. The 12-month is the believer's tier."
         icon={Clock}
+        watermark="SUPPLY"
+        botanical="maca"
       >
         <ChapterPoint
           k="1-month · 'I'll see'"
@@ -214,6 +231,8 @@ export default function ProtocolPage() {
         eyebrow="Chapter 05 · Pair with"
         lede="A supplement is a supplement. It works around the basics, not in place of them."
         icon={Repeat}
+        watermark="BASICS"
+        botanical="ginkgo"
       >
         <ChapterPoint
           k="Sleep"
@@ -307,6 +326,8 @@ function Chapter({
   lede,
   icon: Icon,
   children,
+  watermark,
+  botanical,
 }: {
   index: string;
   eyebrow: string;
@@ -314,13 +335,30 @@ function Chapter({
   lede: string;
   icon: typeof Calendar;
   children: React.ReactNode;
+  watermark?: string;
+  botanical?: 'ashwagandha' | 'maca' | 'tribulus' | 'ginkgo' | 'epimedium' | 'ginger';
 }) {
   return (
     <section
       data-chapter
-      className="relative border-t border-border bg-black"
+      className="relative isolate overflow-hidden border-t border-border bg-black"
     >
-      <div className="mx-auto grid max-w-[1200px] gap-12 px-6 py-24 md:grid-cols-[0.9fr_1.1fr] md:px-10 md:py-32">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-0"
+      >
+        {botanical && (
+          <div className="absolute" style={{right: -100, top: 100, opacity: 0.16}}>
+            <BotanicalEngraving name={botanical} width={420} drawOnScroll />
+          </div>
+        )}
+        {watermark && (
+          <MonoWatermark position="bottom-left" size={340} opacity={0.045}>
+            {watermark}
+          </MonoWatermark>
+        )}
+      </div>
+      <div className="relative z-[1] mx-auto grid max-w-[1200px] gap-12 px-6 py-24 md:grid-cols-[0.9fr_1.1fr] md:px-10 md:py-32">
         <header className="chapter-header self-start">
           <div className="t-mono inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-crimson-hi">
             <Icon size={14} strokeWidth={2.2} />

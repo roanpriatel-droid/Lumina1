@@ -1,5 +1,8 @@
 import type {ReactNode} from 'react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
+import {LightRays} from '~/components/graphics/LightRays';
+import {MonoWatermark} from '~/components/graphics/MonoWatermark';
+import {TopographicLines} from '~/components/graphics/TopographicLines';
 
 /**
  * Shared content-page hero. Crimson eyebrow, dropped headline, optional lede.
@@ -9,13 +12,16 @@ export function PageHero({
   eyebrow,
   title,
   lede,
+  watermark,
 }: {
   eyebrow: string;
   title: string;
   lede?: string;
+  /** Optional ghost watermark text in the upper-right corner. */
+  watermark?: string;
 }) {
   return (
-    <section className="relative overflow-hidden bg-black">
+    <section className="relative isolate overflow-hidden bg-black">
       <div
         aria-hidden
         className="pointer-events-none absolute"
@@ -29,6 +35,13 @@ export function PageHero({
           opacity: 0.45,
         }}
       />
+      <TopographicLines opacity={0.4} variant="broad" />
+      <LightRays origin="top" intensity={0.3} />
+      {watermark && (
+        <MonoWatermark position="top-right" size={300} opacity={0.045}>
+          {watermark}
+        </MonoWatermark>
+      )}
       <div className="relative mx-auto max-w-[1100px] px-6 pb-12 pt-24 md:px-8 md:pb-16 md:pt-32">
         <Eyebrow style={{color: 'var(--color-crimson-hi)'}}>{eyebrow}</Eyebrow>
         <h1
@@ -65,6 +78,7 @@ export function Section({
   tone = 'light',
   id,
   children,
+  decoration,
 }: {
   eyebrow: string;
   title: string;
@@ -72,11 +86,22 @@ export function Section({
   tone?: 'light' | 'dark';
   id?: string;
   children: ReactNode;
+  /** Optional decorative layer (botanical, hex lattice, watermark). Lives
+   *  in an absolutely-positioned overflow-hidden wrapper behind content. */
+  decoration?: ReactNode;
 }) {
   const bg = tone === 'dark' ? 'bg-black' : 'bg-surface';
   return (
-    <section id={id} className={`border-t border-border ${bg}`}>
-      <div className="mx-auto max-w-[1200px] px-6 py-20 md:px-8">
+    <section id={id} className={`relative isolate border-t border-border ${bg}`}>
+      {decoration && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+        >
+          {decoration}
+        </div>
+      )}
+      <div className="relative z-[1] mx-auto max-w-[1200px] px-6 py-20 md:px-8">
         <Eyebrow className="mb-4">{eyebrow}</Eyebrow>
         <h2
           className="m-0 max-w-[760px] text-fg1"

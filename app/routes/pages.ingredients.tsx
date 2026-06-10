@@ -5,6 +5,9 @@ import {ChevronDown} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {PageHero, Section} from '~/components/lumina/PageChrome';
 import {PageCta} from '~/components/lumina/PageCta';
+import {BotanicalEngraving} from '~/components/graphics/BotanicalEngraving';
+import {HexLattice} from '~/components/graphics/Molecular';
+import {MonoWatermark} from '~/components/graphics/MonoWatermark';
 import {fadeRise, staggerChildren} from '~/lib/motion';
 
 type Formula = 'his' | 'hers' | 'both';
@@ -245,6 +248,7 @@ export default function IngredientsPage() {
         eyebrow="Ingredients library"
         title="Every active. Every dose. Every reason."
         lede="The full working ingredient list across both formulas, with the dose, the form, and the traditional or clinical rationale. Filter by formula or by what you&rsquo;re training the protocol for."
+        watermark="19 ACTIVES"
       />
 
       <section className="border-t border-border bg-surface">
@@ -266,8 +270,25 @@ export default function IngredientsPage() {
         </div>
       </section>
 
-      <section className="border-t border-border bg-black">
-        <div className="mx-auto max-w-[1200px] px-6 py-16 md:px-8 md:py-24">
+      <section className="relative isolate overflow-hidden border-t border-border bg-black">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-0"
+        >
+          <div className="absolute" style={{left: -120, top: 100, opacity: 0.16}}>
+            <BotanicalEngraving name="maca" width={420} drawOnScroll />
+          </div>
+          <div className="absolute" style={{right: -100, top: 480, opacity: 0.16}}>
+            <BotanicalEngraving name="epimedium" width={380} drawOnScroll />
+          </div>
+          <div className="absolute" style={{left: -80, bottom: 200, opacity: 0.14}}>
+            <BotanicalEngraving name="ginger" width={360} drawOnScroll />
+          </div>
+          <MonoWatermark position="top-right" size={300} opacity={0.04}>
+            DISCLOSED
+          </MonoWatermark>
+        </div>
+        <div className="relative z-[1] mx-auto max-w-[1200px] px-6 py-16 md:px-8 md:py-24">
           {filtered.length === 0 ? (
             <p
               className="m-0 text-fg3"

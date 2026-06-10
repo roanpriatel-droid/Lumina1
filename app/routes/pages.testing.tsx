@@ -5,6 +5,8 @@ import {Factory, FileCheck2, FlaskConical, Microscope, ShieldCheck, Mail} from '
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {PageHero, Section} from '~/components/lumina/PageChrome';
 import {PageCta} from '~/components/lumina/PageCta';
+import {HexLattice} from '~/components/graphics/Molecular';
+import {MonoWatermark} from '~/components/graphics/MonoWatermark';
 import {fadeRise, staggerChildren} from '~/lib/motion';
 
 const TESTS = [
@@ -68,11 +70,22 @@ export default function TestingPage() {
         eyebrow="Testing"
         title="The COA is the receipt. Ask and we send it."
         lede="The category is full of brands that claim to be tested. Few will actually send you the paperwork. This page is for the customer who wants the paperwork."
+        watermark="LOT-TESTED"
       />
 
       <Section
         eyebrow="The bar"
         title="Three standards. Non-negotiable."
+        decoration={
+          <>
+            <div className="absolute inset-0 opacity-35">
+              <HexLattice rows={8} cols={14} size={48} strokeOpacity={0.35} />
+            </div>
+            <MonoWatermark position="bottom-right" size={320} opacity={0.045}>
+              cGMP
+            </MonoWatermark>
+          </>
+        }
       >
         <div className="standards-grid grid gap-5 md:grid-cols-3">
           {STANDARDS.map(({Icon, title, body}) => (
@@ -107,6 +120,16 @@ export default function TestingPage() {
         eyebrow="What every lot is tested for"
         title="Six tests. Independent lab. Pass or it doesn&rsquo;t ship."
         tone="dark"
+        decoration={
+          <>
+            <div className="absolute inset-0 opacity-30">
+              <HexLattice rows={10} cols={16} size={42} strokeOpacity={0.4} />
+            </div>
+            <MonoWatermark position="top-right" size={300} opacity={0.045}>
+              ICP-MS
+            </MonoWatermark>
+          </>
+        }
       >
         <div className="tests-grid grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {TESTS.map(({label, body}) => (

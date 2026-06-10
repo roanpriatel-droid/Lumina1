@@ -9,6 +9,9 @@ import {
 } from 'lucide-react';
 import {PageCta} from '~/components/lumina/PageCta';
 import {PageHero, Section} from '~/components/lumina/PageChrome';
+import {BotanicalEngraving} from '~/components/graphics/BotanicalEngraving';
+import {HexLattice} from '~/components/graphics/Molecular';
+import {MonoWatermark} from '~/components/graphics/MonoWatermark';
 
 export const meta: Route.MetaFunction = () => [
   {title: 'The Science — Lumina Formulations'},
@@ -121,9 +124,23 @@ export default function TheSciencePage() {
         eyebrow="The science"
         title="Doses you can verify. Sourcing you can audit."
         lede="We built Lumina the way we wished our own supplements were built — with disclosed doses, traditional and clinical evidence behind every choice, and the lab paperwork to back it up."
+        watermark="THE SCIENCE"
       />
 
-      <Section eyebrow="Formulation philosophy" title="Three principles, every formula.">
+      <Section
+        eyebrow="Formulation philosophy"
+        title="Three principles, every formula."
+        decoration={
+          <>
+            <div className="absolute" style={{right: -120, top: 60, opacity: 0.18}}>
+              <BotanicalEngraving name="ginkgo" width={520} drawOnScroll />
+            </div>
+            <MonoWatermark position="bottom-left" size={320} opacity={0.04}>
+              PRINCIPLE
+            </MonoWatermark>
+          </>
+        }
+      >
         <div className="grid gap-5 md:grid-cols-3">
           {PRINCIPLES.map(({Icon, title, body}) => (
             <article
@@ -157,6 +174,19 @@ export default function TheSciencePage() {
         title="Eight ingredients. The reasoning, plainly."
         lede="Across both formulas, this is the working ingredient list. Each one is here for a specific function — and dosed at the level that function actually requires."
         tone="dark"
+        decoration={
+          <>
+            <div className="absolute" style={{left: -100, top: 80, opacity: 0.22}}>
+              <BotanicalEngraving name="ashwagandha" width={420} drawOnScroll />
+            </div>
+            <div className="absolute" style={{right: -120, bottom: 60, opacity: 0.22}}>
+              <BotanicalEngraving name="tribulus" width={440} drawOnScroll />
+            </div>
+            <MonoWatermark position="top-right" size={300} opacity={0.045}>
+              8 ACTIVES
+            </MonoWatermark>
+          </>
+        }
       >
         <div className="flex flex-col">
           {KEY_ACTIVES.map((active, i) => (
@@ -207,6 +237,16 @@ export default function TheSciencePage() {
         eyebrow="Quality & testing"
         title="The bar we hold ourselves to."
         lede="Supplements are one of the easiest places in commerce to cut corners. Here&rsquo;s how we don&rsquo;t."
+        decoration={
+          <>
+            <div className="absolute inset-0 opacity-40">
+              <HexLattice rows={8} cols={14} size={48} strokeOpacity={0.35} />
+            </div>
+            <MonoWatermark position="bottom-right" size={320} opacity={0.045}>
+              LOT-TESTED
+            </MonoWatermark>
+          </>
+        }
       >
         <div className="grid gap-5 md:grid-cols-3">
           {QUALITY.map(({Icon, title, body}) => (
