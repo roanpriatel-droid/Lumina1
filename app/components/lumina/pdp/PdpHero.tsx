@@ -1,6 +1,6 @@
 import {useState} from 'react';
 import {Image} from '@shopify/hydrogen';
-import {FlaskConical, Leaf, ShieldCheck} from 'lucide-react';
+import {FlaskConical, ShieldCheck, MapPin, Sprout} from 'lucide-react';
 import type {LucideIcon} from 'lucide-react';
 import type {ProductVariantFragment} from 'storefrontapi.generated';
 import {Bottle} from '~/components/lumina/Bottle';
@@ -16,8 +16,9 @@ interface PdpHeroProps {
 
 const TRUST: ReadonlyArray<{Icon: LucideIcon; label: string}> = [
   {Icon: FlaskConical, label: 'Clinically-Studied Ingredients'},
-  {Icon: Leaf, label: 'Vegan'},
-  {Icon: ShieldCheck, label: 'Third-Party Tested'},
+  {Icon: ShieldCheck, label: 'Third-Party Tested Every Lot'},
+  {Icon: MapPin, label: 'Made in USA'},
+  {Icon: Sprout, label: 'Non-GMO'},
 ];
 
 export function PdpHero({title, lumina, image}: PdpHeroProps) {

@@ -68,7 +68,7 @@ export function HomeHero() {
           hidden.
         </p>
         <div className="mt-9">
-          <Link to="/products/lumina-male-enhancement" prefetch="intent">
+          <Link to="/products/male-enhancement" prefetch="intent">
             <Button className="px-9 py-[17px] text-base">
               Shop the Protocol
             </Button>

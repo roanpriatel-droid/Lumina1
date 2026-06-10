@@ -216,8 +216,8 @@ const FOOTER_COLUMNS: ReadonlyArray<{
   {
     heading: 'Formulas',
     links: [
-      {label: 'Male Enhancement', to: '/products/lumina-male-enhancement'},
-      {label: 'Female Enhancement', to: '/products/lumina-female-enhancement'},
+      {label: 'Male Enhancement', to: '/products/male-enhancement'},
+      {label: 'Female Enhancement', to: '/products/female-enhancement'},
       {label: 'Sleep', to: '/collections'},
       {label: 'Daily Multi', to: '/collections'},
     ],
