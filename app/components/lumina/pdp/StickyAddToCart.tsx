@@ -1,31 +1,21 @@
 import {useEffect, useState} from 'react';
 import type {OptimisticCartLineInput} from '@shopify/hydrogen';
-import type {ProductFragment} from 'storefrontapi.generated';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
 import {usePurchase} from './PurchaseContext';
 
 interface StickyAddToCartProps {
   productName: string;
-  selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
 }
 
 /**
  * Bottom-fixed add-to-cart bar that appears after the user scrolls past the
- * hero and hides as they reach the footer. Price reflects the static
- * purchase-step selections; the cart line uses the *real* Shopify variant
- * with quantity = tier.bottles so the cart drawer still gets a real line
- * item it can check out.
- *
- * TODO(shopify-wiring): once selling plans exist, pass `sellingPlanId` on
- * the cart line so subscribe-vs-onetime is reflected in the cart, not just
- * in the displayed price.
+ * hero and hides as they reach the footer. Reads the live tier + variant
+ * from PurchaseContext — one line, quantity 1, since each supply tier is
+ * its own Shopify variant.
  */
-export function StickyAddToCart({
-  productName,
-  selectedVariant,
-}: StickyAddToCartProps) {
-  const {tier, option, bundle, price} = usePurchase();
+export function StickyAddToCart({productName}: StickyAddToCartProps) {
+  const {tier, option, bundle, price, selectedVariant} = usePurchase();
   const {open} = useAside();
   const [visible, setVisible] = useState(false);
 
@@ -46,7 +36,7 @@ export function StickyAddToCart({
   }, []);
 
   const optLabel = option === 'subscribe' ? 'Subscribe & Save' : 'One-Time';
-  const detail = `${tier.name} · ${tier.months}-month · ${optLabel}${
+  const detail = `${tier.preset.name} · ${tier.preset.months}-month · ${optLabel}${
     bundle.id !== 'solo' ? ' · ' + bundle.label : ''
   }`;
 
@@ -54,13 +44,15 @@ export function StickyAddToCart({
     ? [
         {
           merchandiseId: selectedVariant.id,
-          quantity: tier.bottles,
+          quantity: 1,
           selectedVariant,
-          // TODO(shopify-wiring): add `attributes` for plan + bundle so the
-          // cart can render the right detail line for the customer.
+          // TODO(selling-plan): attach `sellingPlanId` here once subs are
+          // configured in Shopify Admin.
         },
       ]
     : [];
+
+  const available = Boolean(selectedVariant?.availableForSale);
 
   return (
     <div
@@ -97,14 +89,16 @@ export function StickyAddToCart({
             ${price}
           </span>
           <AddToCartButton
-            disabled={!selectedVariant || !selectedVariant.availableForSale}
+            disabled={!selectedVariant || !available}
             lines={lines}
             onClick={() => open('cart')}
             className="min-w-[180px]"
           >
-            {selectedVariant?.availableForSale
-              ? `Add to Cart — $${price}`
-              : 'Sold out'}
+            {!selectedVariant
+              ? 'Coming soon'
+              : !available
+                ? 'Sold out'
+                : `Add to Cart — $${price}`}
           </AddToCartButton>
         </div>
       </div>

@@ -29,6 +29,7 @@ import {CrossSell} from '~/components/lumina/pdp/CrossSell';
 import {ComplianceFooter} from '~/components/lumina/pdp/ComplianceFooter';
 import {TransparencyCallout} from '~/components/lumina/pdp/TransparencyCallout';
 import {getLuminaProductByHandle} from '~/lib/lumina-product';
+import {pairVariantsToTiers} from '~/lib/lumina-tiers';
 import {redirectIfHandleIsLocalized} from '~/lib/redirect';
 
 export const meta: Route.MetaFunction = ({data}) => {
@@ -142,9 +143,13 @@ function FullProduct({
 
   const {title, descriptionHtml} = product;
   const isLumina = Boolean(lumina);
+  const liveTiers = isLumina ? pairVariantsToTiers(product) : undefined;
 
   return (
-    <PurchaseProvider>
+    <PurchaseProvider
+      tiers={liveTiers}
+      initialVariantId={selectedVariant?.id}
+    >
       <div>
         <PdpHero
           title={title}
@@ -157,7 +162,7 @@ function FullProduct({
         {isLumina && lumina ? (
           <>
             <PurchaseSteps />
-            <PurchaseCta selectedVariant={selectedVariant} />
+            <PurchaseCta />
             <BenefitPillars pillars={lumina.benefitPillars} />
             {lumina.blend && <TransparencyCallout blend={lumina.blend} />}
             <IngredientTransparency
@@ -174,10 +179,7 @@ function FullProduct({
             <ReviewsPlaceholder product={lumina} />
             <CrossSell currentKey={lumina.key} />
             <ComplianceFooter product={lumina} />
-            <StickyAddToCart
-              productName={lumina.name}
-              selectedVariant={selectedVariant}
-            />
+            <StickyAddToCart productName={lumina.name} />
           </>
         ) : (
           <>
@@ -241,7 +243,7 @@ function PreviewProduct({lumina}: {lumina: NonNullable<LoaderLumina>}) {
         <PdpHero title={lumina.name} lumina={lumina} image={null} />
         <HeroMeta product={lumina} />
         <PurchaseSteps />
-        <PurchaseCta selectedVariant={undefined} />
+        <PurchaseCta />
         <BenefitPillars pillars={lumina.benefitPillars} />
         {lumina.blend && <TransparencyCallout blend={lumina.blend} />}
         <IngredientTransparency
@@ -258,7 +260,7 @@ function PreviewProduct({lumina}: {lumina: NonNullable<LoaderLumina>}) {
         <ReviewsPlaceholder product={lumina} />
         <CrossSell currentKey={lumina.key} />
         <ComplianceFooter product={lumina} />
-        <StickyAddToCart productName={lumina.name} selectedVariant={undefined} />
+        <StickyAddToCart productName={lumina.name} />
       </div>
     </PurchaseProvider>
   );

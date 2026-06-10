@@ -534,6 +534,29 @@ export const LUMINA_PRODUCTS: Record<LuminaProductKey, LuminaProduct> = {
   },
 };
 
+/**
+ * Display presets for the supply tier ladder. Each preset is paired at
+ * runtime with the matching Shopify variant on the "Supply" option — see
+ * pairVariantsToTiers() in lumina-product.ts. The `per` / `save` fields
+ * are static fallbacks used by preview mode (no Shopify product wired)
+ * and by the homepage TiersTeaser.
+ */
+export interface LuminaTierPreset {
+  id: string;
+  name: string;
+  months: number;
+  bottles: number;
+  best?: boolean;
+}
+
+export const LUMINA_TIER_PRESETS: ReadonlyArray<LuminaTierPreset> = [
+  {id: 'ignite', name: 'Ignite', months: 1, bottles: 1},
+  {id: 'momentum', name: 'Momentum', months: 2, bottles: 2},
+  {id: 'ascent', name: 'Ascent', months: 4, bottles: 4},
+  {id: 'apex', name: 'Apex', months: 6, bottles: 6, best: true},
+  {id: 'legacy', name: 'Legacy', months: 12, bottles: 12},
+];
+
 export const LUMINA_TIERS: LuminaTier[] = [
   {id: 'ignite', name: 'Ignite', months: 1, bottles: 1, per: 69, save: 0},
   {id: 'momentum', name: 'Momentum', months: 2, bottles: 2, per: 64, save: 7},

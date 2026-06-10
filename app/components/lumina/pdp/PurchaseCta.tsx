@@ -1,31 +1,35 @@
 import {ShieldCheck, Truck, RotateCcw} from 'lucide-react';
 import type {OptimisticCartLineInput} from '@shopify/hydrogen';
-import type {ProductFragment} from 'storefrontapi.generated';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
 import {usePurchase} from './PurchaseContext';
 
-interface PurchaseCtaProps {
-  selectedVariant: ProductFragment['selectedOrFirstAvailableVariant'];
-}
-
-/** In-flow primary CTA + summary, rendered between the steps and the
- *  ingredient table. Mirrors the sticky bar but stays anchored. */
-export function PurchaseCta({selectedVariant}: PurchaseCtaProps) {
-  const {tier, option, bundle, price, subTotal, oneTimeTotal} = usePurchase();
+/**
+ * In-flow primary CTA + summary, rendered between the steps and the
+ * ingredient table. Uses the live Shopify variant from PurchaseContext —
+ * one line per add, quantity 1, since each supply tier is its own variant.
+ */
+export function PurchaseCta() {
+  const {tier, option, bundle, price, selectedVariant, oneTimeTotal} =
+    usePurchase();
   const {open} = useAside();
 
   const optLabel = option === 'subscribe' ? 'Subscribe & Save' : 'One-Time';
+  const showSubBadge = option === 'subscribe' && oneTimeTotal !== price;
 
   const lines: OptimisticCartLineInput[] = selectedVariant
     ? [
         {
           merchandiseId: selectedVariant.id,
-          quantity: tier.bottles,
+          quantity: 1,
           selectedVariant,
+          // TODO(selling-plan): once selling plans exist for the formulas,
+          // attach `sellingPlanId` here for the subscribe-and-save line.
         },
       ]
     : [];
+
+  const available = Boolean(selectedVariant?.availableForSale);
 
   return (
     <section className="mx-auto max-w-[1200px] px-6 pb-16 md:px-8">
@@ -41,7 +45,7 @@ export function PurchaseCta({selectedVariant}: PurchaseCtaProps) {
             >
               ${price}
             </span>
-            {option === 'subscribe' && (
+            {showSubBadge && (
               <span className="text-fg4 line-through">${oneTimeTotal}</span>
             )}
             {option === 'subscribe' && (
@@ -51,8 +55,11 @@ export function PurchaseCta({selectedVariant}: PurchaseCtaProps) {
             )}
           </div>
           <p className="text-sm leading-snug text-fg3">
-            {tier.name} · {tier.months}-month supply ·{' '}
-            {tier.bottles === 1 ? '1 bottle' : `${tier.bottles} bottles`} · {optLabel}
+            {tier.preset.name} · {tier.preset.months}-month supply ·{' '}
+            {tier.preset.bottles === 1
+              ? '1 bottle'
+              : `${tier.preset.bottles} bottles`}{' '}
+            · {optLabel}
             {bundle.id !== 'solo' && ` · ${bundle.label}`}
           </p>
           <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
@@ -68,20 +75,18 @@ export function PurchaseCta({selectedVariant}: PurchaseCtaProps) {
           </div>
         </div>
         <AddToCartButton
-          disabled={!selectedVariant || !selectedVariant.availableForSale}
+          disabled={!selectedVariant || !available}
           lines={lines}
           onClick={() => open('cart')}
           className="min-w-[220px] py-[18px] text-base"
         >
-          {selectedVariant?.availableForSale
-            ? `Add to Cart — $${price}`
-            : 'Sold out'}
+          {!selectedVariant
+            ? 'Coming soon'
+            : !available
+              ? 'Sold out'
+              : `Add to Cart — $${price}`}
         </AddToCartButton>
       </div>
-      <p className="t-mono mt-3 text-[11px] text-fg4">
-        * Placeholder pricing. Real Shopify totals replace this once selling
-        plans land — see TODO markers in lumina-data.ts.
-      </p>
     </section>
   );
 }

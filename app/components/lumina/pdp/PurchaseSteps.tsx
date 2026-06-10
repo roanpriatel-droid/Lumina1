@@ -1,14 +1,11 @@
 import {StepNumber} from '~/components/lumina/StepNumber';
-import {
-  LUMINA_BUNDLES,
-  LUMINA_TIERS,
-  type LuminaBundle,
-  type LuminaTier,
-} from '~/lib/lumina-data';
+import {LUMINA_BUNDLES, type LuminaBundle} from '~/lib/lumina-data';
 import {usePurchase} from './PurchaseContext';
+import type {LuminaLiveTier} from '~/lib/lumina-tiers';
 
 export function PurchaseSteps() {
   const {
+    tiers,
     tier,
     setTierId,
     option,
@@ -17,18 +14,22 @@ export function PurchaseSteps() {
     setBundleId,
     oneTimeTotal,
     subTotal,
+    perBottle,
+    savePct,
   } = usePurchase();
 
   return (
     <section className="mx-auto flex max-w-[1200px] flex-col gap-11 px-6 pb-10 md:px-8">
       <Step n={1} title="Choose Your Supply" hint="More months, lower per-bottle price">
         <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-          {LUMINA_TIERS.map((t) => (
+          {tiers.map((t) => (
             <TierCard
-              key={t.id}
+              key={t.preset.id}
               tier={t}
-              selected={t.id === tier.id}
-              onSelect={() => setTierId(t.id)}
+              selected={t.preset.id === tier.preset.id}
+              perBottle={perBottle(t)}
+              savePct={savePct(t)}
+              onSelect={() => setTierId(t.preset.id)}
             />
           ))}
         </div>
@@ -55,10 +56,14 @@ export function PurchaseSteps() {
             meta="Single purchase · ships once"
           />
         </div>
+        <p className="t-mono mt-3 text-[11px] text-fg4">
+          * Subscribe &amp; Save discount is rendered statically; real selling
+          plans land in a follow-up commit.
+        </p>
       </Step>
 
       <Step n={3} title="Save More with Bundles" hint="Optional">
-        <div className="grid gap-3.5 md:grid-cols-3">
+        <div className="grid gap-3.5 md:grid-cols-2">
           {LUMINA_BUNDLES.map((b) => (
             <BundleCard
               key={b.id}
@@ -103,18 +108,32 @@ function Step({
 function TierCard({
   tier,
   selected,
+  perBottle,
+  savePct,
   onSelect,
 }: {
-  tier: LuminaTier;
+  tier: LuminaLiveTier;
   selected: boolean;
+  perBottle: number | null;
+  savePct: number;
   onSelect: () => void;
 }) {
+  const {preset, variant} = tier;
+  const unavailable = !variant;
+  const perBottleDisplay = perBottle !== null ? Math.round(perBottle) : null;
+
   return (
     <button
       type="button"
       onClick={onSelect}
+      disabled={unavailable}
       aria-pressed={selected}
-      className="relative flex cursor-pointer flex-col gap-1.5 rounded-lg bg-surface px-4 pb-4 pt-[18px] text-left transition-[border-color,box-shadow] duration-150"
+      aria-label={
+        unavailable
+          ? `${preset.name} ${preset.months}-month supply (unavailable)`
+          : `${preset.name} ${preset.months}-month supply`
+      }
+      className="relative flex cursor-pointer flex-col gap-1.5 rounded-lg bg-surface px-4 pb-4 pt-[18px] text-left transition-[border-color,box-shadow] duration-150 disabled:cursor-not-allowed disabled:opacity-50"
       style={{
         border: `1px solid ${selected ? 'var(--color-crimson)' : 'var(--color-border)'}`,
         boxShadow: selected
@@ -122,7 +141,7 @@ function TierCard({
           : 'none',
       }}
     >
-      {tier.best && (
+      {preset.best && (
         <span
           className="absolute rounded-xs bg-crimson px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.13em] text-white"
           style={{top: -10, left: 16, boxShadow: 'var(--shadow-accent)'}}
@@ -132,28 +151,34 @@ function TierCard({
       )}
       <div className="flex items-center justify-between">
         <span className="text-[17px] font-medium leading-none text-fg1">
-          {tier.name}
+          {preset.name}
         </span>
         <Radio selected={selected} />
       </div>
       <span className="text-xs leading-snug text-fg3">
-        {tier.months} {tier.months === 1 ? 'Month' : 'Months'} · {tier.bottles}{' '}
-        {tier.bottles === 1 ? 'bottle' : 'bottles'}
+        {preset.months} {preset.months === 1 ? 'Month' : 'Months'} ·{' '}
+        {preset.bottles} {preset.bottles === 1 ? 'bottle' : 'bottles'}
       </span>
       <span
         className="mt-1.5 text-fg1"
         style={{font: '300 24px/1 var(--font-sans)'}}
       >
-        ${tier.per}
+        {perBottleDisplay !== null ? `$${perBottleDisplay}` : '—'}
         <span className="t-mono text-[11px] text-fg3"> / btl</span>
       </span>
       <span
         className="text-[11px] font-semibold uppercase tracking-[0.12em]"
         style={{
-          color: tier.save ? 'var(--color-crimson-hi)' : 'var(--color-fg4)',
+          color: savePct
+            ? 'var(--color-crimson-hi)'
+            : 'var(--color-fg4)',
         }}
       >
-        {tier.save ? `Save ${tier.save}%` : 'Base price'}
+        {unavailable
+          ? 'Unavailable'
+          : savePct
+            ? `Save ${savePct}%`
+            : 'Base price'}
       </span>
     </button>
   );
@@ -204,7 +229,7 @@ function OptionCard({
           {title}
         </span>
         <span className="ml-auto inline-flex items-baseline gap-1.5 text-base font-medium text-fg1">
-          {oldPrice ? (
+          {oldPrice && oldPrice !== price ? (
             <span className="text-fg4 line-through font-normal">
               ${oldPrice}
             </span>
