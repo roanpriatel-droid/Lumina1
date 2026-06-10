@@ -3,6 +3,7 @@ import type {OptimisticCartLineInput} from '@shopify/hydrogen';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
+import {GuaranteeBar} from '~/components/lumina/GuaranteeBar';
 import {SavingsBreakdown} from '~/components/lumina/SavingsBreakdown';
 import {usePurchase} from './PurchaseContext';
 import {money} from '~/lib/savings';
@@ -105,6 +106,8 @@ export function SupplyPurchaseBlock() {
               </li>
             ))}
           </ul>
+
+          <GuaranteeBar />
         </div>
 
         <SavingsBreakdown breakdown={breakdown} />

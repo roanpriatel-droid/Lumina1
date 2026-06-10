@@ -2,6 +2,7 @@ import {ShieldCheck, Truck, RotateCcw} from 'lucide-react';
 import type {OptimisticCartLineInput} from '@shopify/hydrogen';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
+import {GuaranteeBar} from '~/components/lumina/GuaranteeBar';
 import {usePurchase} from './PurchaseContext';
 import {money, computeSavings} from '~/lib/savings';
 
@@ -92,6 +93,9 @@ export function PurchaseCta() {
         >
           {cta}
         </AddToCartButton>
+      </div>
+      <div className="mt-5">
+        <GuaranteeBar />
       </div>
     </section>
   );

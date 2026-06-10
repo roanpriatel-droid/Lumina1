@@ -18,6 +18,7 @@ import {QualityTesting} from '~/components/lumina/pdp/QualityTesting';
 import {FaqAccordion} from '~/components/lumina/pdp/FaqAccordion';
 import {ReviewsPlaceholder} from '~/components/lumina/pdp/ReviewsPlaceholder';
 import {CompleteTheProtocol} from '~/components/lumina/pdp/CompleteTheProtocol';
+import {WhyMultiMonth} from '~/components/lumina/pdp/WhyMultiMonth';
 import {ComplianceFooter} from '~/components/lumina/pdp/ComplianceFooter';
 import {TransparencyCallout} from '~/components/lumina/pdp/TransparencyCallout';
 import {SavingsLadder} from '~/components/lumina/SavingsLadder';
@@ -125,7 +126,10 @@ export default function ProductRoute() {
             <PurchaseCta />
           </>
         ) : (
-          <SupplyPurchaseBlock />
+          <>
+            <SupplyPurchaseBlock />
+            <WhyMultiMonth months={entry.months} />
+          </>
         )}
 
         <BenefitPillars pillars={lumina.benefitPillars} />
