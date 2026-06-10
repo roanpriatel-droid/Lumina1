@@ -2,6 +2,7 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import {FlaskConical, ListChecks, ShieldCheck} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
+import {HexLattice} from '~/components/graphics/Molecular';
 import {gsap, prefersReducedMotion} from '~/lib/motion';
 
 /**
@@ -72,6 +73,9 @@ export function TheStandard() {
       className="relative isolate overflow-hidden bg-black"
       aria-label="The Lumina standard"
     >
+      <div className="pointer-events-none absolute inset-0" style={{opacity: 0.4}}>
+        <HexLattice rows={8} cols={14} size={56} strokeOpacity={0.5} />
+      </div>
       <div className="standard-overlay border-y border-border">
         <div className="standard-track flex">
           <div className="flex flex-shrink-0 items-center justify-center px-10 py-24 md:px-16 md:py-32" style={{width: '60vw', minWidth: 360}}>

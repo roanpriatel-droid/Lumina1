@@ -1,6 +1,8 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
+import {BotanicalEngraving} from '~/components/graphics/BotanicalEngraving';
+import {MonoWatermark} from '~/components/graphics/MonoWatermark';
 import {countUp, fadeRise, staggerChildren} from '~/lib/motion';
 
 /**
@@ -146,6 +148,36 @@ export function Constellation() {
           opacity: 0.25,
         }}
       />
+      {/* oversized cropped engravings bleeding off-edge */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute"
+        style={{left: '-8%', top: '12%', opacity: 0.35}}
+      >
+        <BotanicalEngraving
+          name="ashwagandha"
+          width={520}
+          strokeOpacity={0.6}
+          accentOpacity={0.18}
+          drawOnScroll
+        />
+      </div>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute"
+        style={{right: '-6%', bottom: '6%', opacity: 0.35, transform: 'rotate(8deg)'}}
+      >
+        <BotanicalEngraving
+          name="tribulus"
+          width={460}
+          strokeOpacity={0.6}
+          accentOpacity={0.18}
+          drawOnScroll
+        />
+      </div>
+      <MonoWatermark position="top-right" size={300} opacity={0.04}>
+        17 ACTIVES
+      </MonoWatermark>
       <div className="relative mx-auto max-w-[1320px] px-6 py-28 md:px-10 md:py-36">
         <Eyebrow className="scene-eyebrow mb-4">The active map</Eyebrow>
         <h2

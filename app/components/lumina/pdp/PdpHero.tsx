@@ -7,6 +7,7 @@ import {Bottle} from '~/components/lumina/Bottle';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {StarRating} from '~/components/lumina/StarRating';
 import {SplitLines} from '~/components/lumina/SplitLines';
+import {LightRays} from '~/components/graphics/LightRays';
 import {fadeRise, parallaxLayer, textReveal} from '~/lib/motion';
 import type {LuminaProduct} from '~/lib/lumina-data';
 
@@ -114,6 +115,9 @@ export function PdpHero({title, lumina, imageUrl, imageAlt}: PdpHeroProps) {
           className="relative flex flex-1 items-center justify-center overflow-hidden rounded-xl border border-border bg-surface"
           style={{minHeight: 460}}
         >
+          <div aria-hidden className="pointer-events-none absolute inset-0 opacity-70">
+            <LightRays origin="top" intensity={0.45} />
+          </div>
           {imageUrl ? (
             <Image
               src={imageUrl}

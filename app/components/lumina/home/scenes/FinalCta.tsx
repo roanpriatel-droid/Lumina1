@@ -6,6 +6,9 @@ import {Bottle} from '~/components/lumina/Bottle';
 import {Button} from '~/components/lumina/Button';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {SplitLines} from '~/components/lumina/SplitLines';
+import {LightRays} from '~/components/graphics/LightRays';
+import {TopographicLines} from '~/components/graphics/TopographicLines';
+import {MonoWatermark} from '~/components/graphics/MonoWatermark';
 import {fadeRise, gsap, prefersReducedMotion, textReveal} from '~/lib/motion';
 import {findBaseline, money, type LuminaProductEntry} from '~/lib/savings';
 
@@ -82,6 +85,11 @@ export function FinalCta({
           opacity: 0.4,
         }}
       />
+      <TopographicLines opacity={0.5} variant="tight" />
+      <LightRays origin="bottom" intensity={0.45} />
+      <MonoWatermark position="center" size={520} opacity={0.04} style={{top: '15%'}}>
+        BEGIN
+      </MonoWatermark>
       <div className="relative mx-auto flex max-w-[1200px] flex-col items-center px-6 py-32 text-center md:px-10 md:py-44">
         <div className="mb-8 inline-block">
           <Bottle width={86} />

@@ -3,6 +3,8 @@ import {useGSAP} from '@gsap/react';
 import {Microscope, FileCheck2, Ban} from 'lucide-react';
 import type {LucideIcon} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
+import {BotanicalEngraving} from '~/components/graphics/BotanicalEngraving';
+import {MonoWatermark} from '~/components/graphics/MonoWatermark';
 import {fadeRise, staggerChildren} from '~/lib/motion';
 import type {LuminaActive, LuminaBlend} from '~/lib/lumina-data';
 
@@ -41,8 +43,28 @@ export function IngredientTransparency({
     <section
       ref={ref}
       id="ingredients"
-      className="border-t border-border bg-black"
+      className="relative border-t border-border bg-black"
     >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
+        <div
+          className="absolute"
+          style={{right: '-10%', top: '8%', opacity: 0.28}}
+        >
+          <BotanicalEngraving
+            name={blend ? 'maca' : 'ginger'}
+            width={520}
+            strokeOpacity={0.6}
+            accentOpacity={0.18}
+            drawOnScroll
+          />
+        </div>
+        <MonoWatermark position="bottom-left" size={300} opacity={0.045} rotate={-2}>
+          FULL LABEL
+        </MonoWatermark>
+      </div>
       <div className="mx-auto max-w-[1200px] px-6 pb-20 pt-20 md:px-8">
         <Eyebrow className="mb-4">Full transparency</Eyebrow>
         <div className="grid gap-14 md:grid-cols-[1fr_1.4fr] md:items-start">

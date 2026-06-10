@@ -1,6 +1,8 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import {SplitLines} from '~/components/lumina/SplitLines';
+import {TopographicLines} from '~/components/graphics/TopographicLines';
+import {MonoWatermark} from '~/components/graphics/MonoWatermark';
 import {textReveal} from '~/lib/motion';
 
 /**
@@ -55,6 +57,10 @@ export function Manifesto() {
           opacity: 0.4,
         }}
       />
+      <TopographicLines opacity={0.55} variant="broad" />
+      <MonoWatermark position="bottom-right" size={400} opacity={0.05} rotate={-3}>
+        MANIFESTO
+      </MonoWatermark>
 
       <div className="relative mx-auto flex max-w-[1320px] flex-col gap-12 px-6 py-32 md:px-10 md:py-44">
         <div

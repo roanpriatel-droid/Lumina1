@@ -6,6 +6,8 @@ import {Bottle} from '~/components/lumina/Bottle';
 import {Button} from '~/components/lumina/Button';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {SplitLines} from '~/components/lumina/SplitLines';
+import {LightRays} from '~/components/graphics/LightRays';
+import {MonoWatermark} from '~/components/graphics/MonoWatermark';
 import {gsap, prefersReducedMotion} from '~/lib/motion';
 
 /**
@@ -105,6 +107,16 @@ export function Hero2() {
           opacity: 0.6,
         }}
       />
+      <LightRays origin="top" intensity={0.4} />
+      <MonoWatermark
+        position="center"
+        size={520}
+        opacity={0.035}
+        parallax={-3}
+        style={{top: '85%'}}
+      >
+        LUMINA · 01
+      </MonoWatermark>
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
