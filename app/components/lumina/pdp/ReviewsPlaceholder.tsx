@@ -27,7 +27,7 @@ export function ReviewsPlaceholder({product}: ReviewsPlaceholderProps) {
             body: 'The nighttime serving and magnesium component come up repeatedly in feedback about restful sleep.',
           },
           {
-            title: 'A formula that doesn&rsquo;t hide its dose',
+            title: 'A formula that doesn’t hide its dose',
             body: 'Long-time supplement users call out the disclosed tribulus, zinc, and magnesium amounts as the reason they switched.',
           },
           {
@@ -42,7 +42,7 @@ export function ReviewsPlaceholder({product}: ReviewsPlaceholderProps) {
           },
           {
             title: 'Daytime energy without a stimulant kick',
-            body: 'Customers note the formula doesn&rsquo;t feel like caffeine — it feels like having the energy they used to have, back.',
+            body: 'Customers note the formula doesn’t feel like caffeine — it feels like having the energy they used to have, back.',
           },
           {
             title: 'Honest transparency over the category',
