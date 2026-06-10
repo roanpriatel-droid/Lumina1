@@ -2,7 +2,7 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import {Link} from 'react-router';
 import {ArrowUpRight, ShieldCheck} from 'lucide-react';
-import {Bottle} from '~/components/lumina/Bottle';
+import {ProductVisual} from '~/components/ProductVisual';
 import {Button} from '~/components/lumina/Button';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {SplitLines} from '~/components/lumina/SplitLines';
@@ -92,7 +92,17 @@ export function FinalCta({
       </MonoWatermark>
       <div className="relative mx-auto flex max-w-[1200px] flex-col items-center px-6 py-32 text-center md:px-10 md:py-44">
         <div className="mb-8 inline-block">
-          <Bottle width={86} />
+          <ProductVisual
+            gender="female"
+            width={100}
+            pedestal={2}
+            reflection
+            rays={false}
+            idleFloat
+            mouseTilt={false}
+            parallax={0}
+            fallbackTitle="Lumina formula"
+          />
         </div>
         <Eyebrow style={{color: 'var(--color-crimson-hi)'}}>
           The protocol begins

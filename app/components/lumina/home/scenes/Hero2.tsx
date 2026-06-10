@@ -2,10 +2,10 @@ import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import {ArrowDown} from 'lucide-react';
 import {Link} from 'react-router';
-import {Bottle} from '~/components/lumina/Bottle';
 import {Button} from '~/components/lumina/Button';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {SplitLines} from '~/components/lumina/SplitLines';
+import {ProductVisual} from '~/components/ProductVisual';
 import {LightRays} from '~/components/graphics/LightRays';
 import {MonoWatermark} from '~/components/graphics/MonoWatermark';
 import {gsap, prefersReducedMotion} from '~/lib/motion';
@@ -136,7 +136,18 @@ export function Hero2() {
 
         <div className="relative">
           <div className="hero-bottle">
-            <Bottle width={140} />
+            <ProductVisual
+              gender="male"
+              width={160}
+              pedestal={2.2}
+              reflection
+              rays={false}
+              idleFloat
+              mouseTilt
+              parallax={0}
+              priority
+              fallbackTitle="Lumina formula"
+            />
           </div>
         </div>
 
