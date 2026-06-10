@@ -180,8 +180,8 @@ const FOOTER_COLUMNS: ReadonlyArray<{
   {
     heading: 'Formulas',
     links: [
-      {label: 'Male Enhancement', to: '/products/male-enhancement'},
-      {label: 'Female Enhancement', to: '/products/female-enhancement'},
+      {label: 'Male Enhancement', to: '/products/alpha-energy-3'},
+      {label: 'Female Enhancement', to: '/products/female-enhancement-3'},
       {label: 'Sleep', to: '/products/sleep'},
       {label: 'Daily Multi', to: '/products/daily-multi'},
     ],

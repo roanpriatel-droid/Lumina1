@@ -124,7 +124,7 @@ export const LUMINA_SUB_DISCOUNT = 0.15;
 export const LUMINA_PRODUCTS: Record<LuminaProductKey, LuminaProduct> = {
   male: {
     key: 'male',
-    handle: 'male-enhancement',
+    handle: 'alpha-energy-3',
     name: 'Lumina Male Enhancement',
     tagline: '90 capsules · 30-day supply · made in USA',
     blurb:
@@ -318,7 +318,7 @@ export const LUMINA_PRODUCTS: Record<LuminaProductKey, LuminaProduct> = {
 
   female: {
     key: 'female',
-    handle: 'female-enhancement',
+    handle: 'female-enhancement-3',
     name: 'Lumina Female Enhancement',
     tagline: '60 capsules · 30-day supply · made in USA',
     blurb:

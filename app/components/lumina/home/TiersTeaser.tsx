@@ -76,7 +76,7 @@ export function TiersTeaser() {
           ))}
         </div>
         <div className="mt-11 text-center">
-          <Link to="/products/male-enhancement" prefetch="intent">
+          <Link to="/collections/all" prefetch="intent">
             <Button className="px-8 py-4 text-base">Start your protocol</Button>
           </Link>
         </div>

@@ -55,7 +55,7 @@ export function IngredientStory() {
           </p>
           <div className="mt-9">
             <Link
-              to="/products/male-enhancement"
+              to="/products/alpha-energy-3"
               prefetch="intent"
             >
               <Button variant="secondary" className="px-7 py-4">
