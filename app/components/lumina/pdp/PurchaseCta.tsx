@@ -3,33 +3,37 @@ import type {OptimisticCartLineInput} from '@shopify/hydrogen';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
 import {usePurchase} from './PurchaseContext';
+import {money, computeSavings} from '~/lib/savings';
 
 /**
- * In-flow primary CTA + summary, rendered between the steps and the
- * ingredient table. Uses the live Shopify variant from PurchaseContext —
- * one line per add, quantity 1, since each supply tier is its own variant.
+ * In-flow primary CTA + summary, rendered between the tier ladder and
+ * the deeper content sections. Pulls the live tier-selected variant +
+ * computed savings from PurchaseContext.
  */
 export function PurchaseCta() {
-  const {tier, option, bundle, price, selectedVariant, oneTimeTotal} =
-    usePurchase();
+  const {selected, option, price, oneTimeTotal, baseline} = usePurchase();
   const {open} = useAside();
 
-  const optLabel = option === 'subscribe' ? 'Subscribe & Save' : 'One-Time';
+  const breakdown = computeSavings(selected, baseline);
   const showSubBadge = option === 'subscribe' && oneTimeTotal !== price;
+  const showSavings = breakdown.saved !== null && breakdown.saved > 0;
 
-  const lines: OptimisticCartLineInput[] = selectedVariant
+  const lines: OptimisticCartLineInput[] = selected.variantId
     ? [
         {
-          merchandiseId: selectedVariant.id,
+          merchandiseId: selected.variantId,
           quantity: 1,
-          selectedVariant,
-          // TODO(selling-plan): once selling plans exist for the formulas,
-          // attach `sellingPlanId` here for the subscribe-and-save line.
+          // TODO(selling-plan): attach sellingPlanId once selling plans
+          // are configured in Shopify Admin.
         },
       ]
     : [];
 
-  const available = Boolean(selectedVariant?.availableForSale);
+  const cta = !selected.variantId
+    ? 'Coming soon'
+    : !selected.availableForSale
+      ? 'Sold out'
+      : `Add ${selected.months === 1 ? '1-Month' : `${selected.months}-Month`} Supply — $${price}`;
 
   return (
     <section className="mx-auto max-w-[1200px] px-6 pb-16 md:px-8">
@@ -55,13 +59,19 @@ export function PurchaseCta() {
             )}
           </div>
           <p className="text-sm leading-snug text-fg3">
-            {tier.preset.name} · {tier.preset.months}-month supply ·{' '}
-            {tier.preset.bottles === 1
-              ? '1 bottle'
-              : `${tier.preset.bottles} bottles`}{' '}
-            · {optLabel}
-            {bundle.id !== 'solo' && ` · ${bundle.label}`}
+            {selected.months === 1
+              ? '1-month supply'
+              : `${selected.months}-month supply`}{' '}
+            · {selected.bottles}{' '}
+            {selected.bottles === 1 ? 'bottle' : 'bottles'} ·{' '}
+            {option === 'subscribe' ? 'Subscribe & Save' : 'One-Time'}
           </p>
+          {showSavings && (
+            <p className="text-[13px] font-medium text-crimson-hi">
+              You save {money(breakdown.saved as number)} vs the 1-month price
+              ({breakdown.savedPct}% off).
+            </p>
+          )}
           <div className="mt-2 flex flex-wrap gap-x-5 gap-y-2">
             {INLINE_BENEFITS.map(({Icon, label}) => (
               <span
@@ -75,16 +85,12 @@ export function PurchaseCta() {
           </div>
         </div>
         <AddToCartButton
-          disabled={!selectedVariant || !available}
+          disabled={!selected.variantId || !selected.availableForSale}
           lines={lines}
           onClick={() => open('cart')}
-          className="min-w-[220px] py-[18px] text-base"
+          className="min-w-[260px] py-[18px] text-base"
         >
-          {!selectedVariant
-            ? 'Coming soon'
-            : !available
-              ? 'Sold out'
-              : `Add to Cart — $${price}`}
+          {cta}
         </AddToCartButton>
       </div>
     </section>
@@ -92,7 +98,7 @@ export function PurchaseCta() {
 }
 
 const INLINE_BENEFITS = [
-  {Icon: Truck, label: 'Ships Free'},
+  {Icon: Truck, label: 'Ships Free on Subscriptions'},
   {Icon: ShieldCheck, label: '3rd-Party Tested'},
   {Icon: RotateCcw, label: '60-Day Guarantee'},
 ] as const;

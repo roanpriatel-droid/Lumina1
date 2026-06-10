@@ -15,6 +15,7 @@ import favicon from '~/assets/favicon.svg';
 import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
 import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from './components/PageLayout';
+import {loadLuminaCatalog} from '~/lib/lumina-catalog.server';
 
 export type RootLoader = typeof loader;
 
@@ -99,17 +100,19 @@ export async function loader(args: Route.LoaderArgs) {
 async function loadCriticalData({context}: Route.LoaderArgs) {
   const {storefront} = context;
 
-  const [header] = await Promise.all([
+  // Lumina catalog is consumed everywhere (cart savings, header, etc.),
+  // so resolve it as critical and keep the long cache.
+  const [header, luminaCatalog] = await Promise.all([
     storefront.query(HEADER_QUERY, {
       cache: storefront.CacheLong(),
       variables: {
         headerMenuHandle: 'main-menu', // Adjust to your header menu handle
       },
     }),
-    // Add other queries here, so that they are loaded in parallel
+    loadLuminaCatalog(storefront),
   ]);
 
-  return {header};
+  return {header, luminaCatalog};
 }
 
 /**

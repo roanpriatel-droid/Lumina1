@@ -2,9 +2,12 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import type {CartLayout} from '~/components/CartMain';
 import {CartForm, Money, type OptimisticCart} from '@shopify/hydrogen';
 import {useEffect, useId, useRef, useState} from 'react';
-import {useFetcher} from 'react-router';
-import {Lock} from 'lucide-react';
+import {useFetcher, useRouteLoaderData} from 'react-router';
+import {Lock, Truck} from 'lucide-react';
 import {Button} from '~/components/lumina/Button';
+import type {RootLoader} from '~/root';
+import {lineSavings} from '~/lib/cart-savings';
+import {money} from '~/lib/savings';
 
 type CartSummaryProps = {
   cart: OptimisticCart<CartApiQueryFragment | null>;
@@ -17,6 +20,23 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
   const discountCodeInputId = useId();
   const giftCardHeadingId = useId();
   const giftCardInputId = useId();
+
+  const root = useRouteLoaderData<RootLoader>('root');
+  const catalog = root?.luminaCatalog ?? [];
+  let totalSaved = 0;
+  for (const node of cart?.lines?.nodes ?? []) {
+    const handle = node.merchandise.product.handle;
+    const title = node.merchandise.product.title;
+    const totalDollars = Number.parseFloat(node.cost?.totalAmount?.amount ?? '0');
+    const saved = lineSavings({
+      productHandle: handle,
+      productTitle: title,
+      lineQuantity: node.quantity,
+      lineTotalDollars: totalDollars,
+      catalog,
+    });
+    if (saved && saved > 0) totalSaved += saved;
+  }
 
   const wrap =
     layout === 'aside'
@@ -44,6 +64,24 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
           )}
         </dd>
       </dl>
+      {totalSaved > 0 && (
+        <dl
+          role="group"
+          className="mb-4 flex items-baseline justify-between rounded-md border border-crimson bg-black px-3 py-2.5"
+          style={{boxShadow: 'var(--shadow-accent)'}}
+        >
+          <dt className="text-[12px] font-semibold uppercase tracking-[0.12em] text-crimson-hi">
+            Total saved
+          </dt>
+          <dd className="t-mono text-[15px] font-semibold text-crimson-hi">
+            − {money(totalSaved)}
+          </dd>
+        </dl>
+      )}
+      <div className="mb-4 inline-flex items-center gap-2 text-[11.5px] uppercase tracking-[0.12em] text-fg3">
+        <Truck size={13} strokeWidth={2} className="text-crimson" />
+        Free shipping on subscriptions · 60-day guarantee
+      </div>
       <CartDiscounts
         discountCodes={cart?.discountCodes}
         discountsHeadingId={discountsHeadingId}
@@ -55,9 +93,6 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
         giftCardInputId={giftCardInputId}
       />
       <CartCheckoutActions checkoutUrl={cart?.checkoutUrl} />
-      <p className="mt-3 text-center text-[11px] text-fg4">
-        Free shipping · 60-day money-back guarantee
-      </p>
     </div>
   );
 }

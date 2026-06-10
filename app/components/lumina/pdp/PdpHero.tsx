@@ -2,7 +2,6 @@ import {useState} from 'react';
 import {Image} from '@shopify/hydrogen';
 import {FlaskConical, ShieldCheck, MapPin, Sprout} from 'lucide-react';
 import type {LucideIcon} from 'lucide-react';
-import type {ProductVariantFragment} from 'storefrontapi.generated';
 import {Bottle} from '~/components/lumina/Bottle';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {StarRating} from '~/components/lumina/StarRating';
@@ -11,7 +10,8 @@ import type {LuminaProduct} from '~/lib/lumina-data';
 interface PdpHeroProps {
   title: string;
   lumina: LuminaProduct | undefined;
-  image: ProductVariantFragment['image'] | null | undefined;
+  imageUrl?: string | null;
+  imageAlt?: string | null;
 }
 
 const TRUST: ReadonlyArray<{Icon: LucideIcon; label: string}> = [
@@ -21,7 +21,7 @@ const TRUST: ReadonlyArray<{Icon: LucideIcon; label: string}> = [
   {Icon: Sprout, label: 'Non-GMO'},
 ];
 
-export function PdpHero({title, lumina, image}: PdpHeroProps) {
+export function PdpHero({title, lumina, imageUrl, imageAlt}: PdpHeroProps) {
   const [activeThumb, setActiveThumb] = useState(0);
   const thumbs = ['Bottle', 'Supplement facts', 'In hand', 'Texture'];
   const tagline = lumina?.tagline ?? 'Daily vitality formula';
@@ -78,13 +78,15 @@ export function PdpHero({title, lumina, image}: PdpHeroProps) {
           className="relative flex flex-1 items-center justify-center overflow-hidden rounded-xl border border-border bg-surface"
           style={{minHeight: 460}}
         >
-          {image ? (
+          {imageUrl ? (
             <Image
-              data={image}
+              src={imageUrl}
               aspectRatio="3/4"
               sizes="(min-width: 768px) 50vw, 100vw"
               className="h-auto w-full max-w-[260px] object-contain"
-              alt={image.altText || title}
+              alt={imageAlt || title}
+              width={520}
+              height={693}
             />
           ) : (
             <Bottle width={150} />
@@ -92,7 +94,7 @@ export function PdpHero({title, lumina, image}: PdpHeroProps) {
           <span
             className="t-mono absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap text-[11px] uppercase tracking-[0.14em] text-fg4"
           >
-            {image
+            {imageUrl
               ? thumbs[activeThumb]
               : `Product photography placeholder · ${thumbs[activeThumb]}`}
           </span>

@@ -5,128 +5,110 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import type {ProductVariantFragment} from 'storefrontapi.generated';
+import {LUMINA_SUB_DISCOUNT, type LuminaOption} from '~/lib/lumina-data';
 import {
-  LUMINA_BUNDLES,
-  LUMINA_SUB_DISCOUNT,
-  LUMINA_TIER_PRESETS,
-  type LuminaBundle,
-  type LuminaOption,
-  type LuminaTierPreset,
-} from '~/lib/lumina-data';
-import {
-  computeSavePct,
-  perBottlePrice,
-  pickInitialTierId,
-  type LuminaLiveTier,
-} from '~/lib/lumina-tiers';
+  computeSavings,
+  findBaseline,
+  money,
+  type Gender,
+  type LuminaProductEntry,
+  type SavingsBreakdown,
+} from '~/lib/savings';
 
 interface PurchaseValue {
-  /** Full tier ladder paired with Shopify variants (variant=null when missing). */
-  tiers: LuminaLiveTier[];
-  tier: LuminaLiveTier;
-  setTierId: (id: string) => void;
+  /** All tier entries for the current product's gender, sorted asc by months. */
+  entries: LuminaProductEntry[];
+  /** Currently selected entry (defaults to the URL-loaded product). */
+  selected: LuminaProductEntry;
+  setSelectedHandle: (handle: string) => void;
+
+  baseline: LuminaProductEntry | null;
+  /** Savings breakdown for the currently selected entry. */
+  breakdown: SavingsBreakdown;
 
   option: LuminaOption;
   setOption: (opt: LuminaOption) => void;
 
-  bundle: LuminaBundle;
-  setBundleId: (id: string) => void;
-
-  /** Live variant for the selected tier (null when that supply isn't wired in Shopify). */
-  selectedVariant: ProductVariantFragment | null;
-
-  /** Per-tier helpers, for the tier cards. */
-  perBottle: (tier: LuminaLiveTier) => number | null;
-  savePct: (tier: LuminaLiveTier) => number;
-
-  /** Pricing displayed by PurchaseCta / StickyAddToCart, in whole dollars. */
+  /** Whole-dollar display price for the price summary. */
   price: number;
+  /** Whole-dollar one-time total (== selected entry price). */
   oneTimeTotal: number;
+  /** Subscribe & Save price (one-time × 0.85). */
   subTotal: number;
-  /** Shopify's compare-at total for the selected tier (whole dollars, or null). */
-  compareAtTotal: number | null;
 }
 
 const PurchaseContext = createContext<PurchaseValue | null>(null);
 
 /**
- * Holds the supply tier selection backed by live Shopify variants.
+ * Drives selection across the tier ladder for a single gender.
  *
- * Subscribe & Save is rendered as a static 15% off because selling plans
- * aren't configured for the formulas yet — see TODO(selling-plan).
- * Bundle math also stays static until Shopify product-bundle support lands.
+ * - `entries` is the live ladder (1/2/4/6/12-month products) ordered asc.
+ * - `initialHandle` picks the default selection — normally the handle of
+ *   the product the user is currently viewing.
+ * - `gender` is used to look up the baseline from `entries`.
+ *
+ * Subscribe & Save is rendered as a static 15% off until selling plans
+ * are configured in Shopify Admin — see TODO(selling-plan).
  */
 export function PurchaseProvider({
-  tiers,
-  initialVariantId,
+  entries,
+  initialHandle,
+  gender,
   children,
 }: {
-  /** Optional: pass live tiers built from the product. When omitted we
-   *  fall back to a preset-only ladder with no variants (preview mode). */
-  tiers?: LuminaLiveTier[];
-  initialVariantId?: string;
+  entries: LuminaProductEntry[];
+  initialHandle: string;
+  gender: Gender;
   children: ReactNode;
 }) {
-  const liveTiers = useMemo<LuminaLiveTier[]>(
-    () =>
-      tiers ??
-      LUMINA_TIER_PRESETS.map<LuminaLiveTier>((preset) => ({
-        preset,
-        variant: null,
-      })),
-    [tiers],
+  const ordered = useMemo(
+    () => [...entries].sort((a, b) => a.months - b.months),
+    [entries],
+  );
+  const baseline = useMemo(
+    () => findBaseline(ordered, gender),
+    [ordered, gender],
   );
 
-  const [tierId, setTierId] = useState(() =>
-    pickInitialTierId(liveTiers, initialVariantId),
-  );
-  const [option, setOption] = useState<LuminaOption>('subscribe');
-  const [bundleId, setBundleId] = useState('solo');
+  const [handle, setSelectedHandle] = useState<string>(initialHandle);
 
   const value = useMemo<PurchaseValue>(() => {
-    const tier =
-      liveTiers.find((t) => t.preset.id === tierId) ?? liveTiers[0];
-    const bundle =
-      LUMINA_BUNDLES.find((b) => b.id === bundleId) ?? LUMINA_BUNDLES[0];
+    const selected =
+      ordered.find((e) => e.handle === handle) ?? ordered[0];
+    const breakdown = computeSavings(selected, baseline);
 
-    const variantPrice = tier.variant
-      ? Number.parseFloat(tier.variant.price.amount)
-      : 0;
-    const oneTimeTotal = Math.round(variantPrice);
-
-    // TODO(selling-plan): when subscriptions are wired in Shopify Admin,
-    // swap this for the real selling-plan-adjusted price from the API.
-    const subTotal = Math.round(variantPrice * (1 - LUMINA_SUB_DISCOUNT));
-
-    let displayBase = option === 'subscribe' ? subTotal : oneTimeTotal;
-    displayBase *= bundle.mult;
-    if (bundle.save) displayBase *= 1 - bundle.save / 100;
-
-    const compareAt = tier.variant?.compareAtPrice
-      ? Math.round(Number.parseFloat(tier.variant.compareAtPrice.amount))
-      : null;
+    const oneTimeTotal = Math.round(selected.price);
+    // TODO(selling-plan): replace with the real selling-plan-adjusted
+    // price from Storefront when subs are wired in admin.
+    const subTotal = Math.round(selected.price * (1 - LUMINA_SUB_DISCOUNT));
 
     return {
-      tiers: liveTiers,
-      tier,
-      setTierId,
-      option,
-      setOption,
-      bundle,
-      setBundleId,
-      selectedVariant: tier.variant,
-      perBottle: perBottlePrice,
-      savePct: computeSavePct,
-      price: Math.round(displayBase),
+      entries: ordered,
+      selected,
+      setSelectedHandle,
+      baseline,
+      breakdown,
+      option: 'subscribe',
+      setOption: () => {},
+      price: oneTimeTotal, // option lives outside this useMemo; see closure below
       oneTimeTotal,
       subTotal,
-      compareAtTotal: compareAt,
     };
-  }, [liveTiers, tierId, option, bundleId]);
+  }, [ordered, baseline, handle]);
+
+  const [option, setOption] = useState<LuminaOption>('subscribe');
+  const merged = useMemo<PurchaseValue>(
+    () => ({
+      ...value,
+      option,
+      setOption,
+      price: option === 'subscribe' ? value.subTotal : value.oneTimeTotal,
+    }),
+    [value, option],
+  );
 
   return (
-    <PurchaseContext.Provider value={value}>
+    <PurchaseContext.Provider value={merged}>
       {children}
     </PurchaseContext.Provider>
   );
@@ -139,4 +121,13 @@ export function usePurchase(): PurchaseValue {
   return ctx;
 }
 
-export type {LuminaTierPreset};
+/** Convenience helper used by the sticky bar copy. */
+export function formatTierDetail(entry: LuminaProductEntry): string {
+  const supply =
+    entry.months === 1
+      ? '1-month supply'
+      : `${entry.months}-month supply`;
+  return `${supply} · ${entry.bottles} ${
+    entry.bottles === 1 ? 'bottle' : 'bottles'
+  } · ${money(entry.price)}`;
+}

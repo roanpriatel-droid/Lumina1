@@ -3,19 +3,15 @@ import type {OptimisticCartLineInput} from '@shopify/hydrogen';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
 import {usePurchase} from './PurchaseContext';
-
-interface StickyAddToCartProps {
-  productName: string;
-}
+import {money} from '~/lib/savings';
 
 /**
- * Bottom-fixed add-to-cart bar that appears after the user scrolls past the
- * hero and hides as they reach the footer. Reads the live tier + variant
- * from PurchaseContext — one line, quantity 1, since each supply tier is
- * its own Shopify variant.
+ * Bottom-fixed Add to Cart bar that appears after the user scrolls past
+ * the hero and hides as they reach the footer. Reads the live tier
+ * selection + savings breakdown from PurchaseContext.
  */
-export function StickyAddToCart({productName}: StickyAddToCartProps) {
-  const {tier, option, bundle, price, selectedVariant} = usePurchase();
+export function StickyAddToCart({productName}: {productName: string}) {
+  const {selected, option, price, breakdown} = usePurchase();
   const {open} = useAside();
   const [visible, setVisible] = useState(false);
 
@@ -36,23 +32,31 @@ export function StickyAddToCart({productName}: StickyAddToCartProps) {
   }, []);
 
   const optLabel = option === 'subscribe' ? 'Subscribe & Save' : 'One-Time';
-  const detail = `${tier.preset.name} · ${tier.preset.months}-month · ${optLabel}${
-    bundle.id !== 'solo' ? ' · ' + bundle.label : ''
-  }`;
+  const supply =
+    selected.months === 1 ? '1-month' : `${selected.months}-month`;
+  const detail = `${supply} · ${optLabel}`;
+  const savings =
+    breakdown.saved && breakdown.saved > 0
+      ? `Saving ${money(breakdown.saved)}`
+      : null;
 
-  const lines: OptimisticCartLineInput[] = selectedVariant
+  const lines: OptimisticCartLineInput[] = selected.variantId
     ? [
         {
-          merchandiseId: selectedVariant.id,
+          merchandiseId: selected.variantId,
           quantity: 1,
-          selectedVariant,
-          // TODO(selling-plan): attach `sellingPlanId` here once subs are
-          // configured in Shopify Admin.
+          // TODO(selling-plan): sellingPlanId on subscribe lines.
         },
       ]
     : [];
 
-  const available = Boolean(selectedVariant?.availableForSale);
+  const available = Boolean(selected.variantId && selected.availableForSale);
+
+  const cta = !selected.variantId
+    ? 'Coming soon'
+    : !selected.availableForSale
+      ? 'Sold out'
+      : `Add ${selected.months === 1 ? '1-Month' : `${selected.months}-Month`} — $${price}`;
 
   return (
     <div
@@ -74,14 +78,12 @@ export function StickyAddToCart({productName}: StickyAddToCartProps) {
           </span>
           <span className="truncate text-xs leading-none text-fg3">
             {detail}
+            {savings && (
+              <span className="ml-2 text-crimson-hi">· {savings}</span>
+            )}
           </span>
         </div>
         <div className="ml-auto flex items-center gap-4 md:gap-5">
-          {option === 'subscribe' && (
-            <span className="hidden text-xs font-medium uppercase tracking-[0.1em] text-crimson-hi sm:inline">
-              15% off applied
-            </span>
-          )}
           <span
             className="text-fg1"
             style={{font: '300 24px/1 var(--font-sans)'}}
@@ -89,16 +91,12 @@ export function StickyAddToCart({productName}: StickyAddToCartProps) {
             ${price}
           </span>
           <AddToCartButton
-            disabled={!selectedVariant || !available}
+            disabled={!available}
             lines={lines}
             onClick={() => open('cart')}
-            className="min-w-[180px]"
+            className="min-w-[200px]"
           >
-            {!selectedVariant
-              ? 'Coming soon'
-              : !available
-                ? 'Sold out'
-                : `Add to Cart — $${price}`}
+            {cta}
           </AddToCartButton>
         </div>
       </div>

@@ -2,7 +2,7 @@ import type {CartLineUpdateInput} from '@shopify/hydrogen/storefront-api-types';
 import type {CartLayout, LineItemChildrenMap} from '~/components/CartMain';
 import {CartForm, Image, type OptimisticCartLine} from '@shopify/hydrogen';
 import {useVariantUrl} from '~/lib/variants';
-import {Link} from 'react-router';
+import {Link, useRouteLoaderData} from 'react-router';
 import {Minus, Plus, X} from 'lucide-react';
 import {ProductPrice} from './ProductPrice';
 import {useAside} from './Aside';
@@ -10,6 +10,9 @@ import type {
   CartApiQueryFragment,
   CartLineFragment,
 } from 'storefrontapi.generated';
+import type {RootLoader} from '~/root';
+import {lineSavings} from '~/lib/cart-savings';
+import {money} from '~/lib/savings';
 
 export type CartLine = OptimisticCartLine<CartApiQueryFragment>;
 
@@ -28,6 +31,16 @@ export function CartLineItem({
   const {close} = useAside();
   const lineItemChildren = childrenMap[id];
   const childrenLabelId = `cart-line-children-${id}`;
+  const root = useRouteLoaderData<RootLoader>('root');
+  const catalog = root?.luminaCatalog ?? [];
+  const totalDollars = Number.parseFloat(line?.cost?.totalAmount?.amount ?? '0');
+  const saved = lineSavings({
+    productHandle: product.handle,
+    productTitle: product.title,
+    lineQuantity: line.quantity,
+    lineTotalDollars: totalDollars,
+    catalog,
+  });
 
   return (
     <li className="border-b border-border py-5 last:border-b-0">
@@ -79,6 +92,11 @@ export function CartLineItem({
             <CartLineQuantity line={line} />
             <ProductPrice price={line?.cost?.totalAmount} compact />
           </div>
+          {saved !== null && saved > 0 && (
+            <p className="mt-1.5 text-[11.5px] font-medium text-crimson-hi">
+              You&rsquo;re saving {money(saved)} vs monthly bottles.
+            </p>
+          )}
         </div>
       </div>
 
