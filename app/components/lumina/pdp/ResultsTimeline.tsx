@@ -1,9 +1,50 @@
+import {useRef} from 'react';
+import {useGSAP} from '@gsap/react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
+import {fadeRise, gsap, prefersReducedMotion, staggerChildren} from '~/lib/motion';
 import type {LuminaResultStage} from '~/lib/lumina-data';
 
 export function ResultsTimeline({stages}: {stages: LuminaResultStage[]}) {
+  const ref = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      fadeRise(ref.current?.querySelector('h2'));
+      fadeRise(ref.current?.querySelector('.timeline-lede'), {delay: 0.05});
+
+      // Drawing line: scale a hairline horizontally from left to right as
+      // the timeline enters the viewport. Falls back to a static line on
+      // reduced motion.
+      if (!prefersReducedMotion()) {
+        const line = ref.current?.querySelector('.timeline-line');
+        if (line) {
+          gsap.fromTo(
+            line,
+            {scaleX: 0, transformOrigin: 'left center'},
+            {
+              scaleX: 1,
+              duration: 1.4,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: line,
+                start: 'top 80%',
+                toggleActions: 'play none none none',
+              },
+            },
+          );
+        }
+      }
+
+      staggerChildren(ref.current?.querySelector('.timeline-stages'), '.timeline-stage', {
+        start: 'top 75%',
+        stagger: 0.1,
+      });
+    },
+    {scope: ref},
+  );
+
   return (
-    <section className="border-t border-border bg-black">
+    <section ref={ref} className="border-t border-border bg-black">
       <div className="mx-auto max-w-[1200px] px-6 py-20 md:px-8">
         <Eyebrow className="mb-4">What the journey looks like</Eyebrow>
         <h2
@@ -16,17 +57,17 @@ export function ResultsTimeline({stages}: {stages: LuminaResultStage[]}) {
           A rhythm, not a guarantee.
         </h2>
         <p
-          className="m-0 mb-12 max-w-[640px] text-fg3"
+          className="timeline-lede m-0 mb-12 max-w-[640px] text-fg3"
           style={{font: '300 17px/1.65 var(--font-sans)'}}
         >
           Bodies respond at their own pace. This is the shape consistency tends
           to take — not a promise of any specific outcome.
         </p>
 
-        <div className="relative grid gap-6 md:grid-cols-3 md:gap-0">
+        <div className="timeline-stages relative grid gap-6 md:grid-cols-3 md:gap-0">
           <div
             aria-hidden
-            className="absolute hidden md:block"
+            className="timeline-line absolute hidden md:block"
             style={{
               left: '8.333%',
               right: '8.333%',
@@ -39,7 +80,7 @@ export function ResultsTimeline({stages}: {stages: LuminaResultStage[]}) {
           {stages.map((stage, i) => (
             <div
               key={stage.range}
-              className="relative flex flex-col gap-4 md:px-5"
+              className="timeline-stage relative flex flex-col gap-4 md:px-5"
             >
               <div className="flex items-center gap-4 md:flex-col md:items-start md:gap-3">
                 <span

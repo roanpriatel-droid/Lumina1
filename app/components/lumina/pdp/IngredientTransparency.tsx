@@ -1,6 +1,9 @@
+import {useRef} from 'react';
+import {useGSAP} from '@gsap/react';
 import {Microscope, FileCheck2, Ban} from 'lucide-react';
 import type {LucideIcon} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
+import {fadeRise, staggerChildren} from '~/lib/motion';
 import type {LuminaActive, LuminaBlend} from '~/lib/lumina-data';
 
 interface IngredientTransparencyProps {
@@ -20,8 +23,26 @@ export function IngredientTransparency({
   blend,
   otherIngredients,
 }: IngredientTransparencyProps) {
+  const ref = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      fadeRise(ref.current?.querySelector('h2'));
+      staggerChildren(
+        ref.current?.querySelector('.actives-table'),
+        '.active-row',
+        {start: 'top 80%', stagger: 0.06},
+      );
+    },
+    {scope: ref},
+  );
+
   return (
-    <section id="ingredients" className="border-t border-border bg-black">
+    <section
+      ref={ref}
+      id="ingredients"
+      className="border-t border-border bg-black"
+    >
       <div className="mx-auto max-w-[1200px] px-6 pb-20 pt-20 md:px-8">
         <Eyebrow className="mb-4">Full transparency</Eyebrow>
         <div className="grid gap-14 md:grid-cols-[1fr_1.4fr] md:items-start">
@@ -69,9 +90,11 @@ export function IngredientTransparency({
               </span>
             </div>
 
-            {actives.map((a, i) => (
-              <ActiveRow key={a.name} active={a} isFirst={i === 0} />
-            ))}
+            <div className="actives-table">
+              {actives.map((a, i) => (
+                <ActiveRow key={a.name} active={a} isFirst={i === 0} />
+              ))}
+            </div>
 
             {blend && <BlendBlock blend={blend} />}
 
@@ -102,7 +125,7 @@ export function IngredientTransparency({
 function ActiveRow({active, isFirst}: {active: LuminaActive; isFirst: boolean}) {
   return (
     <div
-      className="grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1.5 py-5"
+      className="active-row grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1.5 py-5"
       style={{borderTop: isFirst ? 'none' : '1px solid var(--color-border)'}}
     >
       <div className="flex flex-col">

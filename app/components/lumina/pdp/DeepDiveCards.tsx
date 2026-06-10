@@ -1,13 +1,27 @@
-import {useState} from 'react';
+import {useRef, useState} from 'react';
+import {useGSAP} from '@gsap/react';
 import {ChevronDown} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
+import {fadeRise, staggerChildren} from '~/lib/motion';
 import type {LuminaDeepDive} from '~/lib/lumina-data';
 
 export function DeepDiveCards({dives}: {dives: LuminaDeepDive[]}) {
   const [open, setOpen] = useState<number | null>(0);
+  const ref = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      fadeRise(ref.current?.querySelector('h2'));
+      staggerChildren(ref.current?.querySelector('.deep-dive-list'), '.deep-dive-card', {
+        start: 'top 75%',
+        stagger: 0.07,
+      });
+    },
+    {scope: ref},
+  );
 
   return (
-    <section className="border-t border-border bg-black">
+    <section ref={ref} className="border-t border-border bg-black">
       <div className="mx-auto max-w-[1200px] px-6 py-20 md:px-8">
         <Eyebrow className="mb-4">Ingredient deep dives</Eyebrow>
         <h2
@@ -26,13 +40,13 @@ export function DeepDiveCards({dives}: {dives: LuminaDeepDive[]}) {
           Tap any ingredient to read why it&rsquo;s in the formula at the dose
           we chose.
         </p>
-        <div className="flex flex-col gap-3">
+        <div className="deep-dive-list flex flex-col gap-3">
           {dives.map((dive, i) => {
             const isOpen = open === i;
             return (
               <div
                 key={dive.ingredient}
-                className="rounded-lg border border-border bg-surface transition-[border-color,box-shadow] duration-200"
+                className="deep-dive-card rounded-lg border border-border bg-surface transition-[border-color,box-shadow] duration-200"
                 style={{
                   borderColor: isOpen
                     ? 'var(--color-border-strong)'
