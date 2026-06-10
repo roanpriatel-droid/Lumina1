@@ -196,15 +196,69 @@ export function ErrorBoundary() {
     errorMessage = error.message;
   }
 
+  const isNotFound = errorStatus === 404;
+
   return (
-    <div className="mx-auto max-w-2xl px-8 py-24 text-center">
-      <p className="eyebrow mb-4 text-crimson-hi">Error {errorStatus}</p>
-      <h1 className="text-3xl font-light text-fg1">Something went wrong.</h1>
-      {errorMessage && (
-        <pre className="t-mono mt-8 overflow-auto rounded-lg border border-border bg-surface p-6 text-left text-sm text-fg3">
-          {errorMessage}
-        </pre>
-      )}
-    </div>
+    <section
+      className="relative isolate overflow-hidden bg-black"
+      style={{minHeight: '60vh'}}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute"
+        style={{
+          width: 900,
+          height: 900,
+          left: '50%',
+          top: 0,
+          transform: 'translate(-50%,-30%)',
+          background: 'var(--glow-hero)',
+          opacity: 0.4,
+        }}
+      />
+      <div className="relative mx-auto max-w-[760px] px-6 py-28 text-center md:px-8 md:py-36">
+        <p className="eyebrow mb-5 text-crimson-hi">
+          {isNotFound ? 'Page not found' : `Error ${errorStatus}`}
+        </p>
+        <h1
+          className="m-0 text-fg1"
+          style={{
+            font: '300 clamp(40px, 5vw, 60px)/1.05 var(--font-sans)',
+            letterSpacing: '-0.015em',
+          }}
+        >
+          {isNotFound
+            ? 'There’s nothing at this address.'
+            : 'Something went wrong on our end.'}
+        </h1>
+        <p
+          className="m-0 mt-6 text-fg2"
+          style={{font: '300 17px/1.65 var(--font-sans)'}}
+        >
+          {isNotFound
+            ? 'The link you followed may be wrong, or the page may have moved. Either way — the formulas are still here.'
+            : 'Try again, or jump back to the catalog.'}
+        </p>
+        <div className="mt-10 flex flex-wrap justify-center gap-3">
+          <a
+            href="/collections/all"
+            className="inline-flex items-center justify-center gap-2 rounded-pill bg-crimson px-7 py-4 text-[15px] font-medium text-white shadow-accent transition-[background] hover:bg-crimson-hi"
+          >
+            See the catalog
+          </a>
+          <a
+            href="/"
+            className="inline-flex items-center justify-center gap-2 rounded-pill border border-border-strong bg-transparent px-7 py-4 text-[15px] font-medium text-fg1 transition-colors hover:border-fg3"
+          >
+            Back to the homepage
+          </a>
+        </div>
+        {!isNotFound && errorMessage && (
+          <pre className="t-mono mx-auto mt-12 max-w-[680px] overflow-auto rounded-lg border border-border bg-surface p-6 text-left text-sm text-fg3">
+            {errorMessage}
+          </pre>
+        )}
+      </div>
+    </section>
   );
 }

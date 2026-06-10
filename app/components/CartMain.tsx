@@ -5,6 +5,7 @@ import {useAside} from '~/components/Aside';
 import {CartLineItem, type CartLine} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
 import {CartUpgradeHint} from './CartUpgradeHint';
+import {CartUndoToast} from './CartUndoToast';
 
 export type CartLayout = 'page' | 'aside';
 
@@ -83,6 +84,7 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
             </div>
           </div>
           <CartSummary cart={cart} layout={layout} />
+          <CartUndoToast cart={cart} />
         </>
       )}
     </section>

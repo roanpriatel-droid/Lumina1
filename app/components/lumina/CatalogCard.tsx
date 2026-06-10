@@ -1,8 +1,7 @@
 import {Link} from 'react-router';
-import {Image} from '@shopify/hydrogen';
 import {ArrowUpRight, Crown, Award} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
-import {Bottle} from '~/components/lumina/Bottle';
+import {GlowPedestal} from '~/components/lumina/GlowPedestal';
 import {
   money,
   moneyCents,
@@ -56,34 +55,14 @@ export function CatalogCard({
         </span>
       )}
 
-      <div
-        className="relative flex aspect-[5/4] items-center justify-center"
-        style={{background: 'var(--color-bg)'}}
-      >
-        <div
-          aria-hidden
-          className="absolute inset-0"
-          style={{
-            background: 'var(--glow-hero)',
-            opacity: 0.55,
-          }}
-        />
-        {product.imageUrl ? (
-          <Image
-            src={product.imageUrl}
-            alt={product.imageAlt ?? product.title}
-            sizes="(min-width: 768px) 25vw, 50vw"
-            className="relative h-[68%] w-auto object-contain"
-            loading="lazy"
-            width={240}
-            height={240}
-          />
-        ) : (
-          <div className="relative">
-            <Bottle width={86} />
-          </div>
-        )}
-      </div>
+      <GlowPedestal
+        imageUrl={product.imageUrl}
+        imageAlt={product.imageAlt}
+        fallbackTitle={product.title}
+        sizes="(min-width: 768px) 25vw, 50vw"
+        imgWidth={240}
+        imgHeight={240}
+      />
 
       <div className="flex flex-1 flex-col gap-3 border-t border-border p-6">
         <Eyebrow style={{color: 'var(--color-crimson-hi)'}}>

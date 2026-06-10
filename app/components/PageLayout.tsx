@@ -61,11 +61,7 @@ export function PageLayout({
 function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
   return (
     <Aside type="cart" heading="Your Cart">
-      <Suspense
-        fallback={
-          <p className="px-6 py-8 text-sm text-fg3">Loading cart …</p>
-        }
-      >
+      <Suspense fallback={<CartSkeleton />}>
         <Await resolve={cart}>
           {(resolvedCart) => (
             <CartMain cart={resolvedCart} layout="aside" />
@@ -73,6 +69,47 @@ function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
         </Await>
       </Suspense>
     </Aside>
+  );
+}
+
+function CartSkeleton() {
+  return (
+    <div className="flex h-full flex-col" aria-label="Loading cart" role="status">
+      <div className="flex-1 overflow-y-auto px-6 py-5">
+        {[0, 1].map((i) => (
+          <div
+            key={i}
+            className="flex gap-4 border-b border-border py-5"
+            aria-hidden
+          >
+            <div
+              className="h-[70px] w-[54px] flex-none rounded-sm bg-surface-2"
+              style={{
+                background:
+                  'linear-gradient(90deg, #1b1b1e 0%, #232327 50%, #1b1b1e 100%)',
+              }}
+            />
+            <div className="flex flex-1 flex-col gap-2">
+              <div className="h-3 w-3/4 rounded-sm bg-surface-2" />
+              <div className="h-3 w-1/2 rounded-sm bg-surface-2" />
+              <div className="mt-2 flex gap-3">
+                <div className="h-7 w-24 rounded-sm bg-surface-2" />
+                <div className="ml-auto h-3 w-12 self-center rounded-sm bg-surface-2" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="flex-none border-t border-border bg-bg-elev px-6 py-5">
+        <div className="mb-4 h-3 w-16 rounded-sm bg-surface-2" />
+        <div className="mb-4 flex items-baseline justify-between border-b border-border pb-4">
+          <div className="h-3 w-20 rounded-sm bg-surface-2" />
+          <div className="h-6 w-24 rounded-sm bg-surface-2" />
+        </div>
+        <div className="h-11 w-full rounded-pill bg-surface-2" />
+      </div>
+      <span className="sr-only">Loading your cart</span>
+    </div>
   );
 }
 

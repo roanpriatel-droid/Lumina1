@@ -5,6 +5,7 @@ import {PageCta} from '~/components/lumina/PageCta';
 import {CatalogCard} from '~/components/lumina/CatalogCard';
 import {SavingsLadder} from '~/components/lumina/SavingsLadder';
 import {HisAndHers} from '~/components/lumina/HisAndHers';
+import {useScrollReveal} from '~/components/lumina/useScrollReveal';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {loadLuminaCatalog} from '~/lib/lumina-catalog.server';
 import {
@@ -92,6 +93,7 @@ function CatalogGrid({
   baseline: LuminaProductEntry | null;
   empty: string;
 }) {
+  const ref = useScrollReveal<HTMLDivElement>();
   return (
     <section className="border-t border-border bg-surface">
       <div className="mx-auto max-w-[1200px] px-6 py-20 md:px-8">
@@ -113,7 +115,10 @@ function CatalogGrid({
             {empty}
           </p>
         ) : (
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          <div
+            ref={ref}
+            className="reveal-stagger mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
+          >
             {entries.map((product) => (
               <CatalogCard
                 key={product.handle}

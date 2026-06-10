@@ -87,6 +87,8 @@ export function PdpHero({title, lumina, imageUrl, imageAlt}: PdpHeroProps) {
               alt={imageAlt || title}
               width={520}
               height={693}
+              loading="eager"
+              fetchPriority="high"
             />
           ) : (
             <Bottle width={150} />
