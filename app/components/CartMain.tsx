@@ -4,6 +4,7 @@ import type {CartApiQueryFragment} from 'storefrontapi.generated';
 import {useAside} from '~/components/Aside';
 import {CartLineItem, type CartLine} from '~/components/CartLineItem';
 import {CartSummary} from './CartSummary';
+import {CartUpgradeHint} from './CartUpgradeHint';
 
 export type CartLayout = 'page' | 'aside';
 
@@ -52,31 +53,34 @@ export function CartMain({layout, cart: originalCart}: CartMainProps) {
           <div
             className={
               layout === 'aside'
-                ? 'flex-1 overflow-y-auto px-6'
+                ? 'flex-1 overflow-y-auto'
                 : 'mb-8'
             }
           >
-            <p id="cart-lines" className="sr-only">
-              Line items
-            </p>
-            <ul aria-labelledby="cart-lines" className="m-0 p-0">
-              {(cart?.lines?.nodes ?? []).map((line) => {
-                if (
-                  'parentRelationship' in line &&
-                  line.parentRelationship?.parent
-                ) {
-                  return null;
-                }
-                return (
-                  <CartLineItem
-                    key={line.id}
-                    line={line}
-                    layout={layout}
-                    childrenMap={childrenMap}
-                  />
-                );
-              })}
-            </ul>
+            {layout === 'aside' && <CartUpgradeHint cart={cart} />}
+            <div className={layout === 'aside' ? 'px-6' : ''}>
+              <p id="cart-lines" className="sr-only">
+                Line items
+              </p>
+              <ul aria-labelledby="cart-lines" className="m-0 p-0">
+                {(cart?.lines?.nodes ?? []).map((line) => {
+                  if (
+                    'parentRelationship' in line &&
+                    line.parentRelationship?.parent
+                  ) {
+                    return null;
+                  }
+                  return (
+                    <CartLineItem
+                      key={line.id}
+                      line={line}
+                      layout={layout}
+                      childrenMap={childrenMap}
+                    />
+                  );
+                })}
+              </ul>
+            </div>
           </div>
           <CartSummary cart={cart} layout={layout} />
         </>

@@ -17,7 +17,7 @@ import {FormulatedWithout} from '~/components/lumina/pdp/FormulatedWithout';
 import {QualityTesting} from '~/components/lumina/pdp/QualityTesting';
 import {FaqAccordion} from '~/components/lumina/pdp/FaqAccordion';
 import {ReviewsPlaceholder} from '~/components/lumina/pdp/ReviewsPlaceholder';
-import {CrossSell} from '~/components/lumina/pdp/CrossSell';
+import {CompleteTheProtocol} from '~/components/lumina/pdp/CompleteTheProtocol';
 import {ComplianceFooter} from '~/components/lumina/pdp/ComplianceFooter';
 import {TransparencyCallout} from '~/components/lumina/pdp/TransparencyCallout';
 import {SavingsLadder} from '~/components/lumina/SavingsLadder';
@@ -155,7 +155,11 @@ export default function ProductRoute() {
         <QualityTesting />
         <FaqAccordion faqs={lumina.faqs} />
         <ReviewsPlaceholder product={lumina} />
-        <CrossSell currentKey={gender} />
+        <CompleteTheProtocol
+          entries={entries}
+          currentHandle={entry.handle}
+          currentGender={gender}
+        />
         <ComplianceFooter product={lumina} />
         <StickyAddToCart productName={lumina.name} />
 

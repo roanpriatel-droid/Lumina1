@@ -4,6 +4,7 @@ import {PageHero} from '~/components/lumina/PageChrome';
 import {PageCta} from '~/components/lumina/PageCta';
 import {CatalogCard} from '~/components/lumina/CatalogCard';
 import {SavingsLadder} from '~/components/lumina/SavingsLadder';
+import {HisAndHers} from '~/components/lumina/HisAndHers';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {loadLuminaCatalog} from '~/lib/lumina-catalog.server';
 import {
@@ -68,6 +69,8 @@ export default function CatalogPage() {
         entries={female}
         title="The math on the female formula."
       />
+
+      <HisAndHers entries={entries} />
 
       <HowLuminaCompares />
 
