@@ -2,11 +2,14 @@ import type {Route} from './+types/_index';
 import {useLoaderData} from 'react-router';
 import {Hero2} from '~/components/lumina/home/scenes/Hero2';
 import {Manifesto} from '~/components/lumina/home/scenes/Manifesto';
+import {ByTheNumbers} from '~/components/lumina/home/scenes/ByTheNumbers';
 import {TwoFormulas} from '~/components/lumina/home/scenes/TwoFormulas';
 import {Constellation} from '~/components/lumina/home/scenes/Constellation';
+import {InsideTheCapsule} from '~/components/lumina/home/scenes/InsideTheCapsule';
+import {HisHersSplit} from '~/components/lumina/home/scenes/HisHersSplit';
 import {TheStandard} from '~/components/lumina/home/scenes/TheStandard';
+import {EightWeekArc} from '~/components/lumina/home/scenes/EightWeekArc';
 import {SupplyLadderScene} from '~/components/lumina/home/scenes/SupplyLadderScene';
-import {Ritual} from '~/components/lumina/home/scenes/Ritual';
 import {ProofWall} from '~/components/lumina/home/scenes/ProofWall';
 import {FaqTeaser} from '~/components/lumina/home/scenes/FaqTeaser';
 import {FinalCta} from '~/components/lumina/home/scenes/FinalCta';
@@ -40,10 +43,13 @@ export default function Homepage() {
       <Hero2 />
       <Manifesto />
       <TwoFormulas entries={entries} />
+      <ByTheNumbers />
       <Constellation />
+      <InsideTheCapsule />
+      <HisHersSplit entries={entries} />
       <TheStandard />
+      <EightWeekArc />
       <SupplyLadderScene entries={male} gender="male" />
-      <Ritual />
       <ProofWall />
       <FaqTeaser />
       <FinalCta entries={entries} />
