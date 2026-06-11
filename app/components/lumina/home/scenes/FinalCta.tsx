@@ -9,8 +9,6 @@ import {SplitLines} from '~/components/lumina/SplitLines';
 import {LightRays} from '~/components/graphics/LightRays';
 import {TopographicLines} from '~/components/graphics/TopographicLines';
 import {MonoWatermark} from '~/components/graphics/MonoWatermark';
-import {Glow} from '~/components/graphics/Glow';
-import {FloorReflection} from '~/components/graphics/FloorReflection';
 import {fadeRise, gsap, prefersReducedMotion, textReveal} from '~/lib/motion';
 import {findBaseline, money, type LuminaProductEntry} from '~/lib/savings';
 
@@ -72,22 +70,23 @@ export function FinalCta({
   return (
     <section
       ref={ref}
-      className="relative isolate overflow-hidden border-t border-border lumina-bg-3"
+      className="relative isolate overflow-hidden border-t border-border bg-black"
     >
       <div
         aria-hidden
-        className="final-glow absolute"
+        className="final-glow pointer-events-none absolute"
         style={{
+          width: 1600,
+          height: 1600,
           left: '50%',
           top: '60%',
           transform: 'translate(-50%, -50%) scale(0.6)',
+          background: 'var(--glow-hero)',
+          opacity: 0.4,
         }}
-      >
-        <Glow size="hero" animate />
-      </div>
+      />
       <TopographicLines opacity={0.5} variant="tight" />
       <LightRays origin="bottom" intensity={0.45} />
-      <FloorReflection height={140} opacity={0.04} />
       <MonoWatermark position="center" size={520} opacity={0.04} style={{top: '15%'}}>
         BEGIN
       </MonoWatermark>

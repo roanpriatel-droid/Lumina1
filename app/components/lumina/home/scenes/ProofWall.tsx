@@ -85,7 +85,7 @@ export function ProofWall() {
   return (
     <section
       ref={ref}
-      className="relative isolate overflow-hidden border-t border-border lumina-bg-1"
+      className="relative isolate overflow-hidden border-t border-border bg-surface"
     >
       <div className="mx-auto max-w-[1320px] px-6 py-28 md:px-10 md:py-36">
         <Eyebrow className="proof-eyebrow mb-4">The proof</Eyebrow>
@@ -93,7 +93,7 @@ export function ProofWall() {
           <h2
             className="m-0 max-w-[640px] text-fg1"
             style={{
-              font: '300 clamp(2.5rem, 5vw, 4.5rem)/1.05 var(--font-sans)',
+              font: '300 clamp(36px, 4.5vw, 52px)/1.05 var(--font-sans)',
               letterSpacing: '-0.015em',
             }}
           >

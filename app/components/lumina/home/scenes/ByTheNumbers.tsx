@@ -84,7 +84,7 @@ export function ByTheNumbers() {
   return (
     <section
       ref={ref}
-      className="relative isolate overflow-hidden border-t border-border lumina-bg-3"
+      className="relative isolate overflow-hidden border-t border-border bg-surface"
     >
       <MonoWatermark position="left" size={420} opacity={0.045}>
         BY THE NUMBERS
@@ -94,7 +94,7 @@ export function ByTheNumbers() {
         <h2
           className="numbers-headline m-0 mb-16 max-w-[760px] text-fg1"
           style={{
-            font: '300 clamp(2.5rem, 5vw, 4.5rem)/1.05 var(--font-sans)',
+            font: '300 clamp(36px, 4.5vw, 52px)/1.05 var(--font-sans)',
             letterSpacing: '-0.015em',
           }}
         >

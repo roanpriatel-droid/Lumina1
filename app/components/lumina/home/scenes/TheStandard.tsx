@@ -70,7 +70,7 @@ export function TheStandard() {
   return (
     <section
       ref={ref}
-      className="relative isolate overflow-hidden lumina-bg-1"
+      className="relative isolate overflow-hidden bg-black"
       aria-label="The Lumina standard"
     >
       <div className="pointer-events-none absolute inset-0" style={{opacity: 0.4}}>

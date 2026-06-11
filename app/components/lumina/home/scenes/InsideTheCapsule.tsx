@@ -92,7 +92,7 @@ export function InsideTheCapsule() {
   return (
     <section
       ref={ref}
-      className="relative isolate overflow-hidden border-t border-border lumina-bg-2"
+      className="relative isolate overflow-hidden border-t border-border bg-black"
       style={{minHeight: '100vh'}}
     >
       <MonoWatermark position="top-right" size={300} opacity={0.04}>

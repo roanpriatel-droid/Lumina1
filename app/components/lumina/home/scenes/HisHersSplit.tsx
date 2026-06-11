@@ -6,7 +6,6 @@ import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {ProductVisual} from '~/components/ProductVisual';
 import {LightRays} from '~/components/graphics/LightRays';
 import {MonoWatermark} from '~/components/graphics/MonoWatermark';
-import {FloorReflection} from '~/components/graphics/FloorReflection';
 import {fadeRise} from '~/lib/motion';
 import {findBaseline, money, type LuminaProductEntry} from '~/lib/savings';
 
@@ -41,13 +40,12 @@ export function HisHersSplit({
   return (
     <section
       ref={ref}
-      className="relative isolate overflow-hidden border-t border-border lumina-bg-3"
+      className="relative isolate overflow-hidden border-t border-border bg-black"
       style={{minHeight: '90vh'}}
     >
       <MonoWatermark position="top-right" size={300} opacity={0.04}>
         TWO · DAILY
       </MonoWatermark>
-      <FloorReflection height={140} opacity={0.035} />
 
       <div
         className="relative grid h-full min-h-[90vh] grid-cols-1 md:grid-cols-[1fr_1fr]"

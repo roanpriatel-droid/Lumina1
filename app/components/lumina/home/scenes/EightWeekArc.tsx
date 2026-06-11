@@ -105,7 +105,7 @@ export function EightWeekArc() {
   return (
     <section
       ref={ref}
-      className="relative isolate overflow-hidden border-t border-border lumina-bg-2"
+      className="relative isolate overflow-hidden border-t border-border bg-black"
       aria-label="The 8-week assessment arc"
     >
       <TopographicLines opacity={0.4} variant="broad" />

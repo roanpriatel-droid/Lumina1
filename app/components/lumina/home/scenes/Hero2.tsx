@@ -8,8 +8,6 @@ import {SplitLines} from '~/components/lumina/SplitLines';
 import {ProductVisual} from '~/components/ProductVisual';
 import {LightRays} from '~/components/graphics/LightRays';
 import {MonoWatermark} from '~/components/graphics/MonoWatermark';
-import {Glow} from '~/components/graphics/Glow';
-import {FloorReflection} from '~/components/graphics/FloorReflection';
 import {gsap, prefersReducedMotion} from '~/lib/motion';
 
 /**
@@ -98,17 +96,18 @@ export function Hero2() {
     >
       <div
         aria-hidden
-        className="hero-glow absolute"
+        className="hero-glow pointer-events-none absolute"
         style={{
+          width: 1300,
+          height: 1300,
           left: '50%',
           top: '52%',
-          transform: 'translate(-50%, -50%)',
+          transform: 'translate(-50%,-50%)',
+          background: 'var(--glow-hero)',
+          opacity: 0.6,
         }}
-      >
-        <Glow size="hero" animate />
-      </div>
+      />
       <LightRays origin="top" intensity={0.4} />
-      <FloorReflection height={140} opacity={0.035} />
       <MonoWatermark
         position="center"
         size={520}
@@ -147,7 +146,6 @@ export function Hero2() {
               mouseTilt
               parallax={0}
               priority
-              ring
               fallbackTitle="Lumina formula"
             />
           </div>
@@ -156,7 +154,11 @@ export function Hero2() {
         <SplitLines
           lines={['Vitality,', 'formulated', 'honestly.']}
           as="h1"
-          className="lumina-hero"
+          className="text-fg1"
+          style={{
+            font: '200 clamp(60px, 9vw, 128px)/0.95 var(--font-sans)',
+            letterSpacing: '-0.02em',
+          }}
         />
 
         <div className="hero-footing flex flex-col items-center gap-6">

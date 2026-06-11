@@ -50,14 +50,14 @@ export function FaqTeaser() {
   return (
     <section
       ref={ref}
-      className="border-t border-border lumina-bg-2"
+      className="border-t border-border bg-black"
     >
       <div className="mx-auto max-w-[1000px] px-6 py-28 md:px-10 md:py-36">
         <Eyebrow className="faq-eyebrow mb-4">Top questions</Eyebrow>
         <h2
           className="faq-headline m-0 max-w-[680px] text-fg1"
           style={{
-            font: '300 clamp(2.5rem, 5vw, 4.5rem)/1.05 var(--font-sans)',
+            font: '300 clamp(36px, 4.5vw, 52px)/1.05 var(--font-sans)',
             letterSpacing: '-0.015em',
           }}
         >

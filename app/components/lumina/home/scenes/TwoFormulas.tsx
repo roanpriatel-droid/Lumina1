@@ -54,14 +54,14 @@ export function TwoFormulas({
   return (
     <section
       ref={ref}
-      className="relative border-t border-border lumina-bg-2"
+      className="relative border-t border-border bg-surface"
     >
       <div className="mx-auto max-w-[1320px] px-6 py-28 md:px-10 md:py-36">
         <Eyebrow className="scene-eyebrow mb-4">The matched pair</Eyebrow>
         <h2
           className="scene-headline m-0 mb-16 max-w-[840px] text-fg1"
           style={{
-            font: '300 clamp(2.5rem, 5vw, 4.5rem)/1.05 var(--font-sans)',
+            font: '300 clamp(36px, 4.5vw, 52px)/1.05 var(--font-sans)',
             letterSpacing: '-0.015em',
           }}
         >
@@ -106,7 +106,8 @@ function FormulaCard({
     <Link
       to={`/products/${entry.handle}`}
       prefetch="intent"
-      className="formula-card lumina-card group relative flex flex-col overflow-hidden rounded-2xl"
+      className="formula-card group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-black transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-crimson"
+      style={{boxShadow: 'var(--shadow-md)'}}
     >
       <GlowPedestal
         imageUrl={entry.imageUrl}
