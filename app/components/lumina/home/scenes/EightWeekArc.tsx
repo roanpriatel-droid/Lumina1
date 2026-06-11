@@ -177,7 +177,7 @@ export function EightWeekArc() {
                       '0 0 0 4px var(--color-black), 0 0 18px var(--color-crimson)',
                   }}
                 />
-                <div className="arc-card flex flex-col items-center gap-3 rounded-xl border border-border bg-surface px-6 py-6 md:max-w-[300px]">
+                <div className={`arc-card ${i === MILESTONES.length - 1 ? 'glow-frame glow-frame-base glow-frame-rest' : 'border border-border bg-surface'} flex flex-col items-center gap-3 rounded-xl px-6 py-6 md:max-w-[300px]`}>
                   <span className="t-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-crimson-hi">
                     {m.week}
                   </span>

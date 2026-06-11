@@ -106,8 +106,7 @@ function FormulaCard({
     <Link
       to={`/products/${entry.handle}`}
       prefetch="intent"
-      className="formula-card group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-black transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-crimson"
-      style={{boxShadow: 'var(--shadow-md)'}}
+      className="formula-card glow-frame glow-frame-base glow-frame-rest group relative flex flex-col overflow-hidden rounded-2xl"
     >
       <GlowPedestal
         imageUrl={entry.imageUrl}

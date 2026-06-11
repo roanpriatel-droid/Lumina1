@@ -26,6 +26,7 @@ export function CatalogCard({
 }) {
   const breakdown = computeSavings(product, baseline);
   const showSavings = breakdown.saved !== null && breakdown.saved > 0;
+  const isHero = product.months === 1;
   const isBest = product.months === 6;
   const isMax = product.months === 12;
   const ribbon = isMax
@@ -33,13 +34,21 @@ export function CatalogCard({
     : isBest
       ? {Icon: Crown, label: 'Best Value'}
       : null;
+  // Spotlight: the 1-month hero card (per gender) carries the glow-
+  // frame so it reads as the named anchor of the lineup. Best Value
+  // (6mo) gets the rest treatment too. Other tiers stay on the
+  // base lumina-card surface.
+  const frameClass =
+    isHero || isBest
+      ? 'glow-frame glow-frame-base glow-frame-rest'
+      : 'lumina-card';
 
   return (
     <Link
       to={`/products/${product.handle}`}
       prefetch="intent"
       aria-label={`${product.title} — ${money(breakdown.total)}`}
-      className="lumina-card group relative flex h-full flex-col overflow-hidden rounded-xl"
+      className={`${frameClass} group relative flex h-full flex-col overflow-hidden rounded-xl`}
     >
       {ribbon && (
         <span

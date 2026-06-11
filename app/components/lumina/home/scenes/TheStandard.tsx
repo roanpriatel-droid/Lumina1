@@ -101,10 +101,10 @@ export function TheStandard() {
               </p>
             </div>
           </div>
-          {PANELS.map(({label, Icon, headline, body}) => (
+          {PANELS.map(({label, Icon, headline, body}, idx) => (
             <article
               key={label}
-              className="standard-panel relative flex flex-shrink-0 flex-col justify-center border-l border-border px-10 py-24 md:px-16 md:py-32"
+              className={`standard-panel ${idx === 1 ? 'glow-frame glow-frame-base glow-frame-rest mx-6 rounded-2xl md:mx-10' : 'border-l border-border'} relative flex flex-shrink-0 flex-col justify-center px-10 py-24 md:px-16 md:py-32`}
               style={{width: '70vw', minWidth: 420}}
             >
               <div

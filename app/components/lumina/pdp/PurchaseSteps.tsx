@@ -118,7 +118,9 @@ function TierCard({
 
   const tierClass = selected
     ? 'glow-frame glow-frame-base glow-frame-active'
-    : 'tier-card-idle';
+    : isBest
+      ? 'glow-frame glow-frame-base glow-frame-rest'
+      : 'tier-card-idle';
   return (
     <button
       type="button"

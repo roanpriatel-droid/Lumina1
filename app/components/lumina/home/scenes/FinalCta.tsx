@@ -124,7 +124,7 @@ export function FinalCta({
           assessment outcome — keep going or refund — is fine with us.
         </p>
 
-        <div className="final-ctas mt-10 flex flex-wrap items-center justify-center gap-3">
+        <div className="glow-frame glow-frame-base glow-frame-active final-ctas mt-10 inline-flex flex-wrap items-center justify-center gap-3 rounded-pill px-4 py-3">
           {male && (
             <Link to={`/products/${male.handle}`} prefetch="intent">
               <Button className="px-7 py-4 text-base">
