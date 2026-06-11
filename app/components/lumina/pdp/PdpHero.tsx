@@ -1,15 +1,14 @@
-import {useRef, useState} from 'react';
+import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
 import {FlaskConical, ShieldCheck, MapPin, Sprout} from 'lucide-react';
 import type {LucideIcon} from 'lucide-react';
-import {Bottle} from '~/components/lumina/Bottle';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {StarRating} from '~/components/lumina/StarRating';
 import {SplitLines} from '~/components/lumina/SplitLines';
-import {BlendedImage} from '~/components/lumina/BlendedImage';
-import {LightRays} from '~/components/graphics/LightRays';
+import {PdpGallery} from '~/components/lumina/pdp/PdpGallery';
 import {fadeRise, parallaxLayer, textReveal} from '~/lib/motion';
 import type {LuminaProduct} from '~/lib/lumina-data';
+import type {Gender} from '~/lib/product-assets';
 
 interface PdpHeroProps {
   title: string;
@@ -36,8 +35,6 @@ const TRUST: ReadonlyArray<{Icon: LucideIcon; label: string}> = [
 ];
 
 export function PdpHero({title, lumina, imageUrl, imageAlt}: PdpHeroProps) {
-  const [activeThumb, setActiveThumb] = useState(0);
-  const thumbs = ['Bottle', 'Supplement facts', 'In hand', 'Texture'];
   const tagline = lumina?.tagline ?? 'Daily vitality formula';
   const blurb = lumina?.blurb;
   const rating = lumina?.rating ?? 4.8;
@@ -45,6 +42,7 @@ export function PdpHero({title, lumina, imageUrl, imageAlt}: PdpHeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   // Split the long product title into ~2 readable lines for the reveal.
   const titleLines = splitTitleIntoLines(title);
+  const gender = lumina?.key;
 
   useGSAP(
     () => {
@@ -68,79 +66,12 @@ export function PdpHero({title, lumina, imageUrl, imageAlt}: PdpHeroProps) {
       ref={sectionRef}
       className="mx-auto grid max-w-[1200px] items-center gap-12 px-6 pb-10 pt-14 md:grid-cols-[1.05fr_0.95fr] md:px-8 md:pt-20"
     >
-      {/* Gallery */}
-      <div className="pdp-gallery flex gap-5">
-        <div className="flex flex-col gap-3 pt-2">
-          {thumbs.map((t, i) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setActiveThumb(i)}
-              title={t}
-              className="relative flex h-[62px] w-[62px] items-center justify-center overflow-hidden rounded-sm bg-surface transition-[border-color] duration-150"
-              style={{
-                border: `1px solid ${
-                  activeThumb === i
-                    ? 'var(--color-crimson)'
-                    : 'var(--color-border)'
-                }`,
-                boxShadow:
-                  activeThumb === i
-                    ? '0 0 0 1px var(--color-crimson)'
-                    : 'none',
-              }}
-              aria-label={`View ${t}`}
-              aria-pressed={activeThumb === i}
-            >
-              <div
-                aria-hidden
-                className="absolute inset-0 rounded-sm"
-                style={{background: 'var(--glow-hero)', opacity: 0.5}}
-              />
-              <div
-                aria-hidden
-                style={{
-                  width: 12,
-                  height: 30,
-                  borderRadius: 3,
-                  background: 'linear-gradient(180deg,#232327,#0d0d0f)',
-                  border: '1px solid var(--color-border-strong)',
-                  position: 'relative',
-                }}
-              />
-            </button>
-          ))}
-        </div>
-        <div
-          className="relative flex flex-1 items-center justify-center overflow-hidden rounded-xl border border-border bg-surface"
-          style={{minHeight: 460}}
-        >
-          <div aria-hidden className="pointer-events-none absolute inset-0 opacity-70">
-            <LightRays origin="top" intensity={0.45} />
-          </div>
-          {imageUrl ? (
-            <BlendedImage
-              src={imageUrl}
-              sizes="(min-width: 768px) 50vw, 100vw"
-              className="relative h-auto w-full max-w-[260px] object-contain"
-              alt={imageAlt || title}
-              width={520}
-              height={693}
-              loading="eager"
-              fetchPriority="high"
-            />
-          ) : (
-            <Bottle width={150} />
-          )}
-          <span
-            className="t-mono absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap text-[11px] uppercase tracking-[0.14em] text-fg4"
-          >
-            {imageUrl
-              ? thumbs[activeThumb]
-              : `Product photography placeholder · ${thumbs[activeThumb]}`}
-          </span>
-        </div>
-      </div>
+      <PdpGallery
+        gender={(gender as Gender) ?? 'male'}
+        fallbackImageUrl={imageUrl}
+        fallbackImageAlt={imageAlt}
+        productTitle={title}
+      />
 
       {/* Summary */}
       <div className="flex flex-col gap-5">

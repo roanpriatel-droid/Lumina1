@@ -165,7 +165,7 @@ export default function ProductRoute() {
           currentGender={gender}
         />
         <ComplianceFooter product={lumina} />
-        <StickyAddToCart productName={lumina.name} />
+        <StickyAddToCart productName={lumina.name} gender={gender} />
 
         <Analytics.ProductView
           data={{

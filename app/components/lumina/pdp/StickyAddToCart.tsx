@@ -1,16 +1,30 @@
 import {useEffect, useState} from 'react';
+import {Image} from '@shopify/hydrogen';
 import type {OptimisticCartLineInput} from '@shopify/hydrogen';
 import {AddToCartButton} from '~/components/AddToCartButton';
 import {useAside} from '~/components/Aside';
+import {BlendedImage} from '~/components/lumina/BlendedImage';
+import {getStickyThumb} from '~/components/lumina/pdp/PdpGallery';
 import {usePurchase} from './PurchaseContext';
 import {money} from '~/lib/savings';
+import type {Gender} from '~/lib/product-assets';
 
 /**
  * Bottom-fixed Add to Cart bar that appears after the user scrolls past
  * the hero and hides as they reach the footer. Reads the live tier
- * selection + savings breakdown from PurchaseContext.
+ * selection + savings breakdown from PurchaseContext. Carries a small
+ * product thumbnail (cutout preferred, hero fallback) at the left so
+ * the bar reads as a continuation of the PDP gallery.
  */
-export function StickyAddToCart({productName}: {productName: string}) {
+export function StickyAddToCart({
+  productName,
+  gender,
+}: {
+  productName: string;
+  /** Optional — when provided, renders the bottle thumbnail at the
+   *  left of the bar. Falls back to a text-only layout. */
+  gender?: Gender;
+}) {
   const {selected, option, price, breakdown} = usePurchase();
   const {open} = useAside();
   const [visible, setVisible] = useState(false);
@@ -86,6 +100,7 @@ export function StickyAddToCart({productName}: {productName: string}) {
       aria-hidden={!visible}
     >
       <div className="mx-auto flex max-w-[1200px] flex-wrap items-center gap-4 px-6 py-3.5 md:flex-nowrap md:gap-6 md:px-8">
+        {gender && <StickyThumb gender={gender} alt={productName} />}
         <div className="flex min-w-0 flex-col gap-1">
           <span className="truncate text-[15px] font-medium leading-tight text-fg1">
             {productName}
@@ -115,6 +130,37 @@ export function StickyAddToCart({productName}: {productName: string}) {
           </AddToCartButton>
         </div>
       </div>
+    </div>
+  );
+}
+
+function StickyThumb({gender, alt}: {gender: Gender; alt: string}) {
+  const {src, isCutout} = getStickyThumb(gender);
+  if (!src) return null;
+  return (
+    <div
+      className="glow-pedestal relative h-[44px] w-[36px] flex-none overflow-hidden rounded-sm border border-border-strong"
+      aria-hidden
+    >
+      {isCutout ? (
+        <Image
+          src={src}
+          alt={alt}
+          width={72}
+          height={88}
+          loading="lazy"
+          className="relative h-full w-auto object-contain"
+        />
+      ) : (
+        <BlendedImage
+          src={src}
+          alt={alt}
+          width={72}
+          height={88}
+          loading="lazy"
+          className="relative h-full w-auto object-contain"
+        />
+      )}
     </div>
   );
 }
