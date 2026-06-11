@@ -1,8 +1,10 @@
 import {Link} from 'react-router';
+import {Image} from '@shopify/hydrogen';
 import {ArrowUpRight, Crown} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {Bottle} from '~/components/lumina/Bottle';
 import {BlendedImage} from '~/components/lumina/BlendedImage';
+import {getProductImage, getHeroImage} from '~/lib/product-assets';
 import {
   computeSavings,
   entriesForGender,
@@ -106,20 +108,8 @@ function OppositeFormulaCard({
         className="pointer-events-none absolute inset-0"
         style={{background: 'var(--glow-hero)', opacity: 0.22}}
       />
-      <div className="relative flex h-32 w-20 flex-none items-center justify-center">
-        {opposite.imageUrl ? (
-          <BlendedImage
-            src={opposite.imageUrl}
-            alt={opposite.imageAlt ?? opposite.title}
-            sizes="120px"
-            className="h-full w-auto object-contain"
-            loading="lazy"
-            width={140}
-            height={186}
-          />
-        ) : (
-          <Bottle width={70} />
-        )}
+      <div className="glow-pedestal relative flex h-32 w-20 flex-none items-center justify-center overflow-hidden rounded-md">
+        <OppositeBottle opposite={opposite} />
       </div>
       <div className="relative flex flex-1 flex-col gap-2">
         <Eyebrow>For the other half</Eyebrow>
@@ -141,6 +131,53 @@ function OppositeFormulaCard({
       </div>
     </Link>
   );
+}
+
+function OppositeBottle({opposite}: {opposite: LuminaProductEntry}) {
+  if (opposite.gender === 'male' || opposite.gender === 'female') {
+    const cutout = getProductImage(opposite.gender, 'cutout');
+    if (cutout) {
+      return (
+        <Image
+          src={cutout}
+          alt={opposite.imageAlt ?? opposite.title}
+          sizes="120px"
+          className="relative h-full w-auto object-contain"
+          loading="lazy"
+          width={140}
+          height={186}
+        />
+      );
+    }
+    const hero = getHeroImage(opposite.gender);
+    if (hero.src) {
+      return (
+        <BlendedImage
+          src={hero.src}
+          alt={opposite.imageAlt ?? opposite.title}
+          sizes="120px"
+          className="relative h-full w-auto object-contain"
+          loading="lazy"
+          width={140}
+          height={186}
+        />
+      );
+    }
+  }
+  if (opposite.imageUrl) {
+    return (
+      <BlendedImage
+        src={opposite.imageUrl}
+        alt={opposite.imageAlt ?? opposite.title}
+        sizes="120px"
+        className="relative h-full w-auto object-contain"
+        loading="lazy"
+        width={140}
+        height={186}
+      />
+    );
+  }
+  return <Bottle width={70} />;
 }
 
 function UpgradeCard({

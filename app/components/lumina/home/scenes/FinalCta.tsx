@@ -3,6 +3,7 @@ import {useGSAP} from '@gsap/react';
 import {Link} from 'react-router';
 import {ArrowUpRight, ShieldCheck} from 'lucide-react';
 import {ProductVisual} from '~/components/ProductVisual';
+import {BlendedImage} from '~/components/lumina/BlendedImage';
 import {Button} from '~/components/lumina/Button';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {SplitLines} from '~/components/lumina/SplitLines';
@@ -11,6 +12,7 @@ import {TopographicLines} from '~/components/graphics/TopographicLines';
 import {MonoWatermark} from '~/components/graphics/MonoWatermark';
 import {fadeRise, gsap, prefersReducedMotion, textReveal} from '~/lib/motion';
 import {findBaseline, money, type LuminaProductEntry} from '~/lib/savings';
+import {getHeroImage} from '~/lib/product-assets';
 
 /**
  * Scene 10 — Final CTA
@@ -28,6 +30,8 @@ export function FinalCta({
   const ref = useRef<HTMLElement>(null);
   const male = findBaseline(entries, 'male');
   const female = findBaseline(entries, 'female');
+  const maleHero = getHeroImage('male');
+  const femaleHero = getHeroImage('female');
 
   useGSAP(
     () => {
@@ -62,6 +66,24 @@ export function FinalCta({
             },
           });
         }
+
+        // Flanking hero shots rise into frame on scroll, staggered
+        // so the left bottle leads slightly.
+        const flanks = ref.current?.querySelectorAll('.final-flank');
+        if (flanks && flanks.length) {
+          gsap.set(flanks, {opacity: 0, y: 80});
+          gsap.to(flanks, {
+            opacity: 1,
+            y: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            stagger: 0.18,
+            scrollTrigger: {
+              trigger: ref.current,
+              start: 'top 70%',
+            },
+          });
+        }
       }
     },
     {scope: ref},
@@ -90,20 +112,56 @@ export function FinalCta({
       <MonoWatermark position="center" size={520} opacity={0.04} style={{top: '15%'}}>
         BEGIN
       </MonoWatermark>
-      <div className="relative mx-auto flex max-w-[1200px] flex-col items-center px-6 py-32 text-center md:px-10 md:py-44">
-        <div className="mb-8 inline-block">
-          <ProductVisual
-            gender="female"
-            width={100}
-            pedestal={2}
-            reflection
-            rays={false}
-            idleFloat
-            mouseTilt={false}
-            parallax={0}
-            fallbackTitle="Lumina formula"
+      {/* Flanking hero shots — only render if the real photographs
+          are present on disk. They rise on scroll with stagger. */}
+      {maleHero.src && (
+        <div
+          aria-hidden
+          className="final-flank pointer-events-none absolute left-[3vw] top-1/2 hidden -translate-y-1/2 md:block"
+          style={{width: 'clamp(170px, 16vw, 240px)', willChange: 'opacity, transform'}}
+        >
+          <BlendedImage
+            src={maleHero.src}
+            alt=""
+            width={480}
+            height={640}
+            loading="lazy"
+            className="h-auto w-full"
           />
         </div>
+      )}
+      {femaleHero.src && (
+        <div
+          aria-hidden
+          className="final-flank pointer-events-none absolute right-[3vw] top-1/2 hidden -translate-y-1/2 md:block"
+          style={{width: 'clamp(170px, 16vw, 240px)', willChange: 'opacity, transform'}}
+        >
+          <BlendedImage
+            src={femaleHero.src}
+            alt=""
+            width={480}
+            height={640}
+            loading="lazy"
+            className="h-auto w-full"
+          />
+        </div>
+      )}
+      <div className="relative mx-auto flex max-w-[1200px] flex-col items-center px-6 py-32 text-center md:px-10 md:py-44">
+        {!(maleHero.src && femaleHero.src) && (
+          <div className="mb-8 inline-block">
+            <ProductVisual
+              gender="female"
+              width={100}
+              pedestal={2}
+              reflection
+              rays={false}
+              idleFloat
+              mouseTilt={false}
+              parallax={0}
+              fallbackTitle="Lumina formula"
+            />
+          </div>
+        )}
         <Eyebrow style={{color: 'var(--color-crimson-hi)'}}>
           The protocol begins
         </Eyebrow>

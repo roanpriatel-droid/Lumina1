@@ -4,6 +4,7 @@ import {FlaskConical, ListChecks, ShieldCheck} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {HexLattice} from '~/components/graphics/Molecular';
 import {gsap, prefersReducedMotion} from '~/lib/motion';
+import {getProductImage} from '~/lib/product-assets';
 
 /**
  * Scene 5 — The Standard
@@ -63,6 +64,25 @@ export function TheStandard() {
           invalidateOnRefresh: true,
         },
       });
+
+      // Panel-1 + panel-3 photographic backdrops drift horizontally
+      // at 88% of the track speed (i.e. 12% slower) — the photograph
+      // appears to sit behind the type, creating depth without
+      // breaking the pinned horizontal rhythm.
+      const backdrops = scene.querySelectorAll('.standard-panel-bg');
+      backdrops.forEach((bg) => {
+        gsap.to(bg, {
+          x: () => totalWidth * 0.12,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: scene,
+            start: 'top top',
+            end: () => `+=${totalWidth + window.innerHeight * 0.4}`,
+            scrub: 1,
+            invalidateOnRefresh: true,
+          },
+        });
+      });
     },
     {scope: ref},
   );
@@ -101,21 +121,54 @@ export function TheStandard() {
               </p>
             </div>
           </div>
-          {PANELS.map(({label, Icon, headline, body}, idx) => (
+          {PANELS.map(({label, Icon, headline, body}, idx) => {
+            // Panel backdrops: male-rock behind panel 1 (idx 0),
+            // female-smoke behind panel 3 (idx 2).
+            const backdropSrc =
+              idx === 0
+                ? getProductImage('male', 'rock') ??
+                  getProductImage('male', 'hero')
+                : idx === 2
+                  ? getProductImage('female', 'smoke') ??
+                    getProductImage('female', 'hero')
+                  : null;
+            return (
             <article
               key={label}
-              className={`standard-panel ${idx === 1 ? 'glow-frame glow-frame-base glow-frame-rest mx-6 rounded-2xl md:mx-10' : 'border-l border-border'} relative flex flex-shrink-0 flex-col justify-center px-10 py-24 md:px-16 md:py-32`}
+              className={`standard-panel ${idx === 1 ? 'glow-frame glow-frame-base glow-frame-rest mx-6 rounded-2xl md:mx-10' : 'border-l border-border'} relative isolate flex flex-shrink-0 flex-col justify-center overflow-hidden px-10 py-24 md:px-16 md:py-32`}
               style={{width: '70vw', minWidth: 420}}
             >
+              {backdropSrc && (
+                <div
+                  aria-hidden
+                  className="standard-panel-bg pointer-events-none absolute inset-0 z-0"
+                  style={{
+                    backgroundImage: `url(${backdropSrc})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    willChange: 'transform',
+                  }}
+                />
+              )}
+              {/* Edge-darken so type stays readable over the
+                  photograph. 70% black at the corners. */}
               <div
                 aria-hidden
-                className="pointer-events-none absolute inset-0"
+                className="pointer-events-none absolute inset-0 z-[1]"
+                style={{
+                  background:
+                    'radial-gradient(ellipse 110% 80% at 50% 50%, transparent 30%, rgba(11,11,12,0.72) 90%)',
+                }}
+              />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 z-[1]"
                 style={{
                   background:
                     'radial-gradient(closest-side at 0% 50%, rgba(209,26,42,0.15), transparent 65%)',
                 }}
               />
-              <div className="relative flex flex-col gap-6">
+              <div className="relative z-[2] flex flex-col gap-6">
                 <div className="flex items-center gap-3">
                   <div
                     className="inline-flex h-12 w-12 items-center justify-center rounded-lg border border-border"
@@ -149,7 +202,8 @@ export function TheStandard() {
                 </p>
               </div>
             </article>
-          ))}
+            );
+          })}
           <div className="flex flex-shrink-0 px-20" aria-hidden style={{width: '15vw'}} />
         </div>
       </div>

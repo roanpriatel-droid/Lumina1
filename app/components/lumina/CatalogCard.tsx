@@ -2,6 +2,7 @@ import {Link} from 'react-router';
 import {ArrowUpRight, Crown, Award} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {GlowPedestal} from '~/components/lumina/GlowPedestal';
+import {getProductImage} from '~/lib/product-assets';
 import {
   money,
   moneyCents,
@@ -65,7 +66,7 @@ export function CatalogCard({
       )}
 
       <GlowPedestal
-        imageUrl={product.imageUrl}
+        imageUrl={resolveCardImage(product)}
         imageAlt={product.imageAlt}
         fallbackTitle={product.title}
         sizes="(min-width: 768px) 25vw, 50vw"
@@ -118,5 +119,24 @@ export function CatalogCard({
         </div>
       </div>
     </Link>
+  );
+}
+
+/**
+ * Prefer the real photograph (cutout > hero) over the Shopify CDN
+ * image when one exists in app/assets/products/. Falls back to the
+ * Shopify image when no real asset is present for the gender. The
+ * GlowPedestal blend resolver respects the `cutout` token in the
+ * resulting filename, so cutouts automatically skip the screen blend.
+ */
+function resolveCardImage(product: LuminaProductEntry): string | null {
+  if (product.gender !== 'male' && product.gender !== 'female') {
+    return product.imageUrl ?? null;
+  }
+  return (
+    getProductImage(product.gender, 'cutout') ??
+    getProductImage(product.gender, 'hero') ??
+    product.imageUrl ??
+    null
   );
 }

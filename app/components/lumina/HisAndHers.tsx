@@ -1,8 +1,10 @@
 import {Link} from 'react-router';
+import {Image} from '@shopify/hydrogen';
 import {Heart, ArrowUpRight} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {Bottle} from '~/components/lumina/Bottle';
 import {BlendedImage} from '~/components/lumina/BlendedImage';
+import {getProductImage, getHeroImage} from '~/lib/product-assets';
 import {
   findBaseline,
   money,
@@ -112,20 +114,8 @@ function PairCard({entry, label}: {entry: LuminaProductEntry; label: 'His' | 'He
       prefetch="intent"
       className="group relative flex items-center gap-5 px-7 py-7 transition-colors hover:bg-surface md:px-9 md:py-9"
     >
-      <div className="flex h-24 w-16 flex-none items-center justify-center">
-        {entry.imageUrl ? (
-          <BlendedImage
-            src={entry.imageUrl}
-            alt={entry.imageAlt ?? entry.title}
-            sizes="100px"
-            className="h-full w-auto object-contain"
-            loading="lazy"
-            width={120}
-            height={160}
-          />
-        ) : (
-          <Bottle width={56} />
-        )}
+      <div className="glow-pedestal relative flex h-24 w-16 flex-none items-center justify-center overflow-hidden rounded-md">
+        <PairBottle entry={entry} />
       </div>
       <div className="flex flex-col gap-1.5">
         <Eyebrow style={{color: 'var(--color-crimson-hi)'}}>{label}</Eyebrow>
@@ -149,4 +139,51 @@ function PairCard({entry, label}: {entry: LuminaProductEntry; label: 'His' | 'He
       </div>
     </Link>
   );
+}
+
+function PairBottle({entry}: {entry: LuminaProductEntry}) {
+  if (entry.gender === 'male' || entry.gender === 'female') {
+    const cutout = getProductImage(entry.gender, 'cutout');
+    if (cutout) {
+      return (
+        <Image
+          src={cutout}
+          alt={entry.imageAlt ?? entry.title}
+          sizes="100px"
+          className="relative h-full w-auto object-contain"
+          loading="lazy"
+          width={120}
+          height={160}
+        />
+      );
+    }
+    const hero = getHeroImage(entry.gender);
+    if (hero.src) {
+      return (
+        <BlendedImage
+          src={hero.src}
+          alt={entry.imageAlt ?? entry.title}
+          sizes="100px"
+          className="relative h-full w-auto object-contain"
+          loading="lazy"
+          width={120}
+          height={160}
+        />
+      );
+    }
+  }
+  if (entry.imageUrl) {
+    return (
+      <BlendedImage
+        src={entry.imageUrl}
+        alt={entry.imageAlt ?? entry.title}
+        sizes="100px"
+        className="relative h-full w-auto object-contain"
+        loading="lazy"
+        width={120}
+        height={160}
+      />
+    );
+  }
+  return <Bottle width={56} />;
 }
