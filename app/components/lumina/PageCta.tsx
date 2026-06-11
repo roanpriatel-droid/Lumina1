@@ -70,11 +70,7 @@ function PdpCard({
     <Link
       to={`/products/${product.handle}`}
       prefetch="intent"
-      className="group relative flex gap-5 overflow-hidden rounded-xl border border-crimson bg-surface px-6 py-7 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 md:px-8 md:py-8"
-      style={{
-        boxShadow:
-          accent === 'ranked' ? 'var(--shadow-accent)' : 'var(--shadow-md)',
-      }}
+      className="glow-frame glow-frame-base glow-frame-active group relative flex gap-5 overflow-hidden rounded-xl px-6 py-7 md:px-8 md:py-8"
     >
       <div
         aria-hidden

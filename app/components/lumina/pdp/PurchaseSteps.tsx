@@ -116,19 +116,16 @@ function TierCard({
       ? 'Best value'
       : null;
 
+  const tierClass = selected
+    ? 'glow-frame glow-frame-base glow-frame-active'
+    : 'tier-card-idle';
   return (
     <button
       type="button"
       onClick={onSelect}
       aria-pressed={selected}
       aria-label={`${entry.months}-month supply, ${moneyCents(breakdown.perBottle)} per bottle`}
-      className="relative flex cursor-pointer flex-col gap-1.5 rounded-lg bg-surface px-4 pb-4 pt-[18px] text-left transition-[border-color,box-shadow] duration-150"
-      style={{
-        border: `1px solid ${selected ? 'var(--color-crimson)' : 'var(--color-border)'}`,
-        boxShadow: selected
-          ? '0 0 0 1px var(--color-crimson), var(--shadow-accent)'
-          : 'none',
-      }}
+      className={`${tierClass} relative flex cursor-pointer flex-col gap-1.5 rounded-lg px-4 pb-4 pt-[18px] text-left`}
     >
       {ribbon && (
         <span
@@ -191,17 +188,16 @@ function OptionCard({
   meta: string;
   popular?: boolean;
 }) {
+  const optionClass = selected
+    ? 'glow-frame glow-frame-base glow-frame-active'
+    : 'tier-card-idle';
   return (
     <button
       type="button"
       onClick={onSelect}
       aria-pressed={selected}
       data-option={id}
-      className="relative flex flex-1 cursor-pointer flex-col gap-2 rounded-md bg-surface px-5 py-[18px] text-left transition-[border-color,box-shadow] duration-150"
-      style={{
-        border: `1px solid ${selected ? 'var(--color-crimson)' : 'var(--color-border)'}`,
-        boxShadow: selected ? '0 0 0 1px var(--color-crimson)' : 'none',
-      }}
+      className={`${optionClass} relative flex flex-1 cursor-pointer flex-col gap-2 rounded-md px-5 py-[18px] text-left`}
     >
       {popular && (
         <span

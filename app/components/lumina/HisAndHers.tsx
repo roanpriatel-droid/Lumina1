@@ -55,10 +55,7 @@ export function HisAndHers({
           you build it with someone.
         </p>
 
-        <div
-          className="relative grid gap-0 overflow-hidden rounded-2xl border border-crimson md:grid-cols-[1fr_auto_1fr]"
-          style={{boxShadow: 'var(--shadow-accent)'}}
-        >
+        <div className="glow-frame glow-frame-base glow-frame-active relative grid gap-0 overflow-hidden rounded-2xl md:grid-cols-[1fr_auto_1fr]">
           <div
             aria-hidden
             className="pointer-events-none absolute inset-0"

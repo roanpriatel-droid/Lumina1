@@ -91,7 +91,7 @@ export function ReviewsPlaceholder({product}: ReviewsPlaceholderProps) {
           {themes.map((theme) => (
             <div
               key={theme.title}
-              className="rounded-xl border border-border bg-surface px-7 py-7"
+              className="glow-frame-on-hover-rest rounded-xl border border-border bg-surface px-7 py-7"
             >
               <StarRating size={15} label="5 of 5 stars" />
               <h3 className="mt-4 text-[18px] font-medium leading-snug text-fg1">

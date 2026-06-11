@@ -66,7 +66,7 @@ export function EmailCapture({
             }}
           >
             <label
-              className="relative flex flex-1 items-center rounded-pill border border-border bg-black px-5"
+              className="lumina-email-capture relative flex flex-1 items-center rounded-pill border border-border bg-black px-5"
               htmlFor="email-capture-input"
             >
               <Mail size={16} strokeWidth={2} className="mr-2 text-fg4" />

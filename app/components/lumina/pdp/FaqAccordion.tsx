@@ -25,7 +25,7 @@ export function FaqAccordion({faqs}: {faqs: LuminaFaq[]}) {
             return (
               <div
                 key={faq.q}
-                className="border-b border-border"
+                className="glow-frame-on-hover-rest border-b border-border"
                 style={{borderTop: i === 0 ? '1px solid var(--color-border)' : 'none'}}
               >
                 <button

@@ -12,7 +12,7 @@ export function AnnouncementBar() {
   ];
   return (
     <div
-      className="border-b border-border bg-black"
+      className="lumina-announcement-bar relative border-b border-border bg-black"
       role="region"
       aria-label="Site announcement"
     >

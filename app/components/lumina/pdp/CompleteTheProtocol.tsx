@@ -162,8 +162,7 @@ function UpgradeCard({
     <Link
       to={`/products/${to.handle}`}
       prefetch="intent"
-      className="group relative flex flex-col gap-4 overflow-hidden rounded-xl border border-crimson bg-black px-6 py-7 transition-transform duration-200 hover:-translate-y-0.5 md:px-8 md:py-8"
-      style={{boxShadow: 'var(--shadow-accent)'}}
+      className="glow-frame glow-frame-base glow-frame-active group relative flex flex-col gap-4 overflow-hidden rounded-xl px-6 py-7 md:px-8 md:py-8"
     >
       <div
         aria-hidden

@@ -40,8 +40,8 @@ export function CartSummary({cart, layout}: CartSummaryProps) {
 
   const wrap =
     layout === 'aside'
-      ? 'flex-none border-t border-border bg-bg-elev px-6 py-5'
-      : 'mt-8 rounded-lg border border-border bg-bg-elev p-6';
+      ? 'glow-frame-edge-top relative flex-none border-t border-border bg-bg-elev px-6 py-5'
+      : 'glow-frame glow-frame-base glow-frame-rest mt-8 rounded-lg p-6';
 
   return (
     <div aria-labelledby={summaryId} className={wrap}>

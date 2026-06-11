@@ -60,7 +60,7 @@ export function StickyAddToCart({productName}: {productName: string}) {
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-30 border-t border-border transition-transform duration-[320ms] ease-[cubic-bezier(.4,0,.2,1)]"
+      className="glow-frame-edge-top fixed inset-x-0 bottom-0 z-30 border-t border-border transition-transform duration-[320ms] ease-[cubic-bezier(.4,0,.2,1)]"
       style={{
         background: 'rgba(11,11,12,0.9)',
         backdropFilter: 'blur(14px)',
