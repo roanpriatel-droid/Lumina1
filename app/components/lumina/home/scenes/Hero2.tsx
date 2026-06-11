@@ -101,11 +101,15 @@ export function Hero2() {
         );
 
       // 2) Pinned scroll handoff — composed after the load-in resolves.
+      // Mobile gets a shorter pin so the user isn't held on the hero
+      // through more than a viewport-and-change of scroll.
+      const isNarrow = window.matchMedia('(max-width: 480px)').matches;
+      const pinEnd = isNarrow ? '+=120%' : '+=180%';
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: scene,
           start: 'top top',
-          end: '+=180%',
+          end: pinEnd,
           pin: true,
           pinSpacing: true,
           scrub: 0.8,

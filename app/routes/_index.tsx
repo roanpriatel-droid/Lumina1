@@ -15,6 +15,26 @@ import {FaqTeaser} from '~/components/lumina/home/scenes/FaqTeaser';
 import {FinalCta} from '~/components/lumina/home/scenes/FinalCta';
 import {entriesForGender} from '~/lib/savings';
 import {loadLuminaCatalog} from '~/lib/lumina-catalog.server';
+import {getHeroImage} from '~/lib/product-assets';
+
+/**
+ * Preload the male hero photograph — it's the very first image the
+ * viewer sees and gates the homepage load-in timeline. Only emits a
+ * preload tag when the asset is present on disk; absence is handled
+ * by the fallback chain inside ProductVisual.
+ */
+export const links: Route.LinksFunction = () => {
+  const heroSrc = getHeroImage('male').src;
+  if (!heroSrc) return [];
+  return [
+    {
+      rel: 'preload',
+      as: 'image',
+      href: heroSrc,
+      fetchpriority: 'high',
+    },
+  ];
+};
 
 export const meta: Route.MetaFunction = () => {
   return [

@@ -54,6 +54,10 @@ export function HisHersSplit({
   useGSAP(
     () => {
       if (prefersReducedMotion()) return;
+      // Ken Burns drift is a desktop affordance — on small viewports
+      // it competes with already-busy mobile scroll motion and can
+      // tax the GPU. Skip below 600px wide.
+      if (window.matchMedia('(max-width: 600px)').matches) return;
       const hisBg = ref.current?.querySelector('.his-bg');
       const hersBg = ref.current?.querySelector('.hers-bg');
       if (!hisBg || !hersBg) return;

@@ -51,13 +51,18 @@ export function TheStandard() {
       const totalWidth = track.scrollWidth - window.innerWidth;
       if (totalWidth <= 0) return;
 
+      // Mobile gets a shorter pin so the scroll commitment stays
+      // proportional to the screen — desktop runs the full track +
+      // 40% buffer, mobile cuts that buffer.
+      const isNarrow = window.matchMedia('(max-width: 480px)').matches;
+      const tailBuffer = isNarrow ? 0.1 : 0.4;
       gsap.to(track, {
         x: -totalWidth,
         ease: 'none',
         scrollTrigger: {
           trigger: scene,
           start: 'top top',
-          end: () => `+=${totalWidth + window.innerHeight * 0.4}`,
+          end: () => `+=${totalWidth + window.innerHeight * tailBuffer}`,
           pin: true,
           pinSpacing: true,
           scrub: 1,
@@ -77,7 +82,7 @@ export function TheStandard() {
           scrollTrigger: {
             trigger: scene,
             start: 'top top',
-            end: () => `+=${totalWidth + window.innerHeight * 0.4}`,
+            end: () => `+=${totalWidth + window.innerHeight * tailBuffer}`,
             scrub: 1,
             invalidateOnRefresh: true,
           },
