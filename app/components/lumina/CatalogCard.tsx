@@ -39,7 +39,7 @@ export function CatalogCard({
       to={`/products/${product.handle}`}
       prefetch="intent"
       aria-label={`${product.title} — ${money(breakdown.total)}`}
-      className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-border bg-surface transition-[transform,border-color] duration-200 hover:-translate-y-0.5 hover:border-border-strong"
+      className="lumina-card group relative flex h-full flex-col overflow-hidden rounded-xl"
     >
       {ribbon && (
         <span

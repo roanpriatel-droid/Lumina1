@@ -50,7 +50,7 @@ export function FaqTeaser() {
   return (
     <section
       ref={ref}
-      className="border-t border-border bg-black"
+      className="border-t border-border lumina-bg-2"
     >
       <div className="mx-auto max-w-[1000px] px-6 py-28 md:px-10 md:py-36">
         <Eyebrow className="faq-eyebrow mb-4">Top questions</Eyebrow>

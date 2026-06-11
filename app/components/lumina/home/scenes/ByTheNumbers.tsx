@@ -84,7 +84,7 @@ export function ByTheNumbers() {
   return (
     <section
       ref={ref}
-      className="relative isolate overflow-hidden border-t border-border bg-surface"
+      className="relative isolate overflow-hidden border-t border-border lumina-bg-3"
     >
       <MonoWatermark position="left" size={420} opacity={0.045}>
         BY THE NUMBERS

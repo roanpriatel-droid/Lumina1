@@ -70,7 +70,7 @@ export function FinalCta({
   return (
     <section
       ref={ref}
-      className="relative isolate overflow-hidden border-t border-border bg-black"
+      className="relative isolate overflow-hidden border-t border-border lumina-bg-3"
     >
       <div
         aria-hidden

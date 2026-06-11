@@ -40,7 +40,7 @@ export function HisHersSplit({
   return (
     <section
       ref={ref}
-      className="relative isolate overflow-hidden border-t border-border bg-black"
+      className="relative isolate overflow-hidden border-t border-border lumina-bg-3"
       style={{minHeight: '90vh'}}
     >
       <MonoWatermark position="top-right" size={300} opacity={0.04}>

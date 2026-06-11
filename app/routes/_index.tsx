@@ -41,17 +41,29 @@ export default function Homepage() {
   return (
     <div>
       <Hero2 />
+      <hr className="lumina-divider" />
       <Manifesto />
+      <hr className="lumina-divider" />
       <TwoFormulas entries={entries} />
+      <hr className="lumina-divider" />
       <ByTheNumbers />
+      <hr className="lumina-divider" />
       <Constellation />
+      <hr className="lumina-divider" />
       <InsideTheCapsule />
+      <hr className="lumina-divider" />
       <HisHersSplit entries={entries} />
+      <hr className="lumina-divider" />
       <TheStandard />
+      <hr className="lumina-divider" />
       <EightWeekArc />
+      <hr className="lumina-divider" />
       <SupplyLadderScene entries={male} gender="male" />
+      <hr className="lumina-divider" />
       <ProofWall />
+      <hr className="lumina-divider" />
       <FaqTeaser />
+      <hr className="lumina-divider" />
       <FinalCta entries={entries} />
     </div>
   );

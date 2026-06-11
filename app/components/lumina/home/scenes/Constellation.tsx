@@ -133,7 +133,7 @@ export function Constellation() {
   return (
     <section
       ref={ref}
-      className="relative isolate overflow-hidden border-t border-border bg-black"
+      className="relative isolate overflow-hidden border-t border-border lumina-bg-1"
     >
       <div
         aria-hidden

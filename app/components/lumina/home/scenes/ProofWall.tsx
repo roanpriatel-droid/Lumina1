@@ -85,7 +85,7 @@ export function ProofWall() {
   return (
     <section
       ref={ref}
-      className="relative isolate overflow-hidden border-t border-border bg-surface"
+      className="relative isolate overflow-hidden border-t border-border lumina-bg-1"
     >
       <div className="mx-auto max-w-[1320px] px-6 py-28 md:px-10 md:py-36">
         <Eyebrow className="proof-eyebrow mb-4">The proof</Eyebrow>
