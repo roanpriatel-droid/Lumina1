@@ -30,13 +30,40 @@ export function Footer({
       <Suspense>
         <Await resolve={footerPromise}>
           {(footer) => (
-            <footer className="border-t border-border bg-black">
-              <FooterGrid
-                menu={footer?.menu}
-                primaryDomainUrl={header.shop.primaryDomain.url}
-                publicStoreDomain={publicStoreDomain}
+            <footer className="relative isolate overflow-hidden bg-black">
+              {/* Top-edge gradient hairline */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-x-0 top-0 h-px"
+                style={{
+                  background:
+                    'linear-gradient(90deg, transparent 0%, #2A2A2E 50%, transparent 100%)',
+                }}
               />
-              <FooterMeta />
+              {/* Wordmark watermark behind columns */}
+              <div
+                aria-hidden
+                className="t-mono pointer-events-none absolute select-none whitespace-nowrap"
+                style={{
+                  font: '500 clamp(160px, 22vw, 320px)/1 var(--font-mono)',
+                  letterSpacing: '0.42em',
+                  color: 'var(--color-fg1)',
+                  opacity: 0.03,
+                  left: '50%',
+                  bottom: '-8%',
+                  transform: 'translateX(-50%)',
+                }}
+              >
+                LUMINA
+              </div>
+              <div className="relative z-[1]">
+                <FooterGrid
+                  menu={footer?.menu}
+                  primaryDomainUrl={header.shop.primaryDomain.url}
+                  publicStoreDomain={publicStoreDomain}
+                />
+                <FooterMeta />
+              </div>
             </footer>
           )}
         </Await>

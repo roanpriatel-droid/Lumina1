@@ -496,6 +496,122 @@ textarea::placeholder {
 }
 
 /* =========================================================
+   Nav link — crimson underline draws left-to-right on hover.
+   ========================================================= */
+.lumina-navlink {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+.lumina-navlink::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  width: 100%;
+  background: var(--color-crimson);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.lumina-navlink:hover::after,
+.lumina-navlink[aria-current='page']::after {
+  transform: scaleX(1);
+}
+
+/* =========================================================
+   Inputs — matte black with crimson focus ring.
+   ========================================================= */
+.lumina-input {
+  background: #101012;
+  border: 1px solid #232328;
+  color: var(--color-fg1);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  outline: none;
+  transition:
+    border-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.lumina-input:focus,
+.lumina-input:focus-visible {
+  border-color: var(--color-crimson);
+  box-shadow: 0 0 0 2px rgba(209, 26, 42, 0.25);
+}
+.lumina-input::placeholder {
+  color: var(--color-fg4);
+}
+
+/* =========================================================
+   Buttons — primary (crimson with inner highlight + ambient
+   crimson shadow) and secondary (ghost with hairline border).
+   Both use the same shape, padding, and hover/active rhythm.
+   ========================================================= */
+.lumina-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  padding: 14px 28px;
+  border-radius: 9999px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 150ms ease-out,
+    border-color 150ms ease-out,
+    transform 150ms ease-out,
+    box-shadow 200ms ease-out,
+    filter 150ms ease-out;
+}
+.lumina-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.lumina-btn-primary {
+  background: var(--color-crimson);
+  color: #fff;
+  border: 1px solid transparent;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 8px 24px rgba(209, 26, 42, 0.25);
+}
+.lumina-btn-primary:hover {
+  filter: brightness(1.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 12px 32px rgba(209, 26, 42, 0.35);
+}
+.lumina-btn-primary:active {
+  transform: translateY(1px);
+  filter: brightness(0.96);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 4px 12px rgba(209, 26, 42, 0.2);
+}
+
+.lumina-btn-secondary {
+  background: transparent;
+  color: var(--color-fg1);
+  border: 1px solid #2A2A2E;
+}
+.lumina-btn-secondary:hover {
+  border-color: var(--color-crimson);
+  background: rgba(209, 26, 42, 0.06);
+}
+.lumina-btn-secondary:active {
+  transform: translateY(1px);
+}
+
+/* =========================================================
    Marquee — opposite-direction loops for the proof wall.
    ========================================================= */
 @keyframes marquee-left {

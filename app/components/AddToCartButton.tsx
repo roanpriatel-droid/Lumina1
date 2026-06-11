@@ -1,8 +1,7 @@
 import {type FetcherWithComponents} from 'react-router';
 import {CartForm, type OptimisticCartLineInput} from '@shopify/hydrogen';
 
-const baseClass =
-  'inline-flex items-center justify-center gap-2.5 whitespace-nowrap rounded-pill px-7 py-4 text-[15px] font-medium leading-none tracking-[0.01em] transition-[background,transform,box-shadow] duration-150 ease-out bg-crimson text-white shadow-accent hover:bg-crimson-hi active:bg-crimson-lo active:translate-y-px active:shadow-none disabled:cursor-not-allowed disabled:opacity-50';
+const baseClass = 'lumina-btn lumina-btn-primary';
 
 export function AddToCartButton({
   analytics,

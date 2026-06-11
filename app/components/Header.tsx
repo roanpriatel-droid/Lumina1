@@ -74,10 +74,10 @@ export function Header({
     <header
       className="sticky top-0 z-40 transition-[background-color,border-color] duration-300 ease-out"
       style={{
-        background: scrolled ? 'rgba(11,11,12,0.82)' : 'transparent',
-        backdropFilter: scrolled ? 'blur(14px)' : 'none',
-        WebkitBackdropFilter: scrolled ? 'blur(14px)' : 'none',
-        borderBottom: `1px solid ${scrolled ? 'var(--color-border)' : 'transparent'}`,
+        background: scrolled ? 'rgba(11,11,12,0.7)' : 'rgba(11,11,12,0.4)',
+        backdropFilter: 'blur(16px) saturate(140%)',
+        WebkitBackdropFilter: 'blur(16px) saturate(140%)',
+        borderBottom: '1px solid #1A1A1E',
       }}
     >
       <div
@@ -94,15 +94,18 @@ export function Header({
         <HeaderCtas isLoggedIn={isLoggedIn} cart={cart} />
       </div>
 
-      {/* scroll progress hairline */}
+      {/* scroll progress: 2px crimson hairline along the header bottom */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-[-1px] h-px"
+        className="pointer-events-none absolute inset-x-0 bottom-[-2px]"
         style={{
-          background: 'var(--color-crimson)',
+          height: 2,
+          background:
+            'linear-gradient(90deg, var(--color-crimson) 0%, var(--color-crimson-hi) 100%)',
+          boxShadow: '0 0 12px rgba(209,26,42,0.4)',
           transformOrigin: 'left center',
           transform: `scaleX(${progress})`,
-          opacity: scrolled ? 0.95 : 0.4,
+          opacity: scrolled ? 1 : 0.55,
           transition: 'opacity 200ms ease',
         }}
       />
@@ -172,7 +175,7 @@ export function HeaderMenu({viewport}: {viewport: Viewport}) {
             end
             prefetch="intent"
             to={item.to}
-            className="text-sm tracking-[0.02em] text-fg3 hover:text-fg1 transition-colors"
+            className="lumina-navlink text-sm tracking-[0.02em] text-fg3 hover:text-fg1 transition-colors"
           >
             {item.label}
           </NavLink>

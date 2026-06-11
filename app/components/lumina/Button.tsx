@@ -8,15 +8,22 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
 }
 
-const base =
-  'inline-flex items-center justify-center gap-2.5 whitespace-nowrap rounded-pill px-7 py-4 text-[15px] font-medium leading-none tracking-[0.01em] transition-[background,transform,box-shadow,color] duration-150 ease-out disabled:cursor-not-allowed disabled:opacity-50';
-
+/**
+ * The brand's only button system.
+ *
+ *  - primary: crimson with a 1px-inset top highlight + ambient
+ *    rgba(209,26,42,0.25) shadow. Hover brightens 8% and the shadow
+ *    deepens. Active drops 1px.
+ *  - secondary: transparent, 1px #2A2A2E border, hover → crimson border
+ *    with a faint crimson tint.
+ *  - ghost: kept for compatibility with the cart sticky bar; behaves
+ *    like secondary visually now so we don't accidentally introduce a
+ *    third button style anywhere on the site.
+ */
 const variantClasses: Record<Variant, string> = {
-  primary:
-    'bg-crimson text-white shadow-accent hover:bg-crimson-hi active:bg-crimson-lo active:translate-y-px active:shadow-none',
-  secondary:
-    'border border-border-strong bg-transparent text-fg1 hover:border-fg3',
-  ghost: 'bg-surface-2 text-fg1 hover:bg-[#222226]',
+  primary: 'lumina-btn lumina-btn-primary',
+  secondary: 'lumina-btn lumina-btn-secondary',
+  ghost: 'lumina-btn lumina-btn-secondary',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -27,7 +34,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={`${base} ${variantClasses[variant]} ${full ? 'w-full' : ''} ${className}`}
+        className={`${variantClasses[variant]} ${full ? 'w-full' : ''} ${className}`}
         {...rest}
       >
         {children}
