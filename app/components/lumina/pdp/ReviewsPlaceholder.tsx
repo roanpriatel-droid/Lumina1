@@ -1,58 +1,40 @@
+import {Link} from 'react-router';
+import {ArrowUpRight} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {StarRating} from '~/components/lumina/StarRating';
 import type {LuminaProduct} from '~/lib/lumina-data';
+import {REVIEWS, reviewAggregate, type Review} from '~/data/reviews';
 
 interface ReviewsPlaceholderProps {
   product: LuminaProduct;
 }
 
 /**
- * Static review wall placeholder. We intentionally do not show fake reviews
- * with names + photos — instead we render an aggregate band and four
- * representative themes so the page has a "reviews" anchor without faking it.
+ * PDP review band — pulled from the same dataset as /pages/reviews
+ * and the homepage Proof Wall. We render 4 representative reviews
+ * (one pull-quote + three standard) so the section reads like the
+ * surface of a real wall of feedback rather than four hand-tuned
+ * "themes."
  *
- * TODO(reviews): wire to a real review platform (Okendo, Junip, Stamped),
- * pull verified reviews + photos, and replace the static themes.
+ * Aggregate (star avg + verified count) is derived from the dataset
+ * for the matching formula. Until the verified-review platform
+ * lands, this is single source of truth.
  */
 export function ReviewsPlaceholder({product}: ReviewsPlaceholderProps) {
-  const themes: ReadonlyArray<{title: string; body: string}> =
-    product.key === 'male'
-      ? [
-          {
-            title: 'Steady energy through the workday',
-            body: 'Customers most often mention smoother daytime energy and feeling less wrecked after training sessions.',
-          },
-          {
-            title: 'Sleeping like the dose intends',
-            body: 'The nighttime serving and magnesium component come up repeatedly in feedback about restful sleep.',
-          },
-          {
-            title: 'A formula that doesn’t hide its dose',
-            body: 'Long-time supplement users call out the disclosed tribulus, zinc, and magnesium amounts as the reason they switched.',
-          },
-          {
-            title: 'Built for the long run',
-            body: 'Most customers re-up on a subscription after their first 30 days, citing the 8-week consistency message.',
-          },
-        ]
-      : [
-          {
-            title: 'A calmer baseline by week four',
-            body: 'Feedback consistently mentions a steadier emotional baseline alongside the energy lift from the B-complex.',
-          },
-          {
-            title: 'Daytime energy without a stimulant kick',
-            body: 'Customers note the formula doesn’t feel like caffeine — it feels like having the energy they used to have, back.',
-          },
-          {
-            title: 'Honest transparency over the category',
-            body: 'The disclosed botanical blend (every name, total weight) is repeatedly cited as the reason for trust.',
-          },
-          {
-            title: 'A daily habit that stuck',
-            body: 'Two capsules with water; most customers report the routine itself is the easiest part of their day.',
-          },
-        ];
+  const formula = product.key === 'male' ? 'male' : 'female';
+  const aggregate = reviewAggregate(formula);
+
+  // Pick 1 pull-quote + 3 standard cards for this formula. If the
+  // pull-quote isn't there for the formula, fall back to a standard.
+  const formulaReviews = REVIEWS.filter(
+    (r) => r.formula === formula || r.formula === 'both',
+  );
+  const pull =
+    formulaReviews.find((r) => r.kind === 'pull-quote') ?? null;
+  const standards = formulaReviews
+    .filter((r) => r.kind === 'standard' && Boolean(r.headline))
+    .slice(0, 3);
+  const cards: Review[] = pull ? [pull, ...standards] : standards.slice(0, 4);
 
   return (
     <section className="border-t border-border bg-black">
@@ -66,52 +48,97 @@ export function ReviewsPlaceholder({product}: ReviewsPlaceholderProps) {
               letterSpacing: '-0.01em',
             }}
           >
-            Themes from the feedback so far.
+            From customers running the {formula === 'male' ? 'male' : 'female'} formula.
           </h2>
           <div className="flex items-center gap-4 rounded-lg border border-border bg-surface px-5 py-4">
-            <StarRating size={18} label={`${product.rating} of 5`} />
+            <StarRating size={18} label={`${aggregate.average} of 5`} />
             <div className="flex items-baseline gap-2">
               <span
                 className="text-fg1"
                 style={{font: '400 22px/1 var(--font-sans)'}}
               >
-                {product.rating.toFixed(1)}
+                {aggregate.average.toFixed(1)}
               </span>
               <span className="text-xs uppercase tracking-[0.12em] text-fg3">
                 / 5
               </span>
             </div>
             <span className="text-xs uppercase tracking-[0.12em] text-fg3">
-              · {product.reviews.toLocaleString()} customers
+              · {aggregate.count.toLocaleString()} reviewing this formula
             </span>
           </div>
         </div>
 
         <div className="grid gap-5 md:grid-cols-2">
-          {themes.map((theme) => (
-            <div
-              key={theme.title}
-              className="glow-frame-on-hover-rest rounded-xl border border-border bg-surface px-7 py-7"
-            >
-              <StarRating size={15} label="5 of 5 stars" />
-              <h3 className="mt-4 text-[18px] font-medium leading-snug text-fg1">
-                {theme.title}
-              </h3>
-              <p
-                className="m-0 mt-3 text-fg3"
-                style={{font: '400 15px/1.65 var(--font-sans)'}}
-                dangerouslySetInnerHTML={{__html: theme.body}}
-              />
-            </div>
+          {cards.map((review) => (
+            <ReviewCard key={review.id} review={review} />
           ))}
         </div>
 
-        <p className="t-mono mt-7 text-[11px] text-fg4">
-          * Aggregate ratings and themes are representative placeholders while
-          we migrate to a verified-review platform. Individual photographed
-          reviews will replace this section.
-        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+          <Link
+            to="/pages/reviews"
+            prefetch="intent"
+            className="inline-flex items-center gap-2 text-sm font-medium text-crimson-hi underline-offset-4 hover:underline"
+          >
+            See all reviews
+            <ArrowUpRight size={14} strokeWidth={2} />
+          </Link>
+          <p className="t-mono text-[11px] uppercase tracking-[0.14em] text-fg4">
+            * Until the platform migration completes, reviews are sourced from
+            <code className="mx-1 rounded bg-surface px-1 py-0.5">app/data/reviews.ts</code>.
+          </p>
+        </div>
       </div>
     </section>
+  );
+}
+
+function ReviewCard({review}: {review: Review}) {
+  const isPullQuote = review.kind === 'pull-quote';
+  if (isPullQuote) {
+    return (
+      <article className="glow-frame glow-frame-base glow-frame-rest relative flex flex-col gap-4 overflow-hidden rounded-xl px-7 py-7">
+        <span className="text-crimson" aria-hidden>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7 7h4v4H8c0 2 1 3 3 3v2c-3 0-5-2-5-5V7zm8 0h4v4h-3c0 2 1 3 3 3v2c-3 0-5-2-5-5V7z" />
+          </svg>
+        </span>
+        <p
+          className="m-0 italic text-fg1"
+          style={{
+            font: 'italic 300 24px/1.35 var(--font-sans)',
+            letterSpacing: '-0.01em',
+          }}
+        >
+          &ldquo;{review.body}&rdquo;
+        </p>
+        <span className="t-mono text-[11px] uppercase tracking-[0.14em] text-fg4">
+          {review.name} · {review.tier}
+        </span>
+      </article>
+    );
+  }
+
+  return (
+    <div className="glow-frame-on-hover-rest rounded-xl border border-border bg-surface px-7 py-7">
+      <StarRating size={15} label={`${review.rating} of 5 stars`} />
+      {review.headline && (
+        <h3 className="mt-4 text-[18px] font-medium leading-snug text-fg1">
+          {review.headline}
+        </h3>
+      )}
+      <p
+        className="m-0 mt-3 text-fg3"
+        style={{font: '400 15px/1.65 var(--font-sans)'}}
+      >
+        {review.body}
+      </p>
+      <span className="t-mono mt-4 inline-block text-[11px] uppercase tracking-[0.14em] text-fg4">
+        {review.name}
+        {review.region && <span className="text-fg5">, {review.region}</span>} ·{' '}
+        {review.tier}
+      </span>
+    </div>
   );
 }
