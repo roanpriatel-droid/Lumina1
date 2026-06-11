@@ -81,14 +81,9 @@ export function CatalogCard({
           <sup className="text-[10px] text-fg3">™</sup>
         </h3>
 
-        <div className="mt-1 flex items-baseline justify-between border-b border-border pb-3">
-          <span
-            className="text-fg1"
-            style={{font: '300 28px/1 var(--font-sans)'}}
-          >
-            {money(breakdown.total)}
-          </span>
-          <span className="t-mono text-[12px] text-fg3">
+        <div className="mt-1 flex flex-col gap-1 border-b border-border pb-3">
+          <span className="lumina-price">{money(breakdown.total)}</span>
+          <span className="lumina-perunit">
             {moneyCents(breakdown.perBottle)} / bottle
           </span>
         </div>

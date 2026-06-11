@@ -118,9 +118,11 @@ export function Manifesto() {
                 </span>,
               ]}
               as="h2"
-              className="manifesto-headline text-fg1"
+              className="manifesto-headline lumina-h2"
               style={{
-                font: '200 clamp(44px, 7.8vw, 116px)/0.95 var(--font-sans)',
+                fontSize: 'clamp(2.75rem, 7.4vw, 7rem)',
+                fontWeight: 300,
+                lineHeight: 0.95,
                 letterSpacing: '-0.025em',
               }}
             />

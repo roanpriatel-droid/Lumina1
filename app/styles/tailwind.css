@@ -183,19 +183,98 @@ textarea::placeholder {
   color: var(--color-fg1);
 }
 
+/* Kicker label — 0.7rem mono, crimson, leading hairline rule.
+   .eyebrow can be used standalone (no rule) for inline contexts. */
 .eyebrow {
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
   font-weight: 500;
-  font-size: 12px;
+  font-size: 0.7rem;
   line-height: 1;
   text-transform: uppercase;
-  letter-spacing: var(--track-label);
-  color: var(--color-fg3);
+  letter-spacing: 0.25em;
+  color: var(--color-crimson-hi);
+}
+.eyebrow-rule {
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  background: var(--color-crimson);
+  opacity: 0.7;
+  flex: 0 0 auto;
 }
 
 .t-mono {
   font-family: var(--font-mono);
   letter-spacing: 0.02em;
+}
+
+/* =========================================================
+   Typography scale (used to keep "thin and enormous" consistent).
+   ========================================================= */
+.lumina-hero {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: clamp(4rem, 9vw, 8.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--color-fg1);
+  margin: 0;
+}
+
+.lumina-h2 {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.018em;
+  color: var(--color-fg1);
+  margin: 0;
+}
+
+.lumina-h3 {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--color-fg1);
+  margin: 0;
+}
+
+.lumina-body {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  max-width: 38rem;
+  color: #A0A0A5;
+}
+
+/* Mono price + per-bottle helper. Use as a block:
+     <div class="lumina-price-block">
+       <span class="lumina-price">$360</span>
+       <span class="lumina-perunit">$60.00 / bottle</span>
+     </div>
+*/
+.lumina-price {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 1.75rem;
+  letter-spacing: -0.01em;
+  color: var(--color-fg1);
+  line-height: 1;
+  font-feature-settings: 'tnum' 1;
+  display: block;
+}
+.lumina-perunit {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--color-fg3);
+  line-height: 1.2;
+  display: block;
+  margin-top: 4px;
 }
 
 /* =========================================================

@@ -154,11 +154,7 @@ export function Hero2() {
         <SplitLines
           lines={['Vitality,', 'formulated', 'honestly.']}
           as="h1"
-          className="text-fg1"
-          style={{
-            font: '200 clamp(60px, 9vw, 128px)/0.95 var(--font-sans)',
-            letterSpacing: '-0.02em',
-          }}
+          className="lumina-hero"
         />
 
         <div className="hero-footing flex flex-col items-center gap-6">
