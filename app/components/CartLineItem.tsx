@@ -1,6 +1,7 @@
 import type {CartLineUpdateInput} from '@shopify/hydrogen/storefront-api-types';
 import type {CartLayout, LineItemChildrenMap} from '~/components/CartMain';
-import {CartForm, Image, type OptimisticCartLine} from '@shopify/hydrogen';
+import {CartForm, type OptimisticCartLine} from '@shopify/hydrogen';
+import {BlendedImage} from '~/components/lumina/BlendedImage';
 import {useVariantUrl} from '~/lib/variants';
 import {Link, useRouteLoaderData} from 'react-router';
 import {Minus, Plus, X} from 'lucide-react';
@@ -45,16 +46,18 @@ export function CartLineItem({
   return (
     <li className="border-b border-border py-5 last:border-b-0">
       <div className="flex gap-4">
-        {image ? (
-          <div className="h-[70px] w-[54px] flex-none overflow-hidden rounded-sm border border-border-strong bg-surface-2">
-            <Image
+        {image?.url ? (
+          <div
+            className="glow-pedestal h-[70px] w-[54px] flex-none overflow-hidden rounded-sm border border-border-strong"
+            style={{aspectRatio: 'auto'}}
+          >
+            <BlendedImage
               alt={title}
-              aspectRatio="1/1"
-              data={image}
+              src={image.url}
               height={140}
               loading="lazy"
               width={140}
-              className="h-full w-full object-cover"
+              className="relative h-full w-full object-contain"
             />
           </div>
         ) : (

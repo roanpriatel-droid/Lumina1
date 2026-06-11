@@ -1,12 +1,12 @@
 import {useRef, useState} from 'react';
 import {useGSAP} from '@gsap/react';
-import {Image} from '@shopify/hydrogen';
 import {FlaskConical, ShieldCheck, MapPin, Sprout} from 'lucide-react';
 import type {LucideIcon} from 'lucide-react';
 import {Bottle} from '~/components/lumina/Bottle';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {StarRating} from '~/components/lumina/StarRating';
 import {SplitLines} from '~/components/lumina/SplitLines';
+import {BlendedImage} from '~/components/lumina/BlendedImage';
 import {LightRays} from '~/components/graphics/LightRays';
 import {fadeRise, parallaxLayer, textReveal} from '~/lib/motion';
 import type {LuminaProduct} from '~/lib/lumina-data';
@@ -119,11 +119,10 @@ export function PdpHero({title, lumina, imageUrl, imageAlt}: PdpHeroProps) {
             <LightRays origin="top" intensity={0.45} />
           </div>
           {imageUrl ? (
-            <Image
+            <BlendedImage
               src={imageUrl}
-              aspectRatio="3/4"
               sizes="(min-width: 768px) 50vw, 100vw"
-              className="h-auto w-full max-w-[260px] object-contain"
+              className="relative h-auto w-full max-w-[260px] object-contain"
               alt={imageAlt || title}
               width={520}
               height={693}

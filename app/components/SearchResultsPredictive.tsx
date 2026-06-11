@@ -1,5 +1,6 @@
 import {Link, useFetcher, type Fetcher} from 'react-router';
 import {Image, Money} from '@shopify/hydrogen';
+import {BlendedImage} from '~/components/lumina/BlendedImage';
 import React, {useRef, useEffect} from 'react';
 import {
   getEmptyPredictiveSearchResult,
@@ -219,12 +220,15 @@ function SearchResultsPredictiveProducts({
             <li className="predictive-search-result-item" key={product.id}>
               <Link to={productUrl} onClick={closeSearch}>
                 {image && (
-                  <Image
-                    alt={image.altText ?? ''}
-                    src={image.url}
-                    width={50}
-                    height={50}
-                  />
+                  <div className="glow-pedestal" style={{aspectRatio: '1/1', width: 50}}>
+                    <BlendedImage
+                      alt={image.altText ?? ''}
+                      src={image.url}
+                      width={50}
+                      height={50}
+                      className="relative h-full w-full object-contain"
+                    />
+                  </div>
                 )}
                 <div>
                   <p>{product.title}</p>

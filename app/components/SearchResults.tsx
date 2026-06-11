@@ -1,6 +1,7 @@
 import {Link} from 'react-router';
-import {Image, Money, Pagination} from '@shopify/hydrogen';
+import {Money, Pagination} from '@shopify/hydrogen';
 import {urlWithTrackingParams, type RegularSearchReturn} from '~/lib/search';
+import {BlendedImage} from '~/components/lumina/BlendedImage';
 
 type SearchItems = RegularSearchReturn['result']['items'];
 type PartialSearchResult<ItemType extends keyof SearchItems> = Pick<
@@ -119,8 +120,19 @@ function SearchResultsProducts({
             return (
               <div className="search-results-item" key={product.id}>
                 <Link prefetch="intent" to={productUrl}>
-                  {image && (
-                    <Image data={image} alt={product.title} width={50} />
+                  {image?.url && (
+                    <div
+                      className="glow-pedestal"
+                      style={{aspectRatio: '1/1', width: 50}}
+                    >
+                      <BlendedImage
+                        src={image.url}
+                        alt={product.title}
+                        width={50}
+                        height={50}
+                        className="relative h-full w-full object-contain"
+                      />
+                    </div>
                   )}
                   <div>
                     <p>{product.title}</p>

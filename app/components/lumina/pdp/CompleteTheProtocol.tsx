@@ -1,8 +1,8 @@
 import {Link} from 'react-router';
-import {Image} from '@shopify/hydrogen';
 import {ArrowUpRight, Crown} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {Bottle} from '~/components/lumina/Bottle';
+import {BlendedImage} from '~/components/lumina/BlendedImage';
 import {
   computeSavings,
   entriesForGender,
@@ -108,7 +108,7 @@ function OppositeFormulaCard({
       />
       <div className="relative flex h-32 w-20 flex-none items-center justify-center">
         {opposite.imageUrl ? (
-          <Image
+          <BlendedImage
             src={opposite.imageUrl}
             alt={opposite.imageAlt ?? opposite.title}
             sizes="120px"

@@ -1,8 +1,8 @@
 import {Link} from 'react-router';
-import {Image} from '@shopify/hydrogen';
 import {Heart, ArrowUpRight} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {Bottle} from '~/components/lumina/Bottle';
+import {BlendedImage} from '~/components/lumina/BlendedImage';
 import {
   findBaseline,
   money,
@@ -117,7 +117,7 @@ function PairCard({entry, label}: {entry: LuminaProductEntry; label: 'His' | 'He
     >
       <div className="flex h-24 w-16 flex-none items-center justify-center">
         {entry.imageUrl ? (
-          <Image
+          <BlendedImage
             src={entry.imageUrl}
             alt={entry.imageAlt ?? entry.title}
             sizes="100px"
