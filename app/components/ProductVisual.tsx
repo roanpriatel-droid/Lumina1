@@ -2,8 +2,10 @@ import {useEffect, useRef, type CSSProperties} from 'react';
 import {useGSAP} from '@gsap/react';
 import {Image} from '@shopify/hydrogen';
 import {Bottle} from '~/components/lumina/Bottle';
+import {BlendedImage} from '~/components/lumina/BlendedImage';
 import {LightRays} from '~/components/graphics/LightRays';
 import {gsap, parallaxLayer, prefersReducedMotion} from '~/lib/motion';
+import {getHeroImage, type Gender} from '~/lib/product-assets';
 
 /**
  * ProductVisual — the unified bottle renderer for every product visual
@@ -74,6 +76,8 @@ export interface ProductVisualProps {
   priority?: boolean;
   /** Add the 2px crimson "lens" ring around hero product imagery. */
   ring?: boolean;
+  /** Max tilt magnitude in degrees (desktop pointer only). Default 4°. */
+  tiltDeg?: number;
 }
 
 export function ProductVisual({
@@ -92,16 +96,21 @@ export function ProductVisual({
   style,
   priority = false,
   ring = false,
+  tiltDeg = 4,
 }: ProductVisualProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const floatRef = useRef<HTMLDivElement>(null);
 
-  // Resolve the asset URL. A drop-in PNG at /app/assets/<gender>-bottle.*
-  // overrides any imageUrl prop — the explicit local asset is the brand-
-  // owned hero photo and we want it to win across the whole site as soon
-  // as it lands.
-  const localAsset = gender ? getBottleAsset(gender) : null;
-  const resolved = localAsset ?? imageUrl ?? null;
+  // Resolve the asset URL. A drop-in real product photo at
+  // /app/assets/products/<gender>-(cutout|hero).<ext> overrides any
+  // imageUrl prop — the explicit local asset is the brand-owned hero
+  // photo and we want it to win across the whole site as soon as it
+  // lands. Cutouts (transparent PNGs) skip the BlendedImage screen-
+  // blend because they're already composited cleanly on the pedestal.
+  const heroPhoto = gender ? getHeroImage(gender as Gender) : null;
+  const legacyAsset = gender ? getBottleAsset(gender) : null;
+  const resolved = heroPhoto?.src ?? legacyAsset ?? imageUrl ?? null;
+  const useBlend = !heroPhoto?.isCutout;
 
   useGSAP(
     () => {
@@ -140,8 +149,8 @@ export function ProductVisual({
             const cy = rect.top + rect.height / 2;
             const dx = (e.clientX - cx) / (rect.width / 2);
             const dy = (e.clientY - cy) / (rect.height / 2);
-            const rotateY = Math.max(-4, Math.min(4, dx * 4));
-            const rotateX = Math.max(-4, Math.min(4, -dy * 4));
+            const rotateY = Math.max(-tiltDeg, Math.min(tiltDeg, dx * tiltDeg));
+            const rotateX = Math.max(-tiltDeg, Math.min(tiltDeg, -dy * tiltDeg));
             gsap.to(floater, {
               rotateY,
               rotateX,
@@ -236,16 +245,29 @@ export function ProductVisual({
         }}
       >
         {resolved ? (
-          <Image
-            src={resolved}
-            alt={imageAlt ?? fallbackTitle}
-            width={width * 2}
-            height={width * 2.7}
-            loading={priority ? 'eager' : 'lazy'}
-            sizes={`${width}px`}
-            className="relative z-[2] mx-auto h-auto w-full max-w-full object-contain"
-            {...(priority ? {fetchPriority: 'high' as const} : {})}
-          />
+          useBlend ? (
+            <BlendedImage
+              src={resolved}
+              alt={imageAlt ?? fallbackTitle}
+              width={width * 2}
+              height={width * 2.7}
+              loading={priority ? 'eager' : 'lazy'}
+              sizes={`${width}px`}
+              className="relative z-[2] mx-auto h-auto w-full max-w-full object-contain"
+              {...(priority ? {fetchPriority: 'high' as const} : {})}
+            />
+          ) : (
+            <Image
+              src={resolved}
+              alt={imageAlt ?? fallbackTitle}
+              width={width * 2}
+              height={width * 2.7}
+              loading={priority ? 'eager' : 'lazy'}
+              sizes={`${width}px`}
+              className="relative z-[2] mx-auto h-auto w-full max-w-full object-contain"
+              {...(priority ? {fetchPriority: 'high' as const} : {})}
+            />
+          )
         ) : (
           <div className="relative z-[2] mx-auto" style={{width}}>
             <Bottle width={width} />
