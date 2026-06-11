@@ -136,7 +136,7 @@ function ReviewCard({review}: {review: Review}) {
       </p>
       <span className="t-mono mt-4 inline-block text-[11px] uppercase tracking-[0.14em] text-fg4">
         {review.name}
-        {review.region && <span className="text-fg5">, {review.region}</span>} ·{' '}
+        {review.region && <span className="text-fg4">, {review.region}</span>} ·{' '}
         {review.tier}
       </span>
     </div>

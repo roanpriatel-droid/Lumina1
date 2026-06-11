@@ -4,7 +4,7 @@ import {Link} from 'react-router';
 import {ArrowUpRight} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {GlowPedestal} from '~/components/lumina/GlowPedestal';
-import {parallaxLayer, fadeRise} from '~/lib/motion';
+import {parallaxLayer, fadeRise, ignite} from '~/lib/motion';
 import {
   findBaseline,
   money,
@@ -34,6 +34,7 @@ export function TwoFormulas({
       const cards = ref.current?.querySelectorAll('.formula-card');
       fadeRise(eyebrow, {start: 'top 80%'});
       fadeRise(headline, {start: 'top 80%', delay: 0.05});
+      ignite(headline);
 
       if (cards && cards.length === 2) {
         parallaxLayer(cards[0], {
@@ -65,7 +66,9 @@ export function TwoFormulas({
             letterSpacing: '-0.015em',
           }}
         >
-          Two daily formulas. Same standard. Different biology.
+          Two daily formulas.{' '}
+          <span className="ignite-ember">Same standard.</span>{' '}
+          Different biology.
         </h2>
 
         <div className="grid gap-6 md:grid-cols-2 md:gap-8">

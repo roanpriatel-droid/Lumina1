@@ -166,7 +166,10 @@ export function FinalCta({
           The protocol begins
         </Eyebrow>
         <SplitLines
-          lines={['Begin', 'the protocol.']}
+          lines={[
+            'Begin',
+            <span key="proto" className="text-ember">the protocol.</span>,
+          ]}
           as="h2"
           className="final-headline mt-6 text-fg1"
           style={{

@@ -223,7 +223,11 @@ export function Hero2() {
         </div>
 
         <SplitLines
-          lines={['Vitality,', 'formulated', 'honestly.']}
+          lines={[
+            <span key="vit" className="text-ember">Vitality,</span>,
+            'formulated',
+            'honestly.',
+          ]}
           as="h1"
           className="text-fg1"
           style={{

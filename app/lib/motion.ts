@@ -269,6 +269,42 @@ export function textReveal(
 }
 
 /**
+ * Ignition reveal — one-shot scroll-linked headline ignition.
+ *
+ * The element starts in `.ignite-stage` (dim grey, opacity 0.7) per
+ * the CSS. When the element scrolls into view we add `.ignite`,
+ * which the CSS transitions to the lit state — and any
+ * `.ignite-ember` spans inside light up with the crimson bloom.
+ * Reduced motion: skip JS entirely; CSS already renders the final
+ * state.
+ *
+ * Use on hero / scene H2 headlines. Pair with the .text-ember
+ * utility when you want the ember word to inherit the bloom
+ * outside this transition.
+ */
+export function ignite(
+  el: Element | null | undefined,
+  {start = 'top 78%'}: SceneOptions = {},
+): ScrollTrigger | null {
+  if (!el || typeof window === 'undefined') return null;
+  ensureRegistered();
+  if (prefersReducedMotion()) {
+    el.classList.remove('ignite-stage');
+    el.classList.add('ignite');
+    return null;
+  }
+  el.classList.add('ignite-stage');
+  return ScrollTrigger.create({
+    trigger: el,
+    start,
+    once: true,
+    onEnter: () => {
+      el.classList.add('ignite');
+    },
+  });
+}
+
+/**
  * A scroll-progress signal between 0 and 1 over a trigger range. The
  * callback receives the value on every scrub. Use for things like the
  * header's bottom hairline progress.

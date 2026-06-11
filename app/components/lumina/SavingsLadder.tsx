@@ -165,7 +165,7 @@ function Cell({
 }) {
   const value =
     tone === 'save'
-      ? 'text-crimson-hi'
+      ? 'text-ember-crimson'
       : tone === 'accent'
         ? 'text-fg1'
         : 'text-fg2';

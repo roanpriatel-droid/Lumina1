@@ -126,7 +126,7 @@ export function ByTheNumbers() {
               </div>
               <div className="relative">
                 <span
-                  className="numbers-value block text-fg1"
+                  className="numbers-value block text-ember"
                   style={{
                     font: '300 clamp(64px, 7.5vw, 108px)/0.95 var(--font-mono)',
                     letterSpacing: '-0.03em',

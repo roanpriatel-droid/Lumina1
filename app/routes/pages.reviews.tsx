@@ -185,7 +185,8 @@ function ReviewsHero({aggregate}: {aggregate: ReturnType<typeof reviewSiteAggreg
               letterSpacing: '-0.018em',
             }}
           >
-            Verified reviews. Eight-week timelines. Disclosed doses.
+            Verified reviews. Eight-week timelines.{' '}
+            <span className="text-ember">Disclosed doses.</span>
           </h1>
           <p
             className="m-0 mt-6 max-w-[520px] text-fg2"
@@ -215,7 +216,7 @@ function ReviewsHero({aggregate}: {aggregate: ReturnType<typeof reviewSiteAggreg
             <Eyebrow rule={false}>Aggregate</Eyebrow>
             <div className="flex items-baseline gap-5">
               <span
-                className="t-mono text-fg1"
+                className="t-mono text-ember-crimson"
                 style={{
                   font: '300 clamp(96px, 14vw, 168px)/0.9 var(--font-mono)',
                   letterSpacing: '-0.04em',
@@ -256,7 +257,7 @@ function AggregateStars({value}: {value: number}) {
               size={28}
               strokeWidth={0}
               fill="currentColor"
-              className="text-fg5/30"
+              className="text-fg4/40"
             />
             {filled && (
               <Star
@@ -587,7 +588,7 @@ function StarsRow({rating}: {rating: 1 | 2 | 3 | 4 | 5}) {
           size={13}
           strokeWidth={0}
           fill="currentColor"
-          className={i <= rating ? 'text-crimson' : 'text-fg5/30'}
+          className={i <= rating ? 'text-crimson' : 'text-fg4/40'}
           aria-hidden
         />
       ))}

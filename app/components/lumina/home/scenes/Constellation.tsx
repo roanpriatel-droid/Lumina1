@@ -281,7 +281,7 @@ function ConstellationNode({node, index}: {node: NodeDef; index: number}) {
           {node.ingredient}
         </h3>
         <div
-          className="t-mono mt-1 text-[15px] font-medium text-crimson-hi constellation-dose"
+          className="t-mono mt-1 text-[15px] font-medium text-ember-crimson constellation-dose"
         >
           {node.showCount === false
             ? 'In blend'
@@ -311,7 +311,7 @@ function ConstellationNodeMobile({node}: {node: NodeDef}) {
         />
       </div>
       <h3 className="mt-2 text-[15px] font-medium text-fg1">{node.ingredient}</h3>
-      <div className="t-mono mt-1 text-[14px] font-medium text-crimson-hi">
+      <div className="t-mono mt-1 text-[14px] font-medium text-ember-crimson">
         {node.showCount === false ? 'In blend' : `${node.end}${node.suffix}`}
       </div>
       <p className="m-0 mt-2 text-[12.5px] leading-snug text-fg3">{node.note}</p>

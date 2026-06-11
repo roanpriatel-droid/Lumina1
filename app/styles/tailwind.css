@@ -196,16 +196,121 @@ textarea::placeholder {
 }
 .eyebrow-rule {
   display: inline-block;
-  width: 24px;
+  width: 28px;
   height: 1px;
-  background: var(--color-crimson);
-  opacity: 0.7;
+  /* Lit-fuse gradient — crimson on the rule side, fading to
+     transparent at the type-side. Bloom comes from a sibling
+     drop-shadow on the rule itself. */
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-crimson) 60%,
+    var(--color-crimson-hi) 100%
+  );
+  opacity: 0.95;
+  filter: drop-shadow(0 0 4px rgba(209, 26, 42, 0.55));
   flex: 0 0 auto;
+}
+
+/* Soft crimson bloom on the kicker text itself — small enough to
+   keep AA readability of the mono caps, large enough to register
+   as "lit." */
+.eyebrow > span:last-child {
+  text-shadow:
+    0 0 6px rgba(230, 49, 67, 0.45),
+    0 0 14px rgba(209, 26, 42, 0.25);
 }
 
 .t-mono {
   font-family: var(--font-mono);
   letter-spacing: 0.02em;
+}
+
+/* =========================================================
+   Crimson light language — .text-ember
+   --------------------------------------------------------
+   The bloom utility for words that should burn. Tighter inner
+   shadow (0 0 8px) for the core, wider outer (0 0 24px) for the
+   halo. Use sparingly:
+     - one ember headline word per viewport, max
+     - savings amounts + doses + aggregate stats
+     - the 4.8 numeral on /pages/reviews
+   Never on body copy. Discipline is the language. */
+.text-ember {
+  color: var(--color-fg1);
+  text-shadow:
+    0 0 8px rgba(209, 26, 42, 0.55),
+    0 0 24px rgba(209, 26, 42, 0.45);
+}
+
+/* When the ember word itself is crimson (kicker, currency, doses),
+   shift the color and keep the same two-stage bloom. */
+.text-ember-crimson {
+  color: var(--color-crimson-hi);
+  text-shadow:
+    0 0 8px rgba(230, 49, 67, 0.65),
+    0 0 24px rgba(209, 26, 42, 0.5);
+}
+
+/* Gradient crimson hairline rule (replaces flat horizontal bars
+   that sit beneath section kickers / above section headers). The
+   inner drop-shadow gives it a soft glow at the bright end. */
+.rule-ember {
+  display: block;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-crimson) 30%,
+    var(--color-crimson-hi) 60%,
+    transparent 100%
+  );
+  filter: drop-shadow(0 0 6px rgba(209, 26, 42, 0.45));
+  border: 0;
+}
+
+/* Ignition reveal — one-shot scroll-linked sweep. JS adds
+   `.ignite` after staging, then a transition runs from dim grey
+   to the final color. Transform/opacity only so it composites on
+   the GPU. The clip-path runs left-to-right across the headline,
+   "lighting" it. Reduced motion: skip the JS staging, headline
+   renders at final state. */
+.ignite-stage {
+  color: var(--color-fg3);
+  opacity: 0.7;
+  transition:
+    color 600ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 600ms cubic-bezier(0.4, 0, 0.2, 1),
+    text-shadow 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.ignite-stage.ignite {
+  color: var(--color-fg1);
+  opacity: 1;
+}
+.ignite-stage .ignite-ember {
+  position: relative;
+  transition:
+    color 600ms cubic-bezier(0.4, 0, 0.2, 1),
+    text-shadow 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.ignite-stage.ignite .ignite-ember {
+  color: var(--color-fg1);
+  text-shadow:
+    0 0 8px rgba(209, 26, 42, 0.55),
+    0 0 24px rgba(209, 26, 42, 0.45);
+}
+@media (prefers-reduced-motion: reduce) {
+  .ignite-stage,
+  .ignite-stage .ignite-ember {
+    color: var(--color-fg1);
+    opacity: 1;
+    transition: none;
+  }
+  .ignite-stage .ignite-ember {
+    text-shadow:
+      0 0 8px rgba(209, 26, 42, 0.55),
+      0 0 24px rgba(209, 26, 42, 0.45);
+  }
 }
 
 /* =========================================================
