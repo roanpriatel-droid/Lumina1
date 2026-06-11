@@ -147,6 +147,7 @@ export function Hero2() {
               mouseTilt
               parallax={0}
               priority
+              ring
               fallbackTitle="Lumina formula"
             />
           </div>

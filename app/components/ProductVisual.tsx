@@ -72,6 +72,8 @@ export interface ProductVisualProps {
   style?: CSSProperties;
   /** Set true on above-the-fold uses so the asset loads eager. */
   priority?: boolean;
+  /** Add the 2px crimson "lens" ring around hero product imagery. */
+  ring?: boolean;
 }
 
 export function ProductVisual({
@@ -89,6 +91,7 @@ export function ProductVisual({
   className = '',
   style,
   priority = false,
+  ring = false,
 }: ProductVisualProps) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const floatRef = useRef<HTMLDivElement>(null);
@@ -196,6 +199,20 @@ export function ProductVisual({
         >
           <LightRays origin="top" intensity={0.4} />
         </div>
+      )}
+
+      {/* "Lens" hairline ring around the hero product imagery */}
+      {ring && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-1/2 rounded-full"
+          style={{
+            width: width * (pedestal * 0.95),
+            height: width * (pedestal * 0.95),
+            transform: 'translate(-50%, -50%)',
+            border: '2px solid rgba(209, 26, 42, 0.15)',
+          }}
+        />
       )}
 
       {/* Float wrapper — receives idle float, mouse tilt, parallax */}
