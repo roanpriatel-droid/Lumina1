@@ -167,7 +167,10 @@ export function parallaxLayer(
       trigger: trigger ?? el,
       start,
       end,
-      scrub: true,
+      // 0.7 (not `true`) smooths the scrub so per-frame deltas are
+      // interpolated; raw scrub: true ties strictly to scroll and
+      // causes jank under fast wheel/trackpad input.
+      scrub: 0.7,
     },
   });
 }

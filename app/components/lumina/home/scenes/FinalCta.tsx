@@ -58,7 +58,7 @@ export function FinalCta({
               trigger: ref.current,
               start: 'top bottom',
               end: 'bottom bottom',
-              scrub: true,
+              scrub: 0.7,
             },
           });
         }

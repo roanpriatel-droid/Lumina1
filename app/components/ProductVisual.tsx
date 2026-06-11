@@ -128,12 +128,18 @@ export function ProductVisual({
         const fine = window.matchMedia('(pointer: fine)').matches;
         const noHover = window.matchMedia('(hover: none)').matches;
         if (fine && !noHover) {
+          // Cache the wrap's bounding box. Refresh it on mouseenter
+          // (the user is about to move) and on resize/scroll — NOT on
+          // every mousemove, which would force a layout per frame.
+          let rect = wrap.getBoundingClientRect();
+          const refresh = () => {
+            rect = wrap.getBoundingClientRect();
+          };
           const onMove = (e: MouseEvent) => {
-            const r = wrap.getBoundingClientRect();
-            const cx = r.left + r.width / 2;
-            const cy = r.top + r.height / 2;
-            const dx = (e.clientX - cx) / (r.width / 2);
-            const dy = (e.clientY - cy) / (r.height / 2);
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const dx = (e.clientX - cx) / (rect.width / 2);
+            const dy = (e.clientY - cy) / (rect.height / 2);
             const rotateY = Math.max(-4, Math.min(4, dx * 4));
             const rotateX = Math.max(-4, Math.min(4, -dy * 4));
             gsap.to(floater, {
@@ -153,11 +159,17 @@ export function ProductVisual({
               overwrite: 'auto',
             });
           };
+          wrap.addEventListener('mouseenter', refresh);
           wrap.addEventListener('mousemove', onMove);
           wrap.addEventListener('mouseleave', onLeave);
+          window.addEventListener('resize', refresh);
+          window.addEventListener('scroll', refresh, {passive: true});
           return () => {
+            wrap.removeEventListener('mouseenter', refresh);
             wrap.removeEventListener('mousemove', onMove);
             wrap.removeEventListener('mouseleave', onLeave);
+            window.removeEventListener('resize', refresh);
+            window.removeEventListener('scroll', refresh);
           };
         }
       }

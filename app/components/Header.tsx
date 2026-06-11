@@ -54,18 +54,37 @@ export function Header({
 
   useEffect(() => {
     let lastY = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
+    // Cache the document height; recompute only on resize. Reading
+    // scrollHeight from inside the scroll handler triggers a layout
+    // recalc on every frame.
+    let maxScroll =
+      document.documentElement.scrollHeight - window.innerHeight;
+    let raf = 0;
+    let pendingY = window.scrollY;
+    const flush = () => {
+      raf = 0;
+      const y = pendingY;
       setScrolled(y > 20);
       setDirection(y > lastY && y > 60 ? 'down' : 'up');
-      const max =
-        document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(max > 0 ? y / max : 0);
+      setProgress(maxScroll > 0 ? y / maxScroll : 0);
       lastY = y;
     };
-    onScroll();
+    const onScroll = () => {
+      pendingY = window.scrollY;
+      if (!raf) raf = requestAnimationFrame(flush);
+    };
+    const onResize = () => {
+      maxScroll =
+        document.documentElement.scrollHeight - window.innerHeight;
+    };
+    flush();
     window.addEventListener('scroll', onScroll, {passive: true});
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('resize', onResize);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   const condensed = scrolled && direction === 'down';

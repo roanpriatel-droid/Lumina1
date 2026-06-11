@@ -289,10 +289,12 @@ textarea::placeholder {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.04),
     0 16px 40px rgba(0, 0, 0, 0.5);
+  /* transform + border-color are cheap to transition; box-shadow is
+     not — it forces a repaint at every frame. The shadow still
+     changes on hover, it just snaps instead of tweens. */
   transition:
     transform 250ms cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 250ms cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1);
+    border-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 .lumina-card:hover {
   transform: translateY(-4px);
@@ -395,11 +397,15 @@ textarea::placeholder {
   transition:
     opacity 600ms cubic-bezier(0.4, 0, 0.2, 1),
     transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* will-change only while the animation is pending — drop it once
+     the element has been revealed so it doesn't keep a compositor
+     layer alive forever. */
   will-change: opacity, transform;
 }
 .reveal-up.is-revealed {
   opacity: 1;
   transform: translateY(0);
+  will-change: auto;
 }
 @media (prefers-reduced-motion: reduce) {
   .reveal-up {
@@ -515,9 +521,12 @@ textarea::placeholder {
   isolation: isolate;
   background: linear-gradient(180deg, #19181B 0%, #100F12 100%);
   border-radius: inherit;
+  /* GPU-only transition properties. Border-color repaints are cheap
+     for a 1px hairline; box-shadow is intentionally NOT in the
+     transition list — it causes per-frame repaints which were the
+     #1 source of hover jank. */
   transition:
     border-color 220ms cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1),
     transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -569,9 +578,10 @@ textarea::placeholder {
 .tier-card-idle {
   background: linear-gradient(180deg, #17171A 0%, #101012 100%);
   border: 1px solid #232328;
+  /* GPU-only transition; box-shadow snaps on hover (still changes, just
+     instantly). transform handles the visual lift. */
   transition:
     border-color 220ms cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1),
     transform 220ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 .tier-card-idle:hover {
@@ -589,9 +599,8 @@ textarea::placeholder {
    shift on hover. */
 .glow-frame-on-hover-rest {
   border-radius: inherit;
-  transition:
-    background 280ms cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  /* No box-shadow / background transition — the state snaps on hover
+     so we don't pay a repaint cost on every list row. */
 }
 .glow-frame-on-hover-rest:hover {
   background: linear-gradient(180deg, #19181B 0%, #100F12 100%);

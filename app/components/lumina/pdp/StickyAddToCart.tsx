@@ -16,18 +16,33 @@ export function StickyAddToCart({productName}: {productName: string}) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      const nearBottom =
-        window.innerHeight + y > document.body.scrollHeight - 560;
+    // Cache body.scrollHeight; recompute on resize. Reading it from
+    // inside the scroll handler runs a layout on every frame.
+    let bodyHeight = document.body.scrollHeight;
+    let raf = 0;
+    let pendingY = window.scrollY;
+    const flush = () => {
+      raf = 0;
+      const y = pendingY;
+      const nearBottom = window.innerHeight + y > bodyHeight - 560;
       setVisible(y > 420 && !nearBottom);
     };
-    onScroll();
+    const onScroll = () => {
+      pendingY = window.scrollY;
+      if (!raf) raf = requestAnimationFrame(flush);
+    };
+    const onResize = () => {
+      bodyHeight = document.body.scrollHeight;
+      pendingY = window.scrollY;
+      if (!raf) raf = requestAnimationFrame(flush);
+    };
+    flush();
     window.addEventListener('scroll', onScroll, {passive: true});
-    window.addEventListener('resize', onScroll);
+    window.addEventListener('resize', onResize);
     return () => {
       window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
+      window.removeEventListener('resize', onResize);
+      if (raf) cancelAnimationFrame(raf);
     };
   }, []);
 
