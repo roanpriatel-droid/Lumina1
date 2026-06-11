@@ -457,6 +457,45 @@ textarea::placeholder {
 }
 
 /* =========================================================
+   Hero glow breathing — 10s slow scale 1.0 → 1.06, plus a barely-
+   visible conic-highlight rotation underneath. Skipped under
+   prefers-reduced-motion.
+   ========================================================= */
+@keyframes lumina-glow-breath {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.06);
+    opacity: 0.92;
+  }
+}
+@keyframes lumina-glow-conic-spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+.lumina-glow-breath {
+  animation: lumina-glow-breath 10s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+.lumina-glow-conic {
+  animation: lumina-glow-conic-spin 24s linear infinite;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lumina-glow-breath,
+  .lumina-glow-conic {
+    animation: none !important;
+  }
+}
+
+/* =========================================================
    Marquee — opposite-direction loops for the proof wall.
    ========================================================= */
 @keyframes marquee-left {

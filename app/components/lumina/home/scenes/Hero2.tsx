@@ -8,6 +8,8 @@ import {SplitLines} from '~/components/lumina/SplitLines';
 import {ProductVisual} from '~/components/ProductVisual';
 import {LightRays} from '~/components/graphics/LightRays';
 import {MonoWatermark} from '~/components/graphics/MonoWatermark';
+import {Glow} from '~/components/graphics/Glow';
+import {FloorReflection} from '~/components/graphics/FloorReflection';
 import {gsap, prefersReducedMotion} from '~/lib/motion';
 
 /**
@@ -96,18 +98,17 @@ export function Hero2() {
     >
       <div
         aria-hidden
-        className="hero-glow pointer-events-none absolute"
+        className="hero-glow absolute"
         style={{
-          width: 1300,
-          height: 1300,
           left: '50%',
           top: '52%',
-          transform: 'translate(-50%,-50%)',
-          background: 'var(--glow-hero)',
-          opacity: 0.6,
+          transform: 'translate(-50%, -50%)',
         }}
-      />
+      >
+        <Glow size="hero" animate />
+      </div>
       <LightRays origin="top" intensity={0.4} />
+      <FloorReflection height={140} opacity={0.035} />
       <MonoWatermark
         position="center"
         size={520}
