@@ -1,4 +1,4 @@
-import {useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useGSAP} from '@gsap/react';
 import {ArrowDown} from 'lucide-react';
 import {Link} from 'react-router';
@@ -6,10 +6,20 @@ import {Button} from '~/components/lumina/Button';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {SplitLines} from '~/components/lumina/SplitLines';
 import {ProductVisual} from '~/components/ProductVisual';
-import {Glow} from '~/components/graphics/Glow';
 import {LightRays} from '~/components/graphics/LightRays';
-import {MonoWatermark} from '~/components/graphics/MonoWatermark';
 import {gsap, prefersReducedMotion} from '~/lib/motion';
+
+/** Bottle target. The brief asks for 60-70% of viewport height, but the
+ *  three-line display headline + eyebrow + footing CTA already consume
+ *  the rest of the viewport — pushing past ~50% vh on the bottle pushes
+ *  the headline below the fold. We hit the higher end of what coexists
+ *  with the existing typography (≈50% vh, ceiling 580) and also clamp
+ *  on width so mobile portrait doesn't blow past the column. */
+function computeBottleSize(vw: number, vh: number) {
+  return Math.round(
+    Math.max(280, Math.min(580, vh * 0.5, vw * 0.7)),
+  );
+}
 
 /**
  * Scene 1 — Hero 2.0
@@ -33,6 +43,15 @@ import {gsap, prefersReducedMotion} from '~/lib/motion';
  */
 export function Hero2() {
   const sceneRef = useRef<HTMLDivElement>(null);
+  const [bottleSize, setBottleSize] = useState(480);
+
+  useEffect(() => {
+    const update = () =>
+      setBottleSize(computeBottleSize(window.innerWidth, window.innerHeight));
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
 
   useGSAP(
     () => {
@@ -159,42 +178,43 @@ export function Hero2() {
   return (
     <section
       ref={sceneRef}
-      className="relative isolate flex flex-col items-center justify-center overflow-hidden bg-black text-center"
-      style={{height: '100vh'}}
+      className="relative isolate flex flex-col items-center overflow-hidden bg-black text-center"
+      style={{height: '100vh', paddingTop: 'clamp(56px, 6vh, 88px)'}}
     >
-      {/* 3-layer composite glow, breathing forever. */}
+      {/* Single soft bloom — feathered all the way to transparent so it
+          reads as light, not a drawn ring. Scales with the bottle. */}
       <div
         aria-hidden
-        className="hero-glow-stage absolute"
+        className="hero-glow-stage lumina-glow-breath pointer-events-none absolute"
         style={{
           left: '50%',
           top: '52%',
-          transform: 'translate(-50%, -50%)',
+          width: bottleSize * 2.2,
+          height: bottleSize * 2.2,
+          background:
+            'radial-gradient(closest-side, rgba(209,26,42,0.32) 0%, rgba(110,11,20,0.18) 30%, rgba(58,6,12,0.06) 60%, rgba(11,11,12,0) 100%)',
+          filter: 'blur(36px)',
           willChange: 'transform, opacity',
         }}
+      />
+      {/* Atmospheric crimson rays — well behind the product. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute"
+        style={{inset: 0, opacity: 0.28, filter: 'blur(6px)'}}
       >
-        <Glow size="hero" animate />
+        <LightRays origin="top" intensity={0.14} />
       </div>
-      <LightRays origin="top" intensity={0.4} />
-      <MonoWatermark
-        position="center"
-        size={520}
-        opacity={0.035}
-        parallax={-3}
-        style={{top: '85%'}}
-      >
-        LUMINA · 01
-      </MonoWatermark>
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(140% 80% at 50% 110%, rgba(110,11,20,0.3), transparent 60%)',
+            'radial-gradient(140% 80% at 50% 110%, rgba(110,11,20,0.22), transparent 60%)',
         }}
       />
 
-      <div className="relative z-[2] flex flex-col items-center gap-8 px-6">
+      <div className="relative z-[2] flex flex-col items-center gap-y-8 px-6">
         <Eyebrow
           className="hero-kicker"
           style={{color: 'var(--color-crimson-hi)'}}
@@ -203,12 +223,23 @@ export function Hero2() {
         </Eyebrow>
 
         <div className="relative">
-          {/* The reserved box prevents CLS while the asset streams in. */}
-          <div className="hero-bottle" style={{width: 200, height: 270}}>
+          {/* CLS reservation. Square = bottle (1:1 source), plus extra
+              vertical for the reflection so the headline below never
+              gets pushed into the bottle on layout settle. */}
+          <div
+            className="hero-bottle"
+            style={{
+              width: bottleSize,
+              // bottle (1:1) + clamped reflection (38%) - 10px overlap;
+              // small buffer keeps siblings below from being touched
+              // even if the float layer wobbles via parallax/idle.
+              height: Math.round(bottleSize * 1.38) + 16,
+            }}
+          >
             <ProductVisual
               gender="male"
-              width={180}
-              pedestal={2.2}
+              width={bottleSize}
+              pedestal={1.55}
               reflection
               rays={false}
               idleFloat
@@ -216,7 +247,7 @@ export function Hero2() {
               tiltDeg={3}
               parallax={0}
               priority
-              ring
+              ring={false}
               fallbackTitle="Lumina Male Enhancement"
             />
           </div>
@@ -231,26 +262,31 @@ export function Hero2() {
           as="h1"
           className="text-fg1"
           style={{
-            font: '200 clamp(60px, 9vw, 128px)/0.95 var(--font-sans)',
+            font: '200 clamp(56px, 7.5vw, 104px)/0.95 var(--font-sans)',
             letterSpacing: '-0.02em',
           }}
         />
+      </div>
 
-        <div className="hero-footing flex flex-col items-center gap-6">
-          <Link to="/collections/all" prefetch="intent">
-            <Button className="px-9 py-[18px] text-base">
-              Begin the protocol
-            </Button>
-          </Link>
-          <div className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.18em] text-fg3">
-            Disclosed doses · Tested every lot · 60-Day Guarantee
-          </div>
+      {/* Footing — pinned to the section bottom so the CTA is always
+          above the fold regardless of how dominant the bottle gets. */}
+      <div
+        className="hero-footing absolute left-1/2 z-[2] flex -translate-x-1/2 flex-col items-center gap-6"
+        style={{bottom: 'clamp(72px, 9vh, 120px)'}}
+      >
+        <Link to="/collections/all" prefetch="intent">
+          <Button className="px-9 py-[18px] text-base">
+            Begin the protocol
+          </Button>
+        </Link>
+        <div className="flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.18em] text-fg3">
+          Disclosed doses · Tested every lot · 60-Day Guarantee
         </div>
       </div>
 
       <div
         aria-hidden
-        className="absolute bottom-7 left-1/2 -translate-x-1/2"
+        className="absolute bottom-7 left-1/2 z-[2] -translate-x-1/2"
       >
         <span className="t-mono inline-flex items-center gap-2 text-[10.5px] uppercase tracking-[0.18em] text-fg4">
           Scroll <ArrowDown size={12} strokeWidth={2} />

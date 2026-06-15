@@ -244,15 +244,33 @@ export function ProductVisual({
           transformStyle: 'preserve-3d',
         }}
       >
+        {/* Soft contact shadow — grounds the bottle on the pedestal so it
+            doesn't look pasted onto the glow. Sits behind the bottle. */}
+        {resolved && (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2"
+            style={{
+              bottom: width * 0.06,
+              width: width * 0.6,
+              height: width * 0.08,
+              transform: 'translateX(-50%)',
+              background:
+                'radial-gradient(closest-side, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 70%)',
+              filter: 'blur(14px)',
+              zIndex: 1,
+            }}
+          />
+        )}
         {resolved ? (
           useBlend ? (
             <BlendedImage
               src={resolved}
               alt={imageAlt ?? fallbackTitle}
               width={width * 2}
-              height={width * 2.7}
+              height={width * 2}
               loading={priority ? 'eager' : 'lazy'}
-              sizes={`${width}px`}
+              sizes={`(max-width: 768px) 80vw, ${width}px`}
               className="relative z-[2] mx-auto h-auto w-full max-w-full object-contain"
               {...(priority ? {fetchPriority: 'high' as const} : {})}
             />
@@ -261,9 +279,9 @@ export function ProductVisual({
               src={resolved}
               alt={imageAlt ?? fallbackTitle}
               width={width * 2}
-              height={width * 2.7}
+              height={width * 2}
               loading={priority ? 'eager' : 'lazy'}
-              sizes={`${width}px`}
+              sizes={`(max-width: 768px) 80vw, ${width}px`}
               className="relative z-[2] mx-auto h-auto w-full max-w-full object-contain"
               {...(priority ? {fetchPriority: 'high' as const} : {})}
             />
@@ -275,17 +293,22 @@ export function ProductVisual({
         )}
 
         {reflection && (
+          // Floor reflection. Box height is clamped to ~38% of the bottle
+          // so the headline below the wrap doesn't get pushed into the
+          // bottle — the full-height flipped image used to take ~100% of
+          // the bottle's box and forced overlap on the big-bottle hero.
           <div
             aria-hidden
-            className="pointer-events-none relative z-[1]"
+            className="pointer-events-none relative z-[1] overflow-hidden"
             style={{
               marginTop: -10,
+              height: width * 0.38,
               transform: 'scaleY(-1)',
               maskImage:
-                'linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 70%)',
+                'linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 80%)',
               WebkitMaskImage:
-                'linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 70%)',
-              opacity: 0.6,
+                'linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 80%)',
+              opacity: 0.18,
               filter: 'blur(0.5px)',
             }}
           >
