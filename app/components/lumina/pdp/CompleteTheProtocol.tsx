@@ -2,7 +2,7 @@ import {Link} from 'react-router';
 import {Image} from '@shopify/hydrogen';
 import {ArrowUpRight, Crown} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
-import {Bottle} from '~/components/lumina/Bottle';
+import {BrandFallback} from '~/components/lumina/BrandFallback';
 import {BlendedImage} from '~/components/lumina/BlendedImage';
 import {getProductImage, getHeroImage} from '~/lib/product-assets';
 import {
@@ -177,7 +177,7 @@ function OppositeBottle({opposite}: {opposite: LuminaProductEntry}) {
       />
     );
   }
-  return <Bottle width={70} />;
+  return <BrandFallback width={70} />;
 }
 
 function UpgradeCard({

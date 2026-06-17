@@ -1,7 +1,7 @@
 import {useEffect, useRef, type CSSProperties} from 'react';
 import {useGSAP} from '@gsap/react';
 import {Image} from '@shopify/hydrogen';
-import {Bottle} from '~/components/lumina/Bottle';
+import {BrandFallback} from '~/components/lumina/BrandFallback';
 import {BlendedImage} from '~/components/lumina/BlendedImage';
 import {LightRays} from '~/components/graphics/LightRays';
 import {gsap, parallaxLayer, prefersReducedMotion} from '~/lib/motion';
@@ -288,7 +288,7 @@ export function ProductVisual({
           )
         ) : (
           <div className="relative z-[2] mx-auto" style={{width}}>
-            <Bottle width={width} />
+            <BrandFallback width={width} />
           </div>
         )}
 
@@ -324,7 +324,7 @@ export function ProductVisual({
               />
             ) : (
               <div style={{width}}>
-                <Bottle width={width} />
+                <BrandFallback width={width} />
               </div>
             )}
           </div>

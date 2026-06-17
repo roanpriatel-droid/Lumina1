@@ -1,6 +1,6 @@
 import type {CSSProperties} from 'react';
 import {Image} from '@shopify/hydrogen';
-import {Bottle} from '~/components/lumina/Bottle';
+import {BrandFallback} from '~/components/lumina/BrandFallback';
 
 /**
  * Shared crimson glow pedestal behind every product image on the site
@@ -112,7 +112,7 @@ export function GlowPedestal({
           className="relative flex items-center justify-center"
           style={{height: `${imageHeightPct}%`}}
         >
-          <Bottle width={bottleWidth} />
+          <BrandFallback width={bottleWidth} caption={fallbackTitle} />
         </div>
       )}
     </div>

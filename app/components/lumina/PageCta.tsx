@@ -1,8 +1,11 @@
 import {Link} from 'react-router';
+import {Image} from '@shopify/hydrogen';
 import {ArrowUpRight} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
-import {Bottle} from '~/components/lumina/Bottle';
+import {BrandFallback} from '~/components/lumina/BrandFallback';
+import {BlendedImage} from '~/components/lumina/BlendedImage';
 import {LUMINA_PRICE_FROM, LUMINA_PRODUCTS} from '~/lib/lumina-data';
+import {getHeroImage, getProductImage} from '~/lib/product-assets';
 
 interface PageCtaProps {
   eyebrow?: string;
@@ -81,7 +84,7 @@ function PdpCard({
         }}
       />
       <div className="relative flex h-28 w-16 flex-none items-center justify-center">
-        <Bottle width={56} />
+        <PdpCardBottle gender={product.key} alt={product.name} />
       </div>
       <div className="relative flex flex-1 flex-col gap-2">
         <Eyebrow style={{color: 'var(--color-crimson-hi)'}}>
@@ -103,4 +106,42 @@ function PdpCard({
       </div>
     </Link>
   );
+}
+
+function PdpCardBottle({
+  gender,
+  alt,
+}: {
+  gender: 'male' | 'female';
+  alt: string;
+}) {
+  const cutout = getProductImage(gender, 'cutout');
+  if (cutout) {
+    return (
+      <Image
+        src={cutout}
+        alt={alt}
+        sizes="80px"
+        className="relative h-full w-auto object-contain"
+        loading="lazy"
+        width={112}
+        height={150}
+      />
+    );
+  }
+  const hero = getHeroImage(gender);
+  if (hero.src) {
+    return (
+      <BlendedImage
+        src={hero.src}
+        alt={alt}
+        sizes="80px"
+        className="relative h-full w-auto object-contain"
+        loading="lazy"
+        width={112}
+        height={150}
+      />
+    );
+  }
+  return <BrandFallback width={56} />;
 }

@@ -1,13 +1,16 @@
 import {Link} from 'react-router';
 import {useState} from 'react';
+import {Image} from '@shopify/hydrogen';
 import {ArrowRight} from 'lucide-react';
-import {Bottle} from '~/components/lumina/Bottle';
+import {BrandFallback} from '~/components/lumina/BrandFallback';
+import {BlendedImage} from '~/components/lumina/BlendedImage';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {
   LUMINA_PRODUCTS,
   LUMINA_PRICE_FROM,
   type LuminaProduct,
 } from '~/lib/lumina-data';
+import {getHeroImage, getProductImage} from '~/lib/product-assets';
 
 export function ProductPair() {
   return (
@@ -69,7 +72,7 @@ function ProductCard({
         }}
       />
       <div className="relative z-[2] flex flex-col items-center text-center">
-        <Bottle width={104} glow={false} />
+        <PairCardBottle gender={product.key} alt={product.name} />
         <h3
           className="m-0 mt-[34px] text-fg1"
           style={{font: '300 26px/1.2 var(--font-sans)'}}
@@ -105,4 +108,42 @@ function ProductCard({
       </div>
     </Link>
   );
+}
+
+function PairCardBottle({
+  gender,
+  alt,
+}: {
+  gender: 'male' | 'female';
+  alt: string;
+}) {
+  const cutout = getProductImage(gender, 'cutout');
+  if (cutout) {
+    return (
+      <Image
+        src={cutout}
+        alt={alt}
+        sizes="(min-width: 768px) 240px, 50vw"
+        className="relative h-auto w-[140px] max-w-full object-contain md:w-[160px]"
+        loading="lazy"
+        width={320}
+        height={320}
+      />
+    );
+  }
+  const hero = getHeroImage(gender);
+  if (hero.src) {
+    return (
+      <BlendedImage
+        src={hero.src}
+        alt={alt}
+        sizes="(min-width: 768px) 240px, 50vw"
+        className="relative h-auto w-[140px] max-w-full object-contain md:w-[160px]"
+        loading="lazy"
+        width={320}
+        height={320}
+      />
+    );
+  }
+  return <BrandFallback width={104} />;
 }

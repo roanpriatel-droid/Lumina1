@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Bottle} from '~/components/lumina/Bottle';
+import {BrandFallback} from '~/components/lumina/BrandFallback';
 import {Button} from '~/components/lumina/Button';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {Mail, Check} from 'lucide-react';
@@ -52,7 +52,11 @@ export function ComingSoonHero({
         <div className="relative flex flex-col items-center justify-center">
           <div className="relative">
             <div className="relative z-[1]">
-              <Bottle width={170} />
+              <BrandFallback
+                width={200}
+                accent={accent}
+                caption={name}
+              />
             </div>
             <span
               className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-full rounded-pill border border-crimson bg-black px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-crimson-hi"

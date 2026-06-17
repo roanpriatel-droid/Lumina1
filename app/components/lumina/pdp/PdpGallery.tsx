@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {Image} from '@shopify/hydrogen';
 import {BlendedImage} from '~/components/lumina/BlendedImage';
-import {Bottle} from '~/components/lumina/Bottle';
+import {BrandFallback} from '~/components/lumina/BrandFallback';
 import {LightRays} from '~/components/graphics/LightRays';
 import {prefersReducedMotion} from '~/lib/motion';
 import {
@@ -133,7 +133,7 @@ export function PdpGallery({
                 fetchPriority="high"
               />
             ) : (
-              <Bottle width={150} />
+              <BrandFallback width={170} caption={productTitle} />
             )}
 
         <span className="t-mono absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap text-[11px] uppercase tracking-[0.14em] text-fg4">

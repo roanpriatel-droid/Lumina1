@@ -1,9 +1,12 @@
 import {Link} from 'react-router';
+import {Image} from '@shopify/hydrogen';
 import {ArrowUpRight} from 'lucide-react';
-import {Bottle} from '~/components/lumina/Bottle';
+import {BrandFallback} from '~/components/lumina/BrandFallback';
+import {BlendedImage} from '~/components/lumina/BlendedImage';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {LUMINA_PRICE_FROM, LUMINA_PRODUCTS} from '~/lib/lumina-data';
 import type {LuminaProductKey} from '~/lib/lumina-data';
+import {getHeroImage, getProductImage} from '~/lib/product-assets';
 
 export function CrossSell({currentKey}: {currentKey: LuminaProductKey}) {
   const otherKey: LuminaProductKey = currentKey === 'male' ? 'female' : 'male';
@@ -38,7 +41,7 @@ export function CrossSell({currentKey}: {currentKey: LuminaProductKey}) {
               }}
             />
             <div className="relative flex h-32 w-20 flex-none items-center justify-center">
-              <Bottle width={70} />
+              <CrossSellBottle gender={otherKey} alt={other.name} />
             </div>
             <div className="relative flex flex-1 flex-col gap-2">
               <Eyebrow>The other formula</Eyebrow>
@@ -97,4 +100,42 @@ export function CrossSell({currentKey}: {currentKey: LuminaProductKey}) {
       </div>
     </section>
   );
+}
+
+function CrossSellBottle({
+  gender,
+  alt,
+}: {
+  gender: LuminaProductKey;
+  alt: string;
+}) {
+  const cutout = getProductImage(gender, 'cutout');
+  if (cutout) {
+    return (
+      <Image
+        src={cutout}
+        alt={alt}
+        sizes="100px"
+        className="relative h-full w-auto object-contain"
+        loading="lazy"
+        width={140}
+        height={186}
+      />
+    );
+  }
+  const hero = getHeroImage(gender);
+  if (hero.src) {
+    return (
+      <BlendedImage
+        src={hero.src}
+        alt={alt}
+        sizes="100px"
+        className="relative h-full w-auto object-contain"
+        loading="lazy"
+        width={140}
+        height={186}
+      />
+    );
+  }
+  return <BrandFallback width={70} />;
 }

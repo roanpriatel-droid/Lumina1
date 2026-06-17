@@ -82,7 +82,11 @@ export interface GalleryEntry {
   label: string;
 }
 
+// Cutout leads when present so a single transparent PNG is enough to
+// populate the PDP gallery and dismiss the legacy CSS placeholder. The
+// other variants take over once real studio photography lands.
 const GALLERY_ORDER: ReadonlyArray<{variant: Variant; label: string}> = [
+  {variant: 'cutout', label: 'Bottle'},
   {variant: 'hero', label: 'Bottle'},
   {variant: 'rays', label: 'In light'},
   {variant: 'rock', label: 'On set'},
