@@ -1,34 +1,50 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
+import {ChevronDown} from 'lucide-react';
 import {Link} from 'react-router';
 import {Button} from '~/components/lumina/Button';
 import {SplitLines} from '~/components/lumina/SplitLines';
+import {HexLattice} from '~/components/graphics/Molecular';
 import {gsap, prefersReducedMotion} from '~/lib/motion';
 
+// ─── COPY PLACEHOLDERS — verify before production launch ─────────────
+// Per the brief, the structure ships now (so design + IA review can
+// land) but every figure below is unverified. Grep for "TODO(brand)"
+// before any production promotion of this branch.
+
+// TODO(brand): replace with verified customer / order count from
+// Shopify analytics. Appears in the kicker and the trust microline. If
+// the number can't be substantiated, drop both references and fall
+// back to a neutral kicker like "THIRD-PARTY TESTED · 60-DAY GUARANTEE".
+const TRUSTED_BY_COUNT = '12,000+';
+
+// TODO(brand): confirm 750mg is the actual clinical-trial dose for the
+// male protocol's tribulus extract. The dose claim appears in the
+// subhead and as a decorative mono micro-label. Regulatory risk if
+// inaccurate.
+const TRIBULUS_DOSE = '750mg';
+
+// TODO(brand): decorative lot number for editorial texture only.
+// Either auto-inject the current production lot from inventory or
+// remove the "LOT #…" micro-label entirely before launch.
+const SAMPLE_LOT = 'LM-0824';
+
 /**
- * Scene 1 — Brand statement hero
+ * Scene 1 — Brand statement hero (atmospheric, no product)
  *
- * Pure typography on a layered red/black canvas. No product imagery,
- * no scroll triggers, no parallax — a single cohesive composition that
- * loads, settles, and stays still. The atmosphere does the heavy
- * lifting:
+ * Static composition. The layout is the previous pass; this iteration
+ * upgrades copy (more specific, more confrontational) and richens the
+ * canvas (offset secondary glow for dimensionality, faint molecular
+ * lattice behind the type, editorial mono micro-labels, a tasteful
+ * scroll cue at the bottom).
  *
- *   - Three section-filling crimson radials feathered to transparent
- *     (no bounded disc).
- *   - A second slower breath on the type-bed glow so the warmth behind
- *     the headline drifts at a different cadence to the ambient bloom.
- *   - Edge vignette pulling toward black at the corners.
- *   - Faint film grain is contributed by the global <FilmGrain /> layer
- *     in PageLayout — not re-emitted here.
- *
- * Motion budget (transform/opacity only):
- *   - Glow fades in over 700ms; immediately starts a 6s opacity breath.
- *   - Type-bed glow runs a slower 9s opacity drift.
- *   - Mono kicker fades in; hairline rule scales from 0 to 100% width.
- *   - Headline lines: SplitLines mask reveal, yPercent 110 → 0,
- *     staggered 120ms (the slowest, deliberate beat).
- *   - Subhead → supporting → CTAs → trust: opacity + y, stagger 80ms.
- *   - prefers-reduced-motion: snap everything to its final state.
+ * Motion budget — transform/opacity only, zero ScrollTriggers:
+ *   - Atmosphere fades in
+ *   - Kicker + rule come up, headline lines mask-reveal (stagger 120ms)
+ *   - Subhead → supporting → CTAs → trust (stagger 80ms)
+ *   - Mono micro-labels + scroll indicator fade in last
+ *   - Three breath cycles + a slow molecular drift run forever
+ *   - prefers-reduced-motion: snap everything to final state
  */
 export function Hero2() {
   const sceneRef = useRef<HTMLDivElement>(null);
@@ -39,33 +55,49 @@ export function Hero2() {
       if (!scene) return;
 
       const ambientGlow = scene.querySelector('.hero-glow-ambient');
+      const offsetGlow = scene.querySelector('.hero-glow-offset');
       const bedGlow = scene.querySelector('.hero-glow-bed');
+      const molecular = scene.querySelector('.hero-molecular');
       const kicker = scene.querySelector('.hero-kicker');
       const rule = scene.querySelector('.hero-kicker-rule');
       const lines = scene.querySelectorAll('.line-inner');
       const reveals = scene.querySelectorAll('.hero-fade');
+      const microLabels = scene.querySelectorAll('.hero-micro-label');
+      const scrollCue = scene.querySelector('.hero-scroll-cue');
+
+      const allOpacityTargets = [
+        ambientGlow,
+        offsetGlow,
+        bedGlow,
+        molecular,
+        kicker,
+        rule,
+        ...Array.from(lines),
+        ...Array.from(reveals),
+        ...Array.from(microLabels),
+        scrollCue,
+      ];
 
       if (prefersReducedMotion()) {
-        gsap.set(
-          [
-            ambientGlow,
-            bedGlow,
-            kicker,
-            rule,
-            ...Array.from(lines),
-            ...Array.from(reveals),
-          ],
-          {opacity: 1, y: 0, yPercent: 0, scaleX: 1},
-        );
+        gsap.set(allOpacityTargets, {
+          opacity: 1,
+          y: 0,
+          yPercent: 0,
+          scaleX: 1,
+        });
         return;
       }
 
       gsap.set(ambientGlow, {opacity: 0});
+      gsap.set(offsetGlow, {opacity: 0});
       gsap.set(bedGlow, {opacity: 0});
+      gsap.set(molecular, {opacity: 0});
       gsap.set(kicker, {opacity: 0, y: 8});
       gsap.set(rule, {scaleX: 0, transformOrigin: '50% 50%'});
       gsap.set(lines, {yPercent: 110});
       gsap.set(reveals, {opacity: 0, y: 14});
+      gsap.set(microLabels, {opacity: 0});
+      gsap.set(scrollCue, {opacity: 0, y: 6});
 
       const tl = gsap.timeline({delay: 0.05});
       tl.to(
@@ -74,9 +106,19 @@ export function Hero2() {
         0,
       )
         .to(
+          offsetGlow,
+          {opacity: 1, duration: 0.85, ease: 'power2.out'},
+          0.05,
+        )
+        .to(
           bedGlow,
           {opacity: 0.55, duration: 0.9, ease: 'power2.out'},
-          0.05,
+          0.1,
+        )
+        .to(
+          molecular,
+          {opacity: 1, duration: 1.2, ease: 'power2.out'},
+          0.25,
         )
         .to(
           kicker,
@@ -109,10 +151,20 @@ export function Hero2() {
           },
           0.9,
         )
+        .to(
+          microLabels,
+          {opacity: 1, duration: 0.7, ease: 'power2.out', stagger: 0.06},
+          1.2,
+        )
+        .to(
+          scrollCue,
+          {opacity: 1, y: 0, duration: 0.5, ease: 'power2.out'},
+          1.5,
+        )
         .add(() => {
-          // 6s opacity breath on the ambient bloom and 9s drift on the
-          // type-bed glow — different cadences keep the warmth feeling
-          // alive without ever drawing attention.
+          // ─── Idle breaths ───
+          // Three different cadences keep the warmth dimensional.
+          // Opacity only — never re-introduces a hard edge.
           gsap.to(ambientGlow, {
             opacity: 0.84,
             duration: 3,
@@ -120,9 +172,33 @@ export function Hero2() {
             yoyo: true,
             repeat: -1,
           });
+          gsap.to(offsetGlow, {
+            opacity: 0.7,
+            duration: 3.75,
+            ease: 'sine.inOut',
+            yoyo: true,
+            repeat: -1,
+          });
           gsap.to(bedGlow, {
             opacity: 0.32,
             duration: 4.5,
+            ease: 'sine.inOut',
+            yoyo: true,
+            repeat: -1,
+          });
+          // Slow molecular drift — transform only, ~24s cycle.
+          gsap.to(molecular, {
+            x: 24,
+            y: -10,
+            duration: 14,
+            ease: 'sine.inOut',
+            yoyo: true,
+            repeat: -1,
+          });
+          // Scroll cue — gentle vertical breath.
+          gsap.to(scrollCue, {
+            y: 6,
+            duration: 1.6,
             ease: 'sine.inOut',
             yoyo: true,
             repeat: -1,
@@ -140,31 +216,43 @@ export function Hero2() {
         minHeight: '100vh',
         background: '#0B0B0C',
         paddingTop: 'clamp(120px, 14vh, 200px)',
-        paddingBottom: 'clamp(96px, 12vh, 144px)',
+        paddingBottom: 'clamp(112px, 14vh, 168px)',
         paddingLeft: 'clamp(24px, 5vw, 80px)',
         paddingRight: 'clamp(24px, 5vw, 80px)',
       }}
     >
-      {/* === Atmosphere stack ===
-          Every layer is bounded by the section (inset:0) with a
-          percentage-based radial whose final stop is fully transparent
-          inside the section bounds — no hard edge possible. */}
+      {/* ═══ Atmosphere stack ═══
+          Every layer is section-filling on inset:0 with a percentage
+          radial whose final stop is fully transparent well within the
+          section — no bounded disc anywhere. */}
 
-      {/* L1 — Wide ambient bloom. */}
+      {/* L1 — Wide ambient bloom (centre-low, warm). */}
       <div
         aria-hidden
         className="hero-glow-ambient pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(80% 70% at 50% 46%, rgba(209,26,42,0.24) 0%, rgba(110,11,20,0.14) 28%, rgba(58,6,12,0.06) 52%, rgba(28,4,8,0.02) 74%, rgba(11,11,12,0) 92%)',
+            'radial-gradient(82% 72% at 50% 50%, rgba(209,26,42,0.26) 0%, rgba(110,11,20,0.16) 26%, rgba(58,6,12,0.07) 50%, rgba(28,4,8,0.02) 74%, rgba(11,11,12,0) 92%)',
           filter: 'blur(56px)',
           willChange: 'opacity',
         }}
       />
 
-      {/* L2 — Slower glow drift behind the type bed. Sits a touch lower
-          and wider than the headline so the bloom radiates from where
-          the eye lands. */}
+      {/* L2 — Offset secondary glow (smaller, higher-right). The
+          off-axis source breaks the single-radial flatness and gives
+          the light a direction. */}
+      <div
+        aria-hidden
+        className="hero-glow-offset pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(46% 40% at 72% 30%, rgba(230,49,67,0.20) 0%, rgba(209,26,42,0.10) 36%, rgba(110,11,20,0.04) 62%, rgba(28,4,8,0) 86%)',
+          filter: 'blur(44px)',
+          willChange: 'opacity',
+        }}
+      />
+
+      {/* L3 — Type-bed glow (slower drift behind the headline). */}
       <div
         aria-hidden
         className="hero-glow-bed pointer-events-none absolute inset-0"
@@ -176,7 +264,26 @@ export function Hero2() {
         }}
       />
 
-      {/* L3 — Floor wash. Gravity, no spotlight. */}
+      {/* L4 — Molecular lattice. A barely-there crimson hex grid behind
+          the headline, masked to fade out at the edges. Drifts slowly
+          on transform only. */}
+      <div
+        aria-hidden
+        className="hero-molecular pointer-events-none absolute"
+        style={{
+          inset: '8% 4%',
+          opacity: 0.065,
+          maskImage:
+            'radial-gradient(closest-side, #000 35%, transparent 78%)',
+          WebkitMaskImage:
+            'radial-gradient(closest-side, #000 35%, transparent 78%)',
+          willChange: 'transform, opacity',
+        }}
+      >
+        <HexLattice rows={5} cols={9} size={72} strokeOpacity={1} />
+      </div>
+
+      {/* L5 — Floor wash (gravity, no spotlight). */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -186,38 +293,81 @@ export function Hero2() {
         }}
       />
 
-      {/* L4 — Edge vignette. Pulls the corners toward pure black so the
-          composition feels held within the frame. */}
+      {/* L6 — Edge vignette. Pulls corners toward pure black so the
+          composition feels held inside the frame and the centre
+          naturally sits slightly brighter. */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(140% 110% at 50% 50%, rgba(11,11,12,0) 55%, rgba(11,11,12,0.45) 85%, rgba(11,11,12,0.85) 100%)',
+            'radial-gradient(140% 110% at 50% 50%, rgba(11,11,12,0) 52%, rgba(11,11,12,0.40) 82%, rgba(11,11,12,0.85) 100%)',
         }}
       />
 
-      {/* === Content === */}
+      {/* ═══ Editorial mono micro-labels ═══
+          Decorative editorial details that reward looking. Hidden
+          below md to keep the mobile composition clean. */}
+      <div aria-hidden className="pointer-events-none hidden md:block">
+        <span
+          className="hero-micro-label t-mono absolute uppercase text-fg3"
+          style={{
+            top: 'clamp(132px, 16vh, 220px)',
+            left: 'clamp(32px, 3.5vw, 88px)',
+            fontSize: 10,
+            letterSpacing: '0.24em',
+            opacity: 0.22,
+          }}
+        >
+          {TRIBULUS_DOSE.toUpperCase()} TRIBULUS
+        </span>
+        <span
+          className="hero-micro-label t-mono absolute uppercase text-fg3"
+          style={{
+            top: 'clamp(132px, 16vh, 220px)',
+            right: 'clamp(32px, 3.5vw, 88px)',
+            fontSize: 10,
+            letterSpacing: '0.24em',
+            opacity: 0.22,
+          }}
+        >
+          LOT #{SAMPLE_LOT}
+        </span>
+        <span
+          className="hero-micro-label t-mono absolute uppercase text-fg3"
+          style={{
+            bottom: 'clamp(124px, 15vh, 188px)',
+            right: 'clamp(32px, 3.5vw, 88px)',
+            fontSize: 10,
+            letterSpacing: '0.24em',
+            opacity: 0.22,
+          }}
+        >
+          60-DAY · LOT-TESTED
+        </span>
+      </div>
+
+      {/* ═══ Content ═══ */}
       <div className="relative z-[2] mx-auto flex w-full max-w-[1080px] flex-col items-center text-center">
-        {/* Mono kicker + hairline rule */}
+        {/* Kicker — confrontational trust signal */}
         <div className="hero-kicker flex flex-col items-center">
           <span
             className="t-mono text-[11px] uppercase tracking-[0.26em]"
             style={{color: 'var(--color-crimson-hi)'}}
           >
-            Daily vitality, done properly
+            Trusted by {TRUSTED_BY_COUNT} · Third-party tested
           </span>
           <span
             aria-hidden
             className="rule-ember hero-kicker-rule mt-5"
-            style={{width: 96}}
+            style={{width: 112}}
           />
         </div>
 
         <div style={{height: 'clamp(36px, 5vh, 64px)'}} />
 
-        {/* Massive headline — three lines, mask reveal. Last line is the
-            ember word; the rest is calm fg-1 weight 300. */}
+        {/* Massive headline — three lines, mask reveal, ember on the
+            brand-promise word. */}
         <SplitLines
           lines={[
             'Vitality,',
@@ -232,16 +382,19 @@ export function Hero2() {
           }}
         />
 
+        {/* Subhead — specific, confrontational, dose-named. */}
         <p
-          className="hero-fade mt-9 max-w-[640px] text-fg2"
+          className="hero-fade mt-9 max-w-[680px] text-fg2"
           style={{
             font: '300 clamp(16px, 1.25vw, 20px)/1.6 var(--font-sans)',
           }}
         >
-          Two daily formulas — dosed at the levels the studies actually used,
-          third-party tested every lot, nothing hidden.
+          Two daily formulas dosed at the levels studies actually used —{' '}
+          {TRIBULUS_DOSE} tribulus, not fairy dust. Third-party tested every
+          lot. Every dose printed on the label.
         </p>
 
+        {/* Supporting line — the hook that picks a fight. */}
         <p
           className="hero-fade mt-4 text-fg3"
           style={{
@@ -249,27 +402,54 @@ export function Hero2() {
             letterSpacing: '-0.005em',
           }}
         >
-          The protocol for people who read labels.
+          Built for people who read the label before they buy.
         </p>
 
+        {/* CTAs — primary (lower-commitment "Find") + curiosity secondary */}
         <div className="hero-fade mt-11 flex flex-col items-center gap-4 sm:flex-row sm:gap-5">
           <Link to="/collections/all" prefetch="intent">
             <Button className="px-9 py-[18px] text-base">
-              Start your protocol
+              Find your formula
             </Button>
           </Link>
           <Link to="/#two-formulas" prefetch="intent">
             <Button variant="secondary" className="px-9 py-[17px] text-base">
-              See the formulas
+              See what&apos;s inside
             </Button>
           </Link>
         </div>
 
+        {/* Trust microline — specific, multi-claim */}
         <div
           className="hero-fade text-[11px] font-medium uppercase tracking-[0.22em] text-fg3"
           style={{marginTop: 'clamp(48px, 6vh, 80px)'}}
         >
-          60-day guarantee · Third-party tested every lot · Made in USA
+          60-day money-back guarantee · Tested every lot · Made in USA ·{' '}
+          {TRUSTED_BY_COUNT} protocols started
+        </div>
+      </div>
+
+      {/* ═══ Scroll cue ═══
+          Subtle invitation to continue. Vertical breath, never busy. */}
+      <div
+        aria-hidden
+        className="hero-scroll-cue pointer-events-none absolute left-1/2 -translate-x-1/2"
+        style={{
+          bottom: 'clamp(28px, 5vh, 56px)',
+          willChange: 'transform, opacity',
+        }}
+      >
+        <div className="flex flex-col items-center gap-2">
+          <span
+            className="t-mono text-[9px] uppercase tracking-[0.32em] text-fg4"
+          >
+            Scroll
+          </span>
+          <ChevronDown
+            size={14}
+            strokeWidth={1.5}
+            className="text-fg4"
+          />
         </div>
       </div>
     </section>

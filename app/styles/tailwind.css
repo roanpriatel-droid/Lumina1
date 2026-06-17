@@ -239,17 +239,19 @@ textarea::placeholder {
 .text-ember {
   color: var(--color-fg1);
   text-shadow:
-    0 0 14px rgba(209, 26, 42, 0.32),
-    0 0 36px rgba(209, 26, 42, 0.24);
+    0 0 12px rgba(209, 26, 42, 0.40),
+    0 0 32px rgba(209, 26, 42, 0.28),
+    0 0 72px rgba(230, 49, 67, 0.18);
 }
 
 /* When the ember word itself is crimson (kicker, currency, doses),
-   shift the color and keep the same two-stage bloom. */
+   shift the color and keep the same three-stage bloom. */
 .text-ember-crimson {
   color: var(--color-crimson-hi);
   text-shadow:
-    0 0 14px rgba(230, 49, 67, 0.38),
-    0 0 36px rgba(209, 26, 42, 0.28);
+    0 0 12px rgba(230, 49, 67, 0.46),
+    0 0 32px rgba(209, 26, 42, 0.32),
+    0 0 72px rgba(230, 49, 67, 0.20);
 }
 
 /* Gradient crimson hairline rule (replaces flat horizontal bars
