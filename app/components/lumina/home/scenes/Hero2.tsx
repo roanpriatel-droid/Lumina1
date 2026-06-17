@@ -5,34 +5,37 @@ import {Button} from '~/components/lumina/Button';
 import {ProductVisual} from '~/components/ProductVisual';
 import {gsap, prefersReducedMotion} from '~/lib/motion';
 
-/** Bottle target. Side-by-side on desktop (column ≈ half the viewport
- *  width), stacked on mobile (column ≈ full width). Stays inside the
- *  brief's 65–75% vh target on desktop; on mobile, vw becomes the
- *  binding constraint and keeps the bottle from going edge-to-edge. */
+/** Bottle target. Brief asks for ~70vh tall and fully visible — we hit
+ *  that on desktop (vh*0.70, ceiling 720) and let vw bind the size on
+ *  narrow viewports so the bottle never goes edge-to-edge. */
 function computeBottleSize(vw: number, vh: number) {
   if (vw >= 768) {
-    return Math.round(Math.max(360, Math.min(640, vh * 0.72, vw * 0.42)));
+    return Math.round(Math.max(420, Math.min(720, vh * 0.70, vw * 0.50)));
   }
-  return Math.round(Math.max(280, Math.min(540, vh * 0.55, vw * 0.78)));
+  return Math.round(Math.max(280, Math.min(520, vh * 0.55, vw * 0.78)));
 }
 
 /**
  * Scene 1 — Static premium hero
  *
- * A finished banner that loads, settles, and stays still. One ~600ms
- * fade/rise sequence on mount, then composition does the work. No
- * scroll triggers, no pinned handoff — the rest of the homepage's
- * scroll choreography kicks in once the user moves past this section.
+ * One cohesive vertical composition: kicker · bottle · headline · sub ·
+ * CTA · trust. Bottle sits inside a section-filling atmospheric bloom
+ * (no bounded disc, no light rays, no watermark). The hero is allowed
+ * to grow past 100vh — content scrolls in the normal flow once the
+ * user moves past it.
  *
- * Motion budget (transform/opacity only):
+ * Motion budget (transform/opacity only, no ScrollTriggers):
+ *   - Glow: opacity 0→1 over 700ms, then 6s sine-inOut opacity breath
  *   - Bottle: opacity 0→1, y 18→0 over 650ms
  *   - Text reveals: opacity 0→1, y 14→0, staggered 80ms
- *   - Glow: opacity 0→1 over 700ms + a tasteful 6s opacity-only breath
  *   - prefers-reduced-motion: skip the timeline, render final state
+ *
+ * Nav clearance: section paddingTop accounts for the sticky 76px
+ * header + announcement bar + visible headroom above the bottle cap.
  */
 export function Hero2() {
   const sceneRef = useRef<HTMLDivElement>(null);
-  const [bottleSize, setBottleSize] = useState(520);
+  const [bottleSize, setBottleSize] = useState(560);
 
   useEffect(() => {
     const update = () =>
@@ -81,7 +84,18 @@ export function Hero2() {
             stagger: 0.08,
           },
           0.2,
-        );
+        )
+        .add(() => {
+          // Subtle 6s opacity breath on the glow. Opacity only — no scale,
+          // no transform, so it can't reintroduce a visible edge.
+          gsap.to(glow, {
+            opacity: 0.86,
+            duration: 3,
+            ease: 'sine.inOut',
+            yoyo: true,
+            repeat: -1,
+          });
+        }, '>0.1');
     },
     {scope: sceneRef},
   );
@@ -90,44 +104,73 @@ export function Hero2() {
     <section
       ref={sceneRef}
       className="relative isolate overflow-hidden"
-      style={{minHeight: '100vh', background: '#0B0B0C'}}
+      style={{
+        minHeight: '100vh',
+        background: '#0B0B0C',
+        paddingTop: 'clamp(112px, 13vh, 184px)',
+        paddingBottom: 'clamp(96px, 12vh, 144px)',
+        paddingLeft: 'clamp(24px, 5vw, 80px)',
+        paddingRight: 'clamp(24px, 5vw, 80px)',
+      }}
     >
-      {/* Single soft bloom — feathered to fully transparent at the edges.
-          Reads as light, not a drawn ring. 6s opacity-only breath. */}
+      {/* === Atmospheric glow stack ===
+          Every layer is bounded by the section (inset:0) with a
+          percentage-based radial whose final stop is fully transparent
+          well within the section bounds. That removes the hard "disc"
+          edge of a closest-side / fixed-size container glow. */}
+
+      {/* L1 — Wide ambient bloom. Fills most of the hero softly. */}
       <div
         aria-hidden
-        className="hero-glow lumina-glow-breath pointer-events-none absolute left-1/2 top-1/2"
+        className="hero-glow pointer-events-none absolute inset-0"
         style={{
-          width: 'clamp(540px, 82vh, 1180px)',
-          height: 'clamp(540px, 82vh, 1180px)',
-          transform: 'translate(-50%, -50%)',
           background:
-            'radial-gradient(closest-side, rgba(209,26,42,0.28) 0%, rgba(110,11,20,0.16) 32%, rgba(58,6,12,0.06) 62%, rgba(11,11,12,0) 100%)',
-          filter: 'blur(40px)',
+            'radial-gradient(78% 68% at 50% 44%, rgba(209,26,42,0.22) 0%, rgba(110,11,20,0.13) 28%, rgba(58,6,12,0.06) 52%, rgba(28,4,8,0.02) 74%, rgba(11,11,12,0) 92%)',
+          filter: 'blur(56px)',
           willChange: 'opacity',
         }}
       />
-      {/* Subtle floor wash — grounds the bottle in the lower third. */}
+
+      {/* L2 — Tighter warmth pooling around the bottle area. Lifts the
+          centre temperature without ever drawing a ring. */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(140% 80% at 50% 112%, rgba(110,11,20,0.18), transparent 60%)',
+            'radial-gradient(42% 38% at 50% 42%, rgba(230,49,67,0.16) 0%, rgba(209,26,42,0.08) 38%, rgba(110,11,20,0.03) 62%, rgba(28,4,8,0) 84%)',
+          filter: 'blur(36px)',
         }}
       />
 
-      <div className="relative z-[2] mx-auto flex w-full max-w-[1320px] flex-col items-center justify-center gap-12 px-6 py-[clamp(80px,10vh,140px)] md:min-h-screen md:flex-row md:items-center md:justify-between md:gap-16">
-        {/* Bottle column */}
-        <div className="relative flex shrink-0 items-center justify-center">
+      {/* L3 — Floor wash. A wide, very soft oxblood bloom along the
+          lower edge so the composition has gravity. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(130% 50% at 50% 102%, rgba(110,11,20,0.18) 0%, rgba(58,6,12,0.08) 35%, rgba(11,11,12,0) 65%)',
+        }}
+      />
+
+      {/* === Content stack === */}
+      <div className="relative z-[2] mx-auto flex w-full max-w-[920px] flex-col items-center text-center">
+        <div
+          className="hero-fade t-mono mb-9 text-[11px] uppercase tracking-[0.24em]"
+          style={{color: 'var(--color-crimson-hi)'}}
+        >
+          Daily vitality, done properly
+        </div>
+
+        <div className="relative flex items-center justify-center">
           <div
             className="hero-bottle"
             style={{
               width: bottleSize,
-              // bottle (1:1) + clamped reflection (38%) - 10px overlap +
-              // small buffer so neighbours below never get pushed into
-              // the bottle on layout settle.
-              height: Math.round(bottleSize * 1.38) + 16,
+              // 1:1 bottle + ~38% reflection - 10px overlap, + buffer so
+              // the headline below can never collide.
+              height: Math.round(bottleSize * 1.38) + 20,
             }}
           >
             <ProductVisual
@@ -146,48 +189,44 @@ export function Hero2() {
           </div>
         </div>
 
-        {/* Text column */}
-        <div className="relative flex max-w-[520px] flex-col items-center text-center md:items-start md:text-left">
-          <div
-            className="hero-fade t-mono mb-6 text-[11px] uppercase tracking-[0.22em] text-fg3"
-            style={{color: 'var(--color-crimson-hi)'}}
-          >
-            Daily vitality, done properly
-          </div>
+        <div style={{height: 'clamp(40px, 5vh, 72px)'}} />
 
-          <h1
-            className="hero-fade text-fg1"
-            style={{
-              font: '200 clamp(48px, 6.4vw, 92px)/0.98 var(--font-sans)',
-              letterSpacing: '-0.02em',
-              textWrap: 'balance',
-            }}
-          >
-            <span className="text-ember">Vitality,</span> formulated honestly.
-          </h1>
+        <h1
+          className="hero-fade text-fg1"
+          style={{
+            font: '200 clamp(44px, 5.6vw, 84px)/1.02 var(--font-sans)',
+            letterSpacing: '-0.02em',
+            textWrap: 'balance',
+            maxWidth: '14ch',
+          }}
+        >
+          <span className="text-ember">Vitality,</span> formulated honestly.
+        </h1>
 
-          <p
-            className="hero-fade mt-7 max-w-[440px] text-fg2"
-            style={{
-              font: '300 clamp(15px, 1.15vw, 18px)/1.6 var(--font-sans)',
-            }}
-          >
-            Two daily formulas built from clinically-studied actives — dosed at
-            the levels the studies actually used, third-party tested every lot,
-            nothing hidden.
-          </p>
+        <p
+          className="hero-fade mt-7 max-w-[520px] text-fg2"
+          style={{
+            font: '300 clamp(15px, 1.15vw, 18px)/1.65 var(--font-sans)',
+          }}
+        >
+          Two daily formulas built from clinically-studied actives — dosed at
+          the levels the studies actually used, third-party tested every lot,
+          nothing hidden.
+        </p>
 
-          <div className="hero-fade mt-9">
-            <Link to="/collections/all" prefetch="intent">
-              <Button className="px-9 py-[18px] text-base">
-                Start your protocol
-              </Button>
-            </Link>
-          </div>
+        <div className="hero-fade mt-10">
+          <Link to="/collections/all" prefetch="intent">
+            <Button className="px-9 py-[18px] text-base">
+              Start your protocol
+            </Button>
+          </Link>
+        </div>
 
-          <div className="hero-fade mt-7 text-[11px] font-medium uppercase tracking-[0.18em] text-fg3">
-            60-day guarantee · Ships from USA · Cancel anytime
-          </div>
+        <div
+          className="hero-fade text-[11px] font-medium uppercase tracking-[0.2em] text-fg3"
+          style={{marginTop: 'clamp(40px, 5vh, 72px)'}}
+        >
+          60-day guarantee · Ships from USA · Cancel anytime
         </div>
       </div>
     </section>

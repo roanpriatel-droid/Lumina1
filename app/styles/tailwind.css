@@ -239,8 +239,8 @@ textarea::placeholder {
 .text-ember {
   color: var(--color-fg1);
   text-shadow:
-    0 0 8px rgba(209, 26, 42, 0.55),
-    0 0 24px rgba(209, 26, 42, 0.45);
+    0 0 14px rgba(209, 26, 42, 0.32),
+    0 0 36px rgba(209, 26, 42, 0.24);
 }
 
 /* When the ember word itself is crimson (kicker, currency, doses),
@@ -248,8 +248,8 @@ textarea::placeholder {
 .text-ember-crimson {
   color: var(--color-crimson-hi);
   text-shadow:
-    0 0 8px rgba(230, 49, 67, 0.65),
-    0 0 24px rgba(209, 26, 42, 0.5);
+    0 0 14px rgba(230, 49, 67, 0.38),
+    0 0 36px rgba(209, 26, 42, 0.28);
 }
 
 /* Gradient crimson hairline rule (replaces flat horizontal bars
