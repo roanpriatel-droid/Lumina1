@@ -238,10 +238,13 @@ textarea::placeholder {
    Never on body copy. Discipline is the language. */
 .text-ember {
   color: var(--color-fg1);
+  /* Tighter blur, higher core intensity — reads intentional, not fuzzy.
+     The third wider bloom keeps dimensional warmth without spreading
+     the burn to where it looks like an outline. */
   text-shadow:
-    0 0 12px rgba(209, 26, 42, 0.40),
-    0 0 32px rgba(209, 26, 42, 0.28),
-    0 0 72px rgba(230, 49, 67, 0.18);
+    0 0 7px rgba(209, 26, 42, 0.52),
+    0 0 20px rgba(209, 26, 42, 0.32),
+    0 0 44px rgba(230, 49, 67, 0.16);
 }
 
 /* When the ember word itself is crimson (kicker, currency, doses),
@@ -249,9 +252,9 @@ textarea::placeholder {
 .text-ember-crimson {
   color: var(--color-crimson-hi);
   text-shadow:
-    0 0 12px rgba(230, 49, 67, 0.46),
-    0 0 32px rgba(209, 26, 42, 0.32),
-    0 0 72px rgba(230, 49, 67, 0.20);
+    0 0 7px rgba(230, 49, 67, 0.58),
+    0 0 20px rgba(209, 26, 42, 0.36),
+    0 0 44px rgba(230, 49, 67, 0.18);
 }
 
 /* Gradient crimson hairline rule (replaces flat horizontal bars
@@ -718,14 +721,15 @@ textarea::placeholder {
     0 28px 80px rgba(110, 11, 20, 0.32);
 }
 
-/* Primary CTA hover bloom — applies the glow-frame-hover treatment
-   on top of the existing lumina-btn-primary shadow stack so the
-   button reads as importance + actionable. */
+/* Primary CTA hover — tighter, machined halo that intensifies smoothly
+   over the 200ms transition declared on .lumina-btn. The :not(:disabled)
+   specificity wins over .lumina-btn-primary:hover, so keep these values
+   in sync with that block. */
 .lumina-btn-primary:not(:disabled):hover {
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    0 6px 18px rgba(209, 26, 42, 0.22),
-    0 22px 56px rgba(110, 11, 20, 0.36);
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    0 3px 10px rgba(209, 26, 42, 0.42),
+    0 14px 30px rgba(110, 11, 20, 0.32);
 }
 
 /* "Slim top-edge" — for the sticky add-to-cart bar and announcement
@@ -850,6 +854,14 @@ textarea::placeholder {
   font-size: 15px;
   font-weight: 500;
   letter-spacing: 0.01em;
+  /* Smooth 200ms intensification on hover — applies to both variants.
+     Includes filter for the brightness lift on primary. */
+  transition:
+    box-shadow 200ms ease-out,
+    filter 200ms ease-out,
+    background-color 200ms ease-out,
+    border-color 200ms ease-out,
+    transform 80ms ease-out;
   line-height: 1;
   padding: 14px 28px;
   border-radius: 9999px;
@@ -871,22 +883,28 @@ textarea::placeholder {
   background: var(--color-crimson);
   color: #fff;
   border: 1px solid transparent;
+  /* Tighter halo (4px primary, 14px ambient layer) reads machined
+     instead of fuzzy. The brighter inset top highlight (0.22) gives
+     the button a crisp top-edge facet — the "machined" look. */
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.15),
-    0 8px 24px rgba(209, 26, 42, 0.25);
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 2px 6px rgba(209, 26, 42, 0.28),
+    0 10px 22px rgba(110, 11, 20, 0.22);
 }
 .lumina-btn-primary:hover {
   filter: brightness(1.08);
+  /* Halo intensifies smoothly via the .lumina-btn transition. */
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    0 12px 32px rgba(209, 26, 42, 0.35);
+    inset 0 1px 0 rgba(255, 255, 255, 0.30),
+    0 3px 10px rgba(209, 26, 42, 0.42),
+    0 14px 30px rgba(110, 11, 20, 0.32);
 }
 .lumina-btn-primary:active {
   transform: translateY(1px);
   filter: brightness(0.96);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 4px 12px rgba(209, 26, 42, 0.2);
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 2px 6px rgba(209, 26, 42, 0.20);
 }
 
 .lumina-btn-secondary {
@@ -896,7 +914,10 @@ textarea::placeholder {
 }
 .lumina-btn-secondary:hover {
   border-color: var(--color-crimson);
-  background: rgba(209, 26, 42, 0.06);
+  background: rgba(209, 26, 42, 0.09);
+  /* Match the crimson halo language so secondary feels related to
+     primary, just one octave quieter. */
+  box-shadow: 0 1px 8px rgba(209, 26, 42, 0.14);
 }
 .lumina-btn-secondary:active {
   transform: translateY(1px);

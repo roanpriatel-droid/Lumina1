@@ -1,11 +1,20 @@
 import {useRef} from 'react';
 import {useGSAP} from '@gsap/react';
-import {ChevronDown} from 'lucide-react';
 import {Link} from 'react-router';
 import {Button} from '~/components/lumina/Button';
 import {SplitLines} from '~/components/lumina/SplitLines';
 import {HexLattice} from '~/components/graphics/Molecular';
 import {gsap, prefersReducedMotion} from '~/lib/motion';
+
+// ─── Vertical rhythm — a single 1.5× scale governs every gap ─────────
+// 12 → 24 → 40 → 56 → 80 (each step ~1.5×). Each clamp tracks the
+// vh-driven mid value but pins floor + ceiling for stability.
+const GAP = {
+  tight: 'clamp(12px, 1.4vh, 18px)',
+  standard: 'clamp(24px, 3vh, 36px)',
+  wide: 'clamp(40px, 4.8vh, 56px)',
+  wider: 'clamp(56px, 6.5vh, 80px)',
+} as const;
 
 // ─── COPY PLACEHOLDERS — verify before production launch ─────────────
 // Per the brief, the structure ships now (so design + IA review can
@@ -55,27 +64,33 @@ export function Hero2() {
       if (!scene) return;
 
       const ambientGlow = scene.querySelector('.hero-glow-ambient');
+      const highlight = scene.querySelector('.hero-glow-highlight');
       const offsetGlow = scene.querySelector('.hero-glow-offset');
       const bedGlow = scene.querySelector('.hero-glow-bed');
       const molecular = scene.querySelector('.hero-molecular');
+      const corners = scene.querySelectorAll('.hero-corner');
       const kicker = scene.querySelector('.hero-kicker');
       const rule = scene.querySelector('.hero-kicker-rule');
       const lines = scene.querySelectorAll('.line-inner');
       const reveals = scene.querySelectorAll('.hero-fade');
       const microLabels = scene.querySelectorAll('.hero-micro-label');
       const scrollCue = scene.querySelector('.hero-scroll-cue');
+      const scrollCueLine = scene.querySelector('.hero-scroll-cue-line');
 
       const allOpacityTargets = [
         ambientGlow,
+        highlight,
         offsetGlow,
         bedGlow,
         molecular,
         kicker,
         rule,
+        ...Array.from(corners),
         ...Array.from(lines),
         ...Array.from(reveals),
         ...Array.from(microLabels),
         scrollCue,
+        scrollCueLine,
       ];
 
       if (prefersReducedMotion()) {
@@ -84,51 +99,68 @@ export function Hero2() {
           y: 0,
           yPercent: 0,
           scaleX: 1,
+          scaleY: 1,
         });
         return;
       }
 
       gsap.set(ambientGlow, {opacity: 0});
+      gsap.set(highlight, {opacity: 0});
       gsap.set(offsetGlow, {opacity: 0});
       gsap.set(bedGlow, {opacity: 0});
       gsap.set(molecular, {opacity: 0});
+      gsap.set(corners, {opacity: 0});
       gsap.set(kicker, {opacity: 0, y: 8});
       gsap.set(rule, {scaleX: 0, transformOrigin: '50% 50%'});
       gsap.set(lines, {yPercent: 110});
       gsap.set(reveals, {opacity: 0, y: 14});
       gsap.set(microLabels, {opacity: 0});
-      gsap.set(scrollCue, {opacity: 0, y: 6});
+      gsap.set(scrollCue, {opacity: 0});
+      gsap.set(scrollCueLine, {
+        scaleY: 0,
+        transformOrigin: '50% 0%',
+      });
 
       const tl = gsap.timeline({delay: 0.05});
       tl.to(
         ambientGlow,
-        {opacity: 1, duration: 0.75, ease: 'power2.out'},
+        {opacity: 1, duration: 0.85, ease: 'power2.out'},
         0,
       )
         .to(
+          highlight,
+          {opacity: 1, duration: 1.0, ease: 'power2.out'},
+          0.1,
+        )
+        .to(
           offsetGlow,
-          {opacity: 1, duration: 0.85, ease: 'power2.out'},
-          0.05,
+          {opacity: 1, duration: 0.9, ease: 'power2.out'},
+          0.08,
         )
         .to(
           bedGlow,
-          {opacity: 0.55, duration: 0.9, ease: 'power2.out'},
-          0.1,
+          {opacity: 0.55, duration: 0.95, ease: 'power2.out'},
+          0.12,
         )
         .to(
           molecular,
           {opacity: 1, duration: 1.2, ease: 'power2.out'},
-          0.25,
+          0.28,
+        )
+        .to(
+          corners,
+          {opacity: 1, duration: 0.9, ease: 'power2.out', stagger: 0.04},
+          0.35,
         )
         .to(
           kicker,
           {opacity: 1, y: 0, duration: 0.5, ease: 'power3.out'},
-          0.2,
+          0.25,
         )
         .to(
           rule,
           {scaleX: 1, duration: 0.7, ease: 'power3.out'},
-          0.28,
+          0.33,
         )
         .to(
           lines,
@@ -138,7 +170,7 @@ export function Hero2() {
             ease: 'power3.out',
             stagger: 0.12,
           },
-          0.4,
+          0.45,
         )
         .to(
           reveals,
@@ -149,56 +181,69 @@ export function Hero2() {
             ease: 'power3.out',
             stagger: 0.08,
           },
-          0.9,
+          0.95,
         )
         .to(
           microLabels,
-          {opacity: 1, duration: 0.7, ease: 'power2.out', stagger: 0.06},
-          1.2,
+          {opacity: 1, duration: 0.8, ease: 'power2.out', stagger: 0.08},
+          1.25,
+        )
+        .to(
+          scrollCueLine,
+          {scaleY: 1, duration: 0.9, ease: 'power3.out'},
+          1.55,
         )
         .to(
           scrollCue,
-          {opacity: 1, y: 0, duration: 0.5, ease: 'power2.out'},
-          1.5,
+          {opacity: 1, duration: 0.45, ease: 'power2.out'},
+          1.55,
         )
         .add(() => {
           // ─── Idle breaths ───
-          // Three different cadences keep the warmth dimensional.
-          // Opacity only — never re-introduces a hard edge.
+          // Slow, layered cadences — barely perceptible individually,
+          // collectively keep the warmth alive. Opacity / transform
+          // only; nothing reintroduces a hard edge.
           gsap.to(ambientGlow, {
-            opacity: 0.84,
-            duration: 3,
+            opacity: 0.86,
+            duration: 4,
+            ease: 'sine.inOut',
+            yoyo: true,
+            repeat: -1,
+          });
+          gsap.to(highlight, {
+            opacity: 0.6,
+            duration: 5.5,
             ease: 'sine.inOut',
             yoyo: true,
             repeat: -1,
           });
           gsap.to(offsetGlow, {
-            opacity: 0.7,
-            duration: 3.75,
+            opacity: 0.72,
+            duration: 4.75,
             ease: 'sine.inOut',
             yoyo: true,
             repeat: -1,
           });
           gsap.to(bedGlow, {
-            opacity: 0.32,
-            duration: 4.5,
+            opacity: 0.34,
+            duration: 6,
             ease: 'sine.inOut',
             yoyo: true,
             repeat: -1,
           });
-          // Slow molecular drift — transform only, ~24s cycle.
+          // Slowest plane — molecular grid drifts on transform only.
           gsap.to(molecular, {
             x: 24,
             y: -10,
-            duration: 14,
+            duration: 18,
             ease: 'sine.inOut',
             yoyo: true,
             repeat: -1,
           });
-          // Scroll cue — gentle vertical breath.
-          gsap.to(scrollCue, {
-            y: 6,
-            duration: 1.6,
+          // Scroll cue hairline — gentle scaleY pulse, ~3.4s.
+          gsap.to(scrollCueLine, {
+            scaleY: 0.55,
+            duration: 1.7,
             ease: 'sine.inOut',
             yoyo: true,
             repeat: -1,
@@ -226,14 +271,29 @@ export function Hero2() {
           radial whose final stop is fully transparent well within the
           section — no bounded disc anywhere. */}
 
-      {/* L1 — Wide ambient bloom (centre-low, warm). */}
+      {/* L1 — Wide ambient bloom. Brighter crimson core that grades
+          through oxblood to deep oxblood and finally near-black —
+          light with weight, not a flat wash. */}
       <div
         aria-hidden
         className="hero-glow-ambient pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(82% 72% at 50% 50%, rgba(209,26,42,0.26) 0%, rgba(110,11,20,0.16) 26%, rgba(58,6,12,0.07) 50%, rgba(28,4,8,0.02) 74%, rgba(11,11,12,0) 92%)',
-          filter: 'blur(56px)',
+            'radial-gradient(84% 74% at 50% 52%, rgba(230,49,67,0.30) 0%, rgba(209,26,42,0.20) 18%, rgba(110,11,20,0.12) 38%, rgba(58,6,12,0.05) 62%, rgba(28,4,8,0.015) 80%, rgba(11,11,12,0) 94%)',
+          filter: 'blur(60px)',
+          willChange: 'opacity',
+        }}
+      />
+
+      {/* L1b — Soft highlight catch near the top. The single light
+          source the rest of the bloom is reacting to. */}
+      <div
+        aria-hidden
+        className="hero-glow-highlight pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(20% 16% at 50% 16%, rgba(230,49,67,0.22) 0%, rgba(209,26,42,0.10) 40%, rgba(110,11,20,0.02) 75%, rgba(11,11,12,0) 92%)',
+          filter: 'blur(34px)',
           willChange: 'opacity',
         }}
       />
@@ -246,8 +306,8 @@ export function Hero2() {
         className="hero-glow-offset pointer-events-none absolute inset-0"
         style={{
           background:
-            'radial-gradient(46% 40% at 72% 30%, rgba(230,49,67,0.20) 0%, rgba(209,26,42,0.10) 36%, rgba(110,11,20,0.04) 62%, rgba(28,4,8,0) 86%)',
-          filter: 'blur(44px)',
+            'radial-gradient(46% 40% at 72% 30%, rgba(230,49,67,0.18) 0%, rgba(209,26,42,0.09) 36%, rgba(110,11,20,0.035) 62%, rgba(28,4,8,0) 86%)',
+          filter: 'blur(46px)',
           willChange: 'opacity',
         }}
       />
@@ -306,8 +366,11 @@ export function Hero2() {
       />
 
       {/* ═══ Editorial mono micro-labels ═══
-          Decorative editorial details that reward looking. Hidden
-          below md to keep the mobile composition clean. */}
+          Decorative details aligned to a single y-rail at the top and
+          another at the bottom. Two sit at 5% so they're almost an
+          afterthought; NW is bumped to 10% as the intentional focal
+          accent — the reason your eye wants to look there. Hidden
+          below md so the mobile composition stays clean. */}
       <div aria-hidden className="pointer-events-none hidden md:block">
         <span
           className="hero-micro-label t-mono absolute uppercase text-fg3"
@@ -316,7 +379,7 @@ export function Hero2() {
             left: 'clamp(32px, 3.5vw, 88px)',
             fontSize: 10,
             letterSpacing: '0.24em',
-            opacity: 0.22,
+            opacity: 0.1,
           }}
         >
           {TRIBULUS_DOSE.toUpperCase()} TRIBULUS
@@ -328,7 +391,7 @@ export function Hero2() {
             right: 'clamp(32px, 3.5vw, 88px)',
             fontSize: 10,
             letterSpacing: '0.24em',
-            opacity: 0.22,
+            opacity: 0.05,
           }}
         >
           LOT #{SAMPLE_LOT}
@@ -340,11 +403,39 @@ export function Hero2() {
             right: 'clamp(32px, 3.5vw, 88px)',
             fontSize: 10,
             letterSpacing: '0.24em',
-            opacity: 0.22,
+            opacity: 0.05,
           }}
         >
           60-DAY · LOT-TESTED
         </span>
+      </div>
+
+      {/* ═══ Corner accents ═══
+          Four 18px L-shapes inset from the section corners. 1px crimson
+          hairlines at 8% opacity — viewfinder marks that subconsciously
+          signal "framed, designed". Hidden below sm so the mobile
+          composition stays pure. */}
+      <div aria-hidden className="pointer-events-none hidden sm:block">
+        {[
+          {top: 24, left: 24, borders: 'border-t border-l'},
+          {top: 24, right: 24, borders: 'border-t border-r'},
+          {bottom: 24, left: 24, borders: 'border-b border-l'},
+          {bottom: 24, right: 24, borders: 'border-b border-r'},
+        ].map((pos, i) => (
+          <div
+            key={i}
+            className={`hero-corner absolute ${pos.borders}`}
+            style={{
+              width: 18,
+              height: 18,
+              top: pos.top,
+              bottom: pos.bottom,
+              left: pos.left,
+              right: pos.right,
+              borderColor: 'rgba(209,26,42,0.08)',
+            }}
+          />
+        ))}
       </div>
 
       {/* ═══ Content ═══ */}
@@ -364,10 +455,11 @@ export function Hero2() {
           />
         </div>
 
-        <div style={{height: 'clamp(36px, 5vh, 64px)'}} />
+        <div style={{height: GAP.wide}} />
 
         {/* Massive headline — three lines, mask reveal, ember on the
-            brand-promise word. */}
+            brand-promise word. Tighter leading (0.92) + slightly more
+            open tracking (-0.02em) gives the lockup a sculpted feel. */}
         <SplitLines
           lines={[
             'Vitality,',
@@ -377,16 +469,17 @@ export function Hero2() {
           as="h1"
           className="text-fg1"
           style={{
-            font: '300 clamp(3.5rem, 9vw, 8rem)/0.94 var(--font-sans)',
-            letterSpacing: '-0.025em',
+            font: '300 clamp(3.5rem, 9vw, 8rem)/0.92 var(--font-sans)',
+            letterSpacing: '-0.02em',
           }}
         />
 
         {/* Subhead — specific, confrontational, dose-named. */}
         <p
-          className="hero-fade mt-9 max-w-[680px] text-fg2"
+          className="hero-fade max-w-[680px] text-fg2"
           style={{
             font: '300 clamp(16px, 1.25vw, 20px)/1.6 var(--font-sans)',
+            marginTop: GAP.standard,
           }}
         >
           Two daily formulas dosed at the levels studies actually used —{' '}
@@ -396,17 +489,21 @@ export function Hero2() {
 
         {/* Supporting line — the hook that picks a fight. */}
         <p
-          className="hero-fade mt-4 text-fg3"
+          className="hero-fade text-fg3"
           style={{
             font: '300 clamp(13px, 1.05vw, 16px)/1.5 var(--font-sans)',
             letterSpacing: '-0.005em',
+            marginTop: GAP.tight,
           }}
         >
           Built for people who read the label before they buy.
         </p>
 
         {/* CTAs — primary (lower-commitment "Find") + curiosity secondary */}
-        <div className="hero-fade mt-11 flex flex-col items-center gap-4 sm:flex-row sm:gap-5">
+        <div
+          className="hero-fade flex flex-col items-center gap-4 sm:flex-row sm:gap-5"
+          style={{marginTop: GAP.wide}}
+        >
           <Link to="/collections/all" prefetch="intent">
             <Button className="px-9 py-[18px] text-base">
               Find your formula
@@ -422,7 +519,7 @@ export function Hero2() {
         {/* Trust microline — specific, multi-claim */}
         <div
           className="hero-fade text-[11px] font-medium uppercase tracking-[0.22em] text-fg3"
-          style={{marginTop: 'clamp(48px, 6vh, 80px)'}}
+          style={{marginTop: GAP.wider}}
         >
           60-day money-back guarantee · Tested every lot · Made in USA ·{' '}
           {TRUSTED_BY_COUNT} protocols started
@@ -430,27 +527,27 @@ export function Hero2() {
       </div>
 
       {/* ═══ Scroll cue ═══
-          Subtle invitation to continue. Vertical breath, never busy. */}
+          A single thin hairline — gradient from transparent → fg4 →
+          transparent — with a gentle scaleY breath. No chevron, no
+          label. Just the suggestion of "there's more below." */}
       <div
         aria-hidden
         className="hero-scroll-cue pointer-events-none absolute left-1/2 -translate-x-1/2"
         style={{
           bottom: 'clamp(28px, 5vh, 56px)',
-          willChange: 'transform, opacity',
+          willChange: 'opacity',
         }}
       >
-        <div className="flex flex-col items-center gap-2">
-          <span
-            className="t-mono text-[9px] uppercase tracking-[0.32em] text-fg4"
-          >
-            Scroll
-          </span>
-          <ChevronDown
-            size={14}
-            strokeWidth={1.5}
-            className="text-fg4"
-          />
-        </div>
+        <div
+          className="hero-scroll-cue-line"
+          style={{
+            width: 1,
+            height: 36,
+            background:
+              'linear-gradient(180deg, rgba(160,160,168,0) 0%, rgba(160,160,168,0.55) 50%, rgba(160,160,168,0) 100%)',
+            willChange: 'transform',
+          }}
+        />
       </div>
     </section>
   );
