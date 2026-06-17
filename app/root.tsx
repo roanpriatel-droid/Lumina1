@@ -61,7 +61,13 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
+    // Favicons — SVG for capable browsers, ICO fallback for legacy.
+    // Browsers pick the highest-priority match they understand; the SVG
+    // takes precedence on Chrome/Edge/Firefox/Safari ≥ 15.
     {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    {rel: 'icon', type: 'image/x-icon', href: '/favicon.ico', sizes: 'any'},
+    {rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png'},
+    {rel: 'manifest', href: '/manifest.webmanifest'},
   ];
 }
 
