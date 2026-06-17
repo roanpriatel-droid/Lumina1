@@ -26,7 +26,15 @@ interface NavItem {
 }
 
 const LUMINA_NAV: ReadonlyArray<NavItem> = [
-  {label: 'Catalog', to: '/collections/all'},
+  {
+    label: 'Shop',
+    to: '/collections/all',
+    children: [
+      {label: 'For Men', to: '/collections/male', note: 'Lumina Male Enhancement™ · 1–12 month supplies'},
+      {label: 'For Women', to: '/collections/female', note: 'Lumina Female Enhancement™ · 1–12 month supplies'},
+      {label: 'Shop All', to: '/collections/all', note: 'Every formula, every supply, side by side'},
+    ],
+  },
   {
     label: 'Science',
     to: '/pages/the-science',

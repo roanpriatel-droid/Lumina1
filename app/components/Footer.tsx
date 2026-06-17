@@ -263,9 +263,9 @@ const FOOTER_COLUMNS: ReadonlyArray<{
   {
     heading: 'Formulas',
     links: [
-      {label: 'Catalog', to: '/collections/all'},
-      {label: 'Male Enhancement', to: '/products/alpha-energy-3'},
-      {label: 'Female Enhancement', to: '/products/female-enhancement-3'},
+      {label: 'Lumina for Men', to: '/collections/male'},
+      {label: 'Lumina for Women', to: '/collections/female'},
+      {label: 'Shop All', to: '/collections/all'},
       {label: 'Sleep — coming soon', to: '/products/sleep'},
       {label: 'Daily Multi — coming soon', to: '/products/daily-multi'},
     ],
