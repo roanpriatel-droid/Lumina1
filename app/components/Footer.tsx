@@ -288,6 +288,8 @@ const FOOTER_COLUMNS: ReadonlyArray<{
       {label: 'Guarantee', to: '/pages/guarantee'},
       {label: 'Contact', to: '/pages/contact'},
       {label: 'FAQ', to: '/pages/faq'},
+      {label: 'Privacy Policy', to: '/pages/privacy'},
+      {label: 'Terms of Service', to: '/pages/terms'},
     ],
   },
 ];
