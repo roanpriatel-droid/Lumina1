@@ -85,6 +85,25 @@ export function entriesForGender(
     .sort((a, b) => a.months - b.months);
 }
 
+/**
+ * Cheapest per-bottle price across a slice of entries. Drives "From $X
+ * a bottle" copy on cards / cross-sells / page CTAs. Returns null for
+ * an empty slice so the UI omits the price line rather than printing
+ * "From $0" or anything similarly broken.
+ */
+export function lowestPerBottlePrice(
+  entries: ReadonlyArray<LuminaProductEntry>,
+): number | null {
+  if (entries.length === 0) return null;
+  let lowest = Infinity;
+  for (const e of entries) {
+    if (e.bottles < 1) continue;
+    const perBottle = e.price / e.bottles;
+    if (perBottle < lowest) lowest = perBottle;
+  }
+  return Number.isFinite(lowest) ? Math.round(lowest) : null;
+}
+
 /* ───────────────────────── math ───────────────────────── */
 
 export interface SavingsBreakdown {

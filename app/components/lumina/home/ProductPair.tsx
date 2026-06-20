@@ -1,18 +1,19 @@
-import {Link} from 'react-router';
+import {Link, useRouteLoaderData} from 'react-router';
 import {useState} from 'react';
 import {Image} from '@shopify/hydrogen';
 import {ArrowRight} from 'lucide-react';
 import {BrandFallback} from '~/components/lumina/BrandFallback';
 import {BlendedImage} from '~/components/lumina/BlendedImage';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
-import {
-  LUMINA_PRODUCTS,
-  LUMINA_PRICE_FROM,
-  type LuminaProduct,
-} from '~/lib/lumina-data';
+import {LUMINA_PRODUCTS, type LuminaProduct} from '~/lib/lumina-data';
 import {getHeroImage, getProductImage} from '~/lib/product-assets';
+import {lowestPerBottlePrice} from '~/lib/savings';
+import type {RootLoader} from '~/root';
 
 export function ProductPair() {
+  const rootData = useRouteLoaderData<RootLoader>('root');
+  const priceFrom = lowestPerBottlePrice(rootData?.luminaCatalog ?? []);
+
   return (
     <section className="mx-auto max-w-[1100px] px-6 pb-[110px] pt-10 md:px-10">
       <div className="mb-14 text-center">
@@ -28,8 +29,8 @@ export function ProductPair() {
         </h2>
       </div>
       <div className="grid grid-cols-1 gap-7 md:grid-cols-2">
-        <ProductCard product={LUMINA_PRODUCTS.male} priceFrom={LUMINA_PRICE_FROM} />
-        <ProductCard product={LUMINA_PRODUCTS.female} priceFrom={LUMINA_PRICE_FROM} />
+        <ProductCard product={LUMINA_PRODUCTS.male} priceFrom={priceFrom} />
+        <ProductCard product={LUMINA_PRODUCTS.female} priceFrom={priceFrom} />
       </div>
     </section>
   );
@@ -40,7 +41,7 @@ function ProductCard({
   priceFrom,
 }: {
   product: LuminaProduct;
-  priceFrom: number;
+  priceFrom: number | null;
 }) {
   const [hover, setHover] = useState(false);
   return (
@@ -86,18 +87,20 @@ function ProductCard({
         >
           {product.benefit}
         </p>
-        <div className="mt-[22px] flex items-baseline gap-2">
-          <span className="text-xs uppercase tracking-[0.14em] text-fg4">
-            From
-          </span>
-          <span
-            className="text-fg1"
-            style={{font: '300 28px/1 var(--font-sans)'}}
-          >
-            ${priceFrom}
-          </span>
-          <span className="t-mono text-[13px] text-fg3">/ mo</span>
-        </div>
+        {priceFrom !== null && (
+          <div className="mt-[22px] flex items-baseline gap-2">
+            <span className="text-xs uppercase tracking-[0.14em] text-fg4">
+              From
+            </span>
+            <span
+              className="text-fg1"
+              style={{font: '300 28px/1 var(--font-sans)'}}
+            >
+              ${priceFrom}
+            </span>
+            <span className="t-mono text-[13px] text-fg3">/ bottle</span>
+          </div>
+        )}
         <span
           className="mt-[22px] inline-flex items-center gap-2 whitespace-nowrap text-[13px] font-medium tracking-[0.04em] transition-colors duration-200"
           style={{color: hover ? 'var(--color-crimson-hi)' : 'var(--color-fg2)'}}

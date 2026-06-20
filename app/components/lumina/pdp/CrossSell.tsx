@@ -1,16 +1,20 @@
-import {Link} from 'react-router';
+import {Link, useRouteLoaderData} from 'react-router';
 import {Image} from '@shopify/hydrogen';
 import {ArrowUpRight} from 'lucide-react';
 import {BrandFallback} from '~/components/lumina/BrandFallback';
 import {BlendedImage} from '~/components/lumina/BlendedImage';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
-import {LUMINA_PRICE_FROM, LUMINA_PRODUCTS} from '~/lib/lumina-data';
+import {LUMINA_PRODUCTS} from '~/lib/lumina-data';
 import type {LuminaProductKey} from '~/lib/lumina-data';
 import {getHeroImage, getProductImage} from '~/lib/product-assets';
+import {lowestPerBottlePrice} from '~/lib/savings';
+import type {RootLoader} from '~/root';
 
 export function CrossSell({currentKey}: {currentKey: LuminaProductKey}) {
   const otherKey: LuminaProductKey = currentKey === 'male' ? 'female' : 'male';
   const other = LUMINA_PRODUCTS[otherKey];
+  const rootData = useRouteLoaderData<RootLoader>('root');
+  const priceFrom = lowestPerBottlePrice(rootData?.luminaCatalog ?? []);
 
   return (
     <section className="border-t border-border bg-surface">
@@ -86,9 +90,11 @@ export function CrossSell({currentKey}: {currentKey: LuminaProductKey}) {
                 className="m-0 max-w-[420px] text-fg3"
                 style={{font: '400 14.5px/1.55 var(--font-sans)'}}
               >
-                Stack the male and female formulas on subscription — an extra
-                10% off the bundle on top of the 15% subscribe-and-save.
-                Starting at ${LUMINA_PRICE_FROM} per bottle.
+                Stack the male and female formulas on subscription — pause,
+                skip, or cancel from your account anytime
+                {priceFrom !== null
+                  ? `. From $${priceFrom} per bottle.`
+                  : '.'}
               </p>
               <span className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-crimson-hi">
                 See how subscriptions work{' '}

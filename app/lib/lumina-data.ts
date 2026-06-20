@@ -92,31 +92,13 @@ export interface LuminaProduct {
   faqs: LuminaFaq[];
 }
 
-export interface LuminaTier {
-  id: string;
-  name: string;
-  months: number;
-  bottles: number;
-  /** Per-bottle price in dollars. */
-  per: number;
-  /** Savings percentage off the base per-bottle price. */
-  save: number;
-  best?: boolean;
-}
-
-export interface LuminaBundle {
-  id: string;
-  label: string;
-  note: string;
-  /** Multiplier on the base supply total. */
-  mult: number;
-  /** Extra percent off the bundled total. */
-  save: number;
-  popular?: boolean;
-}
-
 export type LuminaOption = 'subscribe' | 'onetime';
 
+// Static rate kept only so the UI has a sensible subscribe price when
+// the storefront hasn't returned a selling-plan adjustment yet (e.g.
+// before selling plans are configured in admin). Once a selling plan
+// id is attached to the cart line, Shopify computes the real discount
+// — this constant becomes UI-side only and the cart is authoritative.
 export const LUMINA_SUB_DISCOUNT = 0.15;
 
 export const LUMINA_PRODUCTS: Record<LuminaProductKey, LuminaProduct> = {
@@ -528,78 +510,10 @@ export const LUMINA_PRODUCTS: Record<LuminaProductKey, LuminaProduct> = {
   },
 };
 
-/**
- * Display presets for the supply tier ladder. Each preset is paired at
- * runtime with the matching Shopify variant on the "Supply" option — see
- * pairVariantsToTiers() in lumina-product.ts. The `per` / `save` fields
- * are static fallbacks used by preview mode (no Shopify product wired)
- * and by the homepage TiersTeaser.
- */
-export interface LuminaTierPreset {
-  id: string;
-  name: string;
-  months: number;
-  bottles: number;
-  best?: boolean;
-}
-
-export const LUMINA_TIER_PRESETS: ReadonlyArray<LuminaTierPreset> = [
-  {id: 'ignite', name: 'Ignite', months: 1, bottles: 1},
-  {id: 'momentum', name: 'Momentum', months: 2, bottles: 2},
-  {id: 'ascent', name: 'Ascent', months: 4, bottles: 4},
-  {id: 'apex', name: 'Apex', months: 6, bottles: 6, best: true},
-  {id: 'legacy', name: 'Legacy', months: 12, bottles: 12},
-];
-
-export const LUMINA_TIERS: LuminaTier[] = [
-  {id: 'ignite', name: 'Ignite', months: 1, bottles: 1, per: 69, save: 0},
-  {id: 'momentum', name: 'Momentum', months: 2, bottles: 2, per: 64, save: 7},
-  {id: 'ascent', name: 'Ascent', months: 4, bottles: 4, per: 59, save: 15},
-  {
-    id: 'apex',
-    name: 'Apex',
-    months: 6,
-    bottles: 6,
-    per: 55,
-    save: 20,
-    best: true,
-  },
-  {id: 'legacy', name: 'Legacy', months: 12, bottles: 12, per: 52, save: 25},
-];
-
-export const LUMINA_BUNDLES: LuminaBundle[] = [
-  {
-    id: 'solo',
-    label: 'Single formula',
-    note: 'Your selected supply',
-    mult: 1,
-    save: 0,
-  },
-  {
-    id: 'duo',
-    label: 'His & Hers Duo',
-    note: 'Both formulas, paired',
-    mult: 2,
-    save: 10,
-    popular: true,
-  },
-];
-
-/**
- * Static placeholder pricing math. Swap this for real Shopify variant
- * prices + selling-plan adjustments once the products are wired.
- */
-export function computeLuminaPrice(
-  tier: LuminaTier,
-  option: LuminaOption,
-  bundle: LuminaBundle,
-): number {
-  let total = tier.per * tier.bottles;
-  if (option === 'subscribe') total *= 1 - LUMINA_SUB_DISCOUNT;
-  total *= bundle.mult;
-  if (bundle.save) total *= 1 - bundle.save / 100;
-  return Math.round(total);
-}
-
-/** Cheapest per-bottle price across the tier ladder. Used for "From $X / mo". */
-export const LUMINA_PRICE_FROM = Math.min(...LUMINA_TIERS.map((t) => t.per));
+// Live Shopify pricing is the source of truth across the storefront.
+// The catalog loader (lib/lumina-catalog.server.ts) projects every
+// Lumina product into a LuminaProductEntry, the savings engine
+// (lib/savings.ts) computes per-bottle / per-day / savings vs baseline
+// from those entries, and the UI reads them via useRouteLoaderData on
+// the root loader. Nothing in this file should ever hold a placeholder
+// dollar amount again.

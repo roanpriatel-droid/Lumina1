@@ -1,11 +1,13 @@
-import {Link} from 'react-router';
+import {Link, useRouteLoaderData} from 'react-router';
 import {Image} from '@shopify/hydrogen';
 import {ArrowUpRight} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {BrandFallback} from '~/components/lumina/BrandFallback';
 import {BlendedImage} from '~/components/lumina/BlendedImage';
-import {LUMINA_PRICE_FROM, LUMINA_PRODUCTS} from '~/lib/lumina-data';
+import {LUMINA_PRODUCTS} from '~/lib/lumina-data';
 import {getHeroImage, getProductImage} from '~/lib/product-assets';
+import {lowestPerBottlePrice} from '~/lib/savings';
+import type {RootLoader} from '~/root';
 
 interface PageCtaProps {
   eyebrow?: string;
@@ -20,8 +22,20 @@ interface PageCtaProps {
 export function PageCta({
   eyebrow = 'Ready when you are',
   title = 'Two daily formulas. Built honestly. Tested every lot.',
-  body = `Run them one at a time, or together as a duo. Subscribe and save 15%. Free shipping, pause or cancel anytime. From $${LUMINA_PRICE_FROM} a bottle.`,
+  body,
 }: PageCtaProps) {
+  // Read the live catalog off the root loader so the "From $X" line is
+  // computed from real Shopify variant prices, not a static literal.
+  // When the catalog isn't loaded (rare — root is always present in
+  // practice) or has no entries, the price clause is omitted instead
+  // of printing a fabricated dollar amount.
+  const rootData = useRouteLoaderData<RootLoader>('root');
+  const priceFrom = lowestPerBottlePrice(rootData?.luminaCatalog ?? []);
+  const resolvedBody =
+    body ??
+    (priceFrom !== null
+      ? `Run them one at a time, or together as a duo. Subscribe and save. Free shipping, pause or cancel anytime. From $${priceFrom} a bottle.`
+      : `Run them one at a time, or together as a duo. Subscribe and save. Free shipping, pause or cancel anytime.`);
   const male = LUMINA_PRODUCTS.male;
   const female = LUMINA_PRODUCTS.female;
   return (
@@ -50,7 +64,7 @@ export function PageCta({
             className="m-0 mt-5 max-w-[640px] text-fg2"
             style={{font: '300 17px/1.65 var(--font-sans)'}}
           >
-            {body}
+            {resolvedBody}
           </p>
         </div>
         <div className="grid gap-5 md:grid-cols-2">
