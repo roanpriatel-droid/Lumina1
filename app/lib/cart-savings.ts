@@ -36,6 +36,7 @@ export function lineSavings({
       compareAtPrice: null,
       variantId: null,
       availableForSale: true,
+      sellingPlanId: null,
       imageUrl: null,
       imageAlt: null,
     });

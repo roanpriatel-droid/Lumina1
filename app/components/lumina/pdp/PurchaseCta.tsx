@@ -12,20 +12,32 @@ import {money, computeSavings} from '~/lib/savings';
  * computed savings from PurchaseContext.
  */
 export function PurchaseCta() {
-  const {selected, option, price, oneTimeTotal, baseline} = usePurchase();
+  const {
+    selected,
+    option,
+    price,
+    oneTimeTotal,
+    baseline,
+    subscribeSellingPlanId,
+  } = usePurchase();
   const {open} = useAside();
 
   const breakdown = computeSavings(selected, baseline);
   const showSubBadge = option === 'subscribe' && oneTimeTotal !== price;
   const showSavings = breakdown.saved !== null && breakdown.saved > 0;
 
+  // Subscribe lines attach the product's first selling-plan id so
+  // Shopify applies the plan-level price adjustment + recurring
+  // schedule. When no plan is configured we fall through to a
+  // one-time line so checkout never bills against a missing plan.
   const lines: OptimisticCartLineInput[] = selected.variantId
     ? [
         {
           merchandiseId: selected.variantId,
           quantity: 1,
-          // TODO(selling-plan): attach sellingPlanId once selling plans
-          // are configured in Shopify Admin.
+          ...(option === 'subscribe' && subscribeSellingPlanId
+            ? {sellingPlanId: subscribeSellingPlanId}
+            : {}),
         },
       ]
     : [];

@@ -25,7 +25,8 @@ export function StickyAddToCart({
    *  left of the bar. Falls back to a text-only layout. */
   gender?: Gender;
 }) {
-  const {selected, option, price, breakdown} = usePurchase();
+  const {selected, option, price, breakdown, subscribeSellingPlanId} =
+    usePurchase();
   const {open} = useAside();
   const [visible, setVisible] = useState(false);
 
@@ -69,12 +70,19 @@ export function StickyAddToCart({
       ? `Saving ${money(breakdown.saved)}`
       : null;
 
+  // Subscribe lines attach the product's first selling-plan id so
+  // Shopify applies the plan-level price adjustment + recurring
+  // schedule. When the user toggles Subscribe but no plan is
+  // configured in Admin, we fall through to a one-time line so the
+  // checkout doesn't silently bill against a non-existent plan.
   const lines: OptimisticCartLineInput[] = selected.variantId
     ? [
         {
           merchandiseId: selected.variantId,
           quantity: 1,
-          // TODO(selling-plan): sellingPlanId on subscribe lines.
+          ...(option === 'subscribe' && subscribeSellingPlanId
+            ? {sellingPlanId: subscribeSellingPlanId}
+            : {}),
         },
       ]
     : [];

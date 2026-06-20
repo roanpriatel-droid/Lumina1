@@ -28,6 +28,14 @@ export async function loadLuminaCatalog(
     if (!p?.title?.toLowerCase().startsWith('lumina')) continue;
     const variant = p.variants?.nodes?.[0];
     if (!variant) continue;
+
+    // First subscription selling plan on the product, if one is
+    // configured in Shopify Admin. Storefront returns nested groups →
+    // we surface the first plan id so the cart can attach it on
+    // subscribe.
+    const sellingPlanId =
+      p.sellingPlanGroups?.nodes?.[0]?.sellingPlans?.nodes?.[0]?.id ?? null;
+
     entries.push(
       toEntry({
         handle: p.handle,
@@ -38,6 +46,7 @@ export async function loadLuminaCatalog(
           : null,
         variantId: variant.id,
         availableForSale: Boolean(variant.availableForSale),
+        sellingPlanId,
         imageUrl:
           variant.image?.url ??
           p.featuredImage?.url ??
@@ -52,7 +61,11 @@ export async function loadLuminaCatalog(
   return entries;
 }
 
-/* Storefront query: pull title, handle, featured image, primary variant. */
+/* Storefront query: title, handle, featured image, primary variant,
+   and the first selling-plan group attached to the product. The
+   selling-plan id is what the cart attaches to subscribe-and-save
+   lines so Shopify can apply the recurring schedule + plan-level
+   price adjustment. */
 const LUMINA_CATALOG_QUERY = `#graphql
   query LuminaCatalog($country: CountryCode, $language: LanguageCode)
   @inContext(country: $country, language: $language) {
@@ -69,6 +82,13 @@ const LUMINA_CATALOG_QUERY = `#graphql
             price { amount currencyCode }
             compareAtPrice { amount currencyCode }
             image { url altText width height }
+          }
+        }
+        sellingPlanGroups(first: 1) {
+          nodes {
+            sellingPlans(first: 1) {
+              nodes { id name }
+            }
           }
         }
       }

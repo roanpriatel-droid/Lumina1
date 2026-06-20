@@ -16,16 +16,29 @@ import {money} from '~/lib/savings';
  * surface the math instead of forcing another selector.
  */
 export function SupplyPurchaseBlock() {
-  const {selected, breakdown, price, oneTimeTotal, option, setOption} =
-    usePurchase();
+  const {
+    selected,
+    breakdown,
+    price,
+    oneTimeTotal,
+    option,
+    setOption,
+    subscribeSellingPlanId,
+  } = usePurchase();
   const {open} = useAside();
 
+  // Subscribe lines attach the product's first selling-plan id so
+  // Shopify applies the plan-level price adjustment + recurring
+  // schedule. When no plan is configured we fall through to a
+  // one-time line so checkout never bills against a missing plan.
   const lines: OptimisticCartLineInput[] = selected.variantId
     ? [
         {
           merchandiseId: selected.variantId,
           quantity: 1,
-          // TODO(selling-plan): attach sellingPlanId on subscribe.
+          ...(option === 'subscribe' && subscribeSellingPlanId
+            ? {sellingPlanId: subscribeSellingPlanId}
+            : {}),
         },
       ]
     : [];
@@ -80,8 +93,9 @@ export function SupplyPurchaseBlock() {
               onChange={setOption}
             />
             <p className="t-mono text-[10.5px] uppercase tracking-[0.12em] text-fg4">
-              * Subscribe &amp; Save shown statically at 15%; selling plans
-              wire in a follow-up.
+              * Subscribe &amp; Save price is finalised by Shopify once the
+              line lands in the cart, using the selling plan attached in
+              admin.
             </p>
           </div>
 

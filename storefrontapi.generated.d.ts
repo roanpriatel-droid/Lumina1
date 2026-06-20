@@ -405,9 +405,31 @@ export type LuminaCatalogQuery = {
             }
           >;
         };
+        sellingPlanGroups: {
+          nodes: Array<{
+            sellingPlans: {
+              nodes: Array<Pick<StorefrontAPI.SellingPlan, 'id' | 'name'>>;
+            };
+          }>;
+        };
       }
     >;
   };
+};
+
+export type NewsletterCustomerCreateMutationVariables = StorefrontAPI.Exact<{
+  input: StorefrontAPI.CustomerCreateInput;
+}>;
+
+export type NewsletterCustomerCreateMutation = {
+  customerCreate?: StorefrontAPI.Maybe<{
+    customer?: StorefrontAPI.Maybe<
+      Pick<StorefrontAPI.Customer, 'id' | 'email' | 'acceptsMarketing'>
+    >;
+    customerUserErrors: Array<
+      Pick<StorefrontAPI.CustomerUserError, 'field' | 'message' | 'code'>
+    >;
+  }>;
 };
 
 export type ArticleQueryVariables = StorefrontAPI.Exact<{
@@ -957,7 +979,7 @@ interface GeneratedQueryTypes {
     return: FooterQuery;
     variables: FooterQueryVariables;
   };
-  '#graphql\n  query LuminaCatalog($country: CountryCode, $language: LanguageCode)\n  @inContext(country: $country, language: $language) {\n    products(first: 50, sortKey: TITLE) {\n      nodes {\n        id\n        handle\n        title\n        featuredImage { url altText width height }\n        variants(first: 1) {\n          nodes {\n            id\n            availableForSale\n            price { amount currencyCode }\n            compareAtPrice { amount currencyCode }\n            image { url altText width height }\n          }\n        }\n      }\n    }\n  }\n': {
+  '#graphql\n  query LuminaCatalog($country: CountryCode, $language: LanguageCode)\n  @inContext(country: $country, language: $language) {\n    products(first: 50, sortKey: TITLE) {\n      nodes {\n        id\n        handle\n        title\n        featuredImage { url altText width height }\n        variants(first: 1) {\n          nodes {\n            id\n            availableForSale\n            price { amount currencyCode }\n            compareAtPrice { amount currencyCode }\n            image { url altText width height }\n          }\n        }\n        sellingPlanGroups(first: 1) {\n          nodes {\n            sellingPlans(first: 1) {\n              nodes { id name }\n            }\n          }\n        }\n      }\n    }\n  }\n': {
     return: LuminaCatalogQuery;
     variables: LuminaCatalogQueryVariables;
   };
@@ -1007,7 +1029,12 @@ interface GeneratedQueryTypes {
   };
 }
 
-interface GeneratedMutationTypes {}
+interface GeneratedMutationTypes {
+  '#graphql\n  mutation NewsletterCustomerCreate($input: CustomerCreateInput!) {\n    customerCreate(input: $input) {\n      customer { id email acceptsMarketing }\n      customerUserErrors { field message code }\n    }\n  }\n': {
+    return: NewsletterCustomerCreateMutation;
+    variables: NewsletterCustomerCreateMutationVariables;
+  };
+}
 
 declare module '@shopify/hydrogen' {
   interface StorefrontQueries extends GeneratedQueryTypes {}

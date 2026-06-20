@@ -37,6 +37,12 @@ export interface LuminaProductEntry {
   variantId: string | null;
   /** Whether the variant is available for sale right now. */
   availableForSale: boolean;
+  /** First subscription selling-plan id on the product, when one is
+   *  configured in Shopify Admin. Attached to cart lines when the
+   *  customer picks Subscribe & Save so Shopify can apply the
+   *  selling-plan price adjustment + recurring schedule. Null when no
+   *  selling plan is configured. */
+  sellingPlanId: string | null;
   /** featuredImage url for cards / pdp gallery. */
   imageUrl: string | null;
   imageAlt: string | null;
@@ -213,6 +219,7 @@ export function toEntry(input: {
   compareAtPrice: number | null;
   variantId: string | null;
   availableForSale: boolean;
+  sellingPlanId: string | null;
   imageUrl: string | null;
   imageAlt: string | null;
 }): LuminaProductEntry {
@@ -228,6 +235,7 @@ export function toEntry(input: {
     compareAtPrice: input.compareAtPrice,
     variantId: input.variantId,
     availableForSale: input.availableForSale,
+    sellingPlanId: input.sellingPlanId,
     imageUrl: input.imageUrl,
     imageAlt: input.imageAlt,
   };

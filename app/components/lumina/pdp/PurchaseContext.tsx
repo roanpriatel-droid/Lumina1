@@ -35,6 +35,13 @@ interface PurchaseValue {
   oneTimeTotal: number;
   /** Subscribe & Save price (one-time × 0.85). */
   subTotal: number;
+  /** Selling-plan id to attach to the cart line when option ==
+   *  'subscribe' AND the selected product has a selling plan
+   *  configured in Shopify. Null otherwise — Add-to-Cart callsites
+   *  treat null as "ship as a one-time line even if Subscribe is the
+   *  toggled UI choice", so the user never gets billed for a
+   *  recurring schedule that isn't actually configured. */
+  subscribeSellingPlanId: string | null;
 }
 
 const PurchaseContext = createContext<PurchaseValue | null>(null);
@@ -47,8 +54,10 @@ const PurchaseContext = createContext<PurchaseValue | null>(null);
  *   the product the user is currently viewing.
  * - `gender` is used to look up the baseline from `entries`.
  *
- * Subscribe & Save is rendered as a static 15% off until selling plans
- * are configured in Shopify Admin — see TODO(selling-plan).
+ * Subscribe & Save renders at a static 15% off in the toggle UI; once
+ * the line lands in the cart with a selling-plan id attached, Shopify
+ * is the authoritative source for the final subscribe price and the
+ * cart-drawer / checkout reflect that automatically.
  */
 export function PurchaseProvider({
   entries,
@@ -78,8 +87,11 @@ export function PurchaseProvider({
     const breakdown = computeSavings(selected, baseline);
 
     const oneTimeTotal = Math.round(selected.price);
-    // TODO(selling-plan): replace with the real selling-plan-adjusted
-    // price from Storefront when subs are wired in admin.
+    // The UI rate is a sensible default for rendering "Subscribe &
+    // Save" totals before Shopify returns the selling-plan-adjusted
+    // line price in the cart. Once the line lands in the cart with
+    // sellingPlanId attached, the cart line price replaces this on
+    // every surface that consumes the cart (cart drawer, checkout).
     const subTotal = Math.round(selected.price * (1 - LUMINA_SUB_DISCOUNT));
 
     return {
@@ -93,6 +105,7 @@ export function PurchaseProvider({
       price: oneTimeTotal, // option lives outside this useMemo; see closure below
       oneTimeTotal,
       subTotal,
+      subscribeSellingPlanId: selected.sellingPlanId,
     };
   }, [ordered, baseline, handle]);
 
