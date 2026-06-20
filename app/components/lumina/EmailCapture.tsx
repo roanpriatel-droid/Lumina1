@@ -1,5 +1,5 @@
-import {useState} from 'react';
-import {Mail, Check} from 'lucide-react';
+import {useFetcher} from 'react-router';
+import {Mail, Check, AlertCircle} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
 import {Button} from '~/components/lumina/Button';
 
@@ -10,12 +10,20 @@ interface EmailCaptureProps {
   cta?: string;
 }
 
+interface SubscribeResponse {
+  ok?: true;
+  error?: string;
+}
+
 /**
- * Email-capture band rendered above the footer on every Lumina content page.
+ * Email-capture band rendered above the footer on every Lumina content
+ * page. Submits to /api/subscribe (resource route) which records
+ * marketing consent through Shopify's Storefront customerCreate
+ * mutation — the subscriber enters the Shopify customer-marketing
+ * audience without needing a separate ESP integration upstream.
  *
- * Submit is a no-op success state at the moment so the design is final;
- * TODO(newsletter): wire to a real subscription endpoint (Klaviyo / Postscript
- * / Shopify customer marketing consent) before launch.
+ * Swap the action target if you later migrate to Klaviyo / Postscript
+ * / Beehiiv — the form contract (POST email) doesn't change.
  */
 export function EmailCapture({
   eyebrow = 'Field notes',
@@ -23,7 +31,11 @@ export function EmailCapture({
   body = "Once a fortnight: what's new in our testing, what we're seeing in the formula, what the category is up to. No spam.",
   cta = 'Subscribe',
 }: EmailCaptureProps) {
-  const [submitted, setSubmitted] = useState(false);
+  const fetcher = useFetcher<SubscribeResponse>();
+  const submitting = fetcher.state !== 'idle';
+  const data = fetcher.data;
+  const submitted = data?.ok === true;
+  const error = data?.error ?? null;
 
   return (
     <section className="border-t border-border bg-surface">
@@ -58,31 +70,47 @@ export function EmailCapture({
             </span>
           </div>
         ) : (
-          <form
-            className="flex flex-col gap-3 sm:flex-row"
-            onSubmit={(e) => {
-              e.preventDefault();
-              setSubmitted(true);
-            }}
+          <fetcher.Form
+            method="post"
+            action="/api/subscribe"
+            className="flex flex-col gap-3"
           >
-            <label
-              className="lumina-email-capture relative flex flex-1 items-center rounded-pill border border-border bg-black px-5"
-              htmlFor="email-capture-input"
-            >
-              <Mail size={16} strokeWidth={2} className="mr-2 text-fg4" />
-              <input
-                id="email-capture-input"
-                type="email"
-                required
-                placeholder="Email address"
-                aria-label="Email address"
-                className="flex-1 bg-transparent py-3.5 text-[15px] text-fg1 outline-none"
-              />
-            </label>
-            <Button type="submit" className="px-7 py-3.5">
-              {cta}
-            </Button>
-          </form>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <label
+                className="lumina-email-capture relative flex flex-1 items-center rounded-pill border border-border bg-black px-5"
+                htmlFor="email-capture-input"
+              >
+                <Mail size={16} strokeWidth={2} className="mr-2 text-fg4" />
+                <input
+                  id="email-capture-input"
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="Email address"
+                  aria-label="Email address"
+                  aria-invalid={error ? true : undefined}
+                  disabled={submitting}
+                  className="flex-1 bg-transparent py-3.5 text-[15px] text-fg1 outline-none disabled:opacity-60"
+                />
+              </label>
+              <Button
+                type="submit"
+                disabled={submitting}
+                className="px-7 py-3.5 disabled:opacity-60"
+              >
+                {submitting ? 'Subscribing…' : cta}
+              </Button>
+            </div>
+            {error && (
+              <div
+                role="alert"
+                className="flex items-center gap-2 text-[13px] text-crimson-hi"
+              >
+                <AlertCircle size={14} strokeWidth={2} />
+                {error}
+              </div>
+            )}
+          </fetcher.Form>
         )}
       </div>
     </section>
