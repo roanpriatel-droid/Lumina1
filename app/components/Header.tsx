@@ -145,29 +145,37 @@ export function HeaderMenu({viewport}: {viewport: Viewport}) {
 
   if (viewport === 'mobile') {
     return (
-      <nav className="flex flex-col gap-2 px-2 py-4" role="navigation">
+      <nav className="flex flex-col gap-1 px-2 py-4" role="navigation">
         <NavLink
           end
           onClick={close}
           prefetch="intent"
           to="/"
-          className="text-base text-fg2 hover:text-fg1 transition-colors"
+          className={({isActive}) =>
+            `block rounded-md py-2 text-base tracking-[0.01em] transition-colors duration-150 ${
+              isActive ? 'text-crimson-hi' : 'text-fg2 hover:text-fg1'
+            }`
+          }
         >
           Home
         </NavLink>
         {LUMINA_NAV.map((item) => (
-          <div key={item.label}>
+          <div key={item.label} className="flex flex-col">
             <NavLink
               end
               onClick={close}
               prefetch="intent"
               to={item.to}
-              className="text-base text-fg2 hover:text-fg1 transition-colors"
+              className={({isActive}) =>
+                `block rounded-md py-2 text-base tracking-[0.01em] transition-colors duration-150 ${
+                  isActive ? 'text-crimson-hi' : 'text-fg2 hover:text-fg1'
+                }`
+              }
             >
               {item.label}
             </NavLink>
             {item.children && (
-              <div className="mt-2 ml-4 flex flex-col gap-1.5">
+              <div className="mb-2 ml-4 mt-1 flex flex-col border-l border-border pl-3">
                 {item.children.map((child) => (
                   <NavLink
                     key={child.label}
@@ -175,7 +183,11 @@ export function HeaderMenu({viewport}: {viewport: Viewport}) {
                     onClick={close}
                     prefetch="intent"
                     to={child.to}
-                    className="text-[13px] text-fg3 hover:text-fg1 transition-colors"
+                    className={({isActive}) =>
+                      `block py-1.5 text-[13px] tracking-[0.01em] transition-colors duration-150 ${
+                        isActive ? 'text-crimson-hi' : 'text-fg3 hover:text-fg1'
+                      }`
+                    }
                   >
                     {child.label}
                   </NavLink>
@@ -190,7 +202,7 @@ export function HeaderMenu({viewport}: {viewport: Viewport}) {
 
   return (
     <nav
-      className="hidden md:flex items-center gap-7 ml-4"
+      className="hidden md:flex items-center gap-9 ml-6"
       role="navigation"
     >
       {LUMINA_NAV.map((item) =>
@@ -202,7 +214,7 @@ export function HeaderMenu({viewport}: {viewport: Viewport}) {
             end
             prefetch="intent"
             to={item.to}
-            className="lumina-navlink text-sm tracking-[0.02em] text-fg3 hover:text-fg1 transition-colors"
+            className="lumina-navlink text-[13px] tracking-[0.04em] text-fg3 hover:text-fg1 transition-colors duration-200"
           >
             {item.label}
           </NavLink>
@@ -226,26 +238,32 @@ function NavDropdown({item}: {item: NavItem}) {
         to={item.to}
         onFocus={() => setOpen(true)}
         onBlur={() => setOpen(false)}
-        className="inline-flex items-center gap-1 text-sm tracking-[0.02em] text-fg3 hover:text-fg1 transition-colors"
+        className="lumina-navlink inline-flex items-center gap-[5px] text-[13px] tracking-[0.04em] text-fg3 hover:text-fg1 transition-colors duration-200"
       >
         {item.label}
         <ChevronDown
-          size={13}
-          strokeWidth={2}
-          className="transition-transform"
-          style={{transform: open ? 'rotate(180deg)' : 'rotate(0deg)'}}
+          size={10}
+          strokeWidth={1.5}
+          className="text-fg4 transition-transform duration-200 ease-out"
+          style={{
+            transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+            transformOrigin: 'center',
+          }}
         />
       </NavLink>
       <div
-        className="absolute left-0 top-full z-50 mt-3 w-[320px] rounded-xl border border-border bg-black p-2 transition-[opacity,transform] duration-200"
+        className="absolute left-0 top-full z-50 mt-3 w-[340px] rounded-xl border border-border p-2"
         style={{
-          background: 'rgba(11,11,12,0.95)',
-          backdropFilter: 'blur(14px)',
-          WebkitBackdropFilter: 'blur(14px)',
+          background: 'rgba(11,11,12,0.92)',
+          backdropFilter: 'blur(18px) saturate(140%)',
+          WebkitBackdropFilter: 'blur(18px) saturate(140%)',
           opacity: open ? 1 : 0,
-          transform: open ? 'translateY(0)' : 'translateY(-4px)',
+          transform: open ? 'translateY(0)' : 'translateY(-6px)',
           pointerEvents: open ? 'auto' : 'none',
-          boxShadow: 'var(--shadow-md)',
+          boxShadow:
+            '0 16px 40px rgba(0,0,0,0.42), 0 1px 0 rgba(255,255,255,0.04) inset',
+          transition:
+            'opacity 150ms cubic-bezier(0.16, 1, 0.3, 1), transform 150ms cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         {item.children?.map((child) => (
@@ -254,13 +272,25 @@ function NavDropdown({item}: {item: NavItem}) {
             end
             prefetch="intent"
             to={child.to}
-            className="flex flex-col gap-1 rounded-lg px-4 py-3 transition-colors hover:bg-surface"
+            className={({isActive}) =>
+              `flex flex-col gap-1 rounded-lg px-4 py-3 transition-colors duration-150 ${
+                isActive ? 'bg-surface' : 'hover:bg-surface'
+              }`
+            }
           >
-            <span className="text-[13.5px] font-medium text-fg1">
-              {child.label}
-            </span>
-            {child.note && (
-              <span className="text-[12px] text-fg3">{child.note}</span>
+            {({isActive}) => (
+              <>
+                <span
+                  className={`text-[13.5px] font-medium ${
+                    isActive ? 'text-crimson-hi' : 'text-fg1'
+                  }`}
+                >
+                  {child.label}
+                </span>
+                {child.note && (
+                  <span className="text-[12px] text-fg3">{child.note}</span>
+                )}
+              </>
             )}
           </NavLink>
         ))}
