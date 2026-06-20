@@ -3,7 +3,6 @@ import {useGSAP} from '@gsap/react';
 import {FlaskConical, ShieldCheck, MapPin, Sprout} from 'lucide-react';
 import type {LucideIcon} from 'lucide-react';
 import {Eyebrow} from '~/components/lumina/Eyebrow';
-import {StarRating} from '~/components/lumina/StarRating';
 import {SplitLines} from '~/components/lumina/SplitLines';
 import {PdpGallery} from '~/components/lumina/pdp/PdpGallery';
 import {fadeRise, parallaxLayer, textReveal} from '~/lib/motion';
@@ -37,8 +36,6 @@ const TRUST: ReadonlyArray<{Icon: LucideIcon; label: string}> = [
 export function PdpHero({title, lumina, imageUrl, imageAlt}: PdpHeroProps) {
   const tagline = lumina?.tagline ?? 'Daily vitality formula';
   const blurb = lumina?.blurb;
-  const rating = lumina?.rating ?? 4.8;
-  const reviews = lumina?.reviews ?? 0;
   const sectionRef = useRef<HTMLElement>(null);
   // Split the long product title into ~2 readable lines for the reveal.
   const titleLines = splitTitleIntoLines(title);
@@ -50,7 +47,6 @@ export function PdpHero({title, lumina, imageUrl, imageAlt}: PdpHeroProps) {
         start: 'top 85%',
       });
       fadeRise(sectionRef.current?.querySelector('.pdp-eyebrow'));
-      fadeRise(sectionRef.current?.querySelector('.pdp-rating'), {delay: 0.1});
       fadeRise(sectionRef.current?.querySelector('.pdp-blurb'), {delay: 0.15});
       fadeRise(sectionRef.current?.querySelector('.pdp-trust'), {delay: 0.2});
       parallaxLayer(sectionRef.current?.querySelector('.pdp-gallery'), {
@@ -85,17 +81,6 @@ export function PdpHero({title, lumina, imageUrl, imageAlt}: PdpHeroProps) {
             letterSpacing: '-0.01em',
           }}
         />
-        <div className="pdp-rating flex flex-wrap items-center gap-3">
-          <StarRating size={17} label={`${rating} of 5 stars`} />
-          <span className="text-sm font-medium text-fg1">
-            {rating.toFixed(1)}
-          </span>
-          {reviews > 0 && (
-            <span className="text-sm text-fg3">
-              · {reviews.toLocaleString()} verified reviews
-            </span>
-          )}
-        </div>
         {blurb && (
           <p
             className="pdp-blurb m-0 max-w-[460px] text-fg2"

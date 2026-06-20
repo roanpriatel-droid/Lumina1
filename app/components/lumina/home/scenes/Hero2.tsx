@@ -16,27 +16,11 @@ const GAP = {
   wider: 'clamp(56px, 6.5vh, 80px)',
 } as const;
 
-// ─── COPY PLACEHOLDERS — verify before production launch ─────────────
-// Per the brief, the structure ships now (so design + IA review can
-// land) but every figure below is unverified. Grep for "TODO(brand)"
-// before any production promotion of this branch.
-
-// TODO(brand): replace with verified customer / order count from
-// Shopify analytics. Appears in the kicker and the trust microline. If
-// the number can't be substantiated, drop both references and fall
-// back to a neutral kicker like "THIRD-PARTY TESTED · 60-DAY GUARANTEE".
-const TRUSTED_BY_COUNT = '12,000+';
-
-// TODO(brand): confirm 750mg is the actual clinical-trial dose for the
-// male protocol's tribulus extract. The dose claim appears in the
-// subhead and as a decorative mono micro-label. Regulatory risk if
-// inaccurate.
+// TODO(brand): confirm 750mg matches the actual tribulus extract dose
+// before launch. Appears in the hero subhead and as a decorative mono
+// micro-label. The figure was already part of the formulator brief, so
+// this is verification, not invention — but flag it for legal scrub.
 const TRIBULUS_DOSE = '750mg';
-
-// TODO(brand): decorative lot number for editorial texture only.
-// Either auto-inject the current production lot from inventory or
-// remove the "LOT #…" micro-label entirely before launch.
-const SAMPLE_LOT = 'LM-0824';
 
 /**
  * Scene 1 — Brand statement hero (atmospheric, no product)
@@ -387,18 +371,6 @@ export function Hero2() {
         <span
           className="hero-micro-label t-mono absolute uppercase text-fg3"
           style={{
-            top: 'clamp(132px, 16vh, 220px)',
-            right: 'clamp(32px, 3.5vw, 88px)',
-            fontSize: 10,
-            letterSpacing: '0.24em',
-            opacity: 0.05,
-          }}
-        >
-          LOT #{SAMPLE_LOT}
-        </span>
-        <span
-          className="hero-micro-label t-mono absolute uppercase text-fg3"
-          style={{
             bottom: 'clamp(124px, 15vh, 188px)',
             right: 'clamp(32px, 3.5vw, 88px)',
             fontSize: 10,
@@ -446,7 +418,7 @@ export function Hero2() {
             className="t-mono text-[11px] uppercase tracking-[0.26em]"
             style={{color: 'var(--color-crimson-hi)'}}
           >
-            Trusted by {TRUSTED_BY_COUNT} · Third-party tested
+            Third-party tested · 60-day guarantee
           </span>
           <span
             aria-hidden
@@ -521,8 +493,7 @@ export function Hero2() {
           className="hero-fade text-[11px] font-medium uppercase tracking-[0.22em] text-fg3"
           style={{marginTop: GAP.wider}}
         >
-          60-day money-back guarantee · Tested every lot · Made in USA ·{' '}
-          {TRUSTED_BY_COUNT} protocols started
+          60-day money-back guarantee · Tested every lot · Made in USA
         </div>
       </div>
 

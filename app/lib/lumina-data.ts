@@ -65,8 +65,6 @@ export interface LuminaProduct {
   tagline: string;
   blurb: string;
   benefit: string;
-  rating: number;
-  reviews: number;
 
   /** Bottle facts shown in the hero meta strip. */
   bottleCount: number;
@@ -131,8 +129,6 @@ export const LUMINA_PRODUCTS: Record<LuminaProductKey, LuminaProduct> = {
       "A comprehensive nightly formula for energy, stamina, drive, and hormonal balance — built on tribulus, zinc, magnesium, and a stack of traditional botanicals dosed for men who actually train.",
     benefit:
       'Energy, stamina, drive, and hormonal balance — in three capsules before bed.',
-    rating: 4.8,
-    reviews: 2417,
     bottleCount: 90,
     dailyServing: '3 capsules nightly',
     supplyDays: 30,
@@ -325,8 +321,6 @@ export const LUMINA_PRODUCTS: Record<LuminaProductKey, LuminaProduct> = {
       "A complete daily vitality formula for women — built on a B-complex backbone with 15 traditional botanicals, an absorption catalyst, and minerals dosed for the way modern women actually live.",
     benefit:
       'Daily energy, balance, vitality, and circulation — in two capsules a day.',
-    rating: 4.9,
-    reviews: 1862,
     bottleCount: 60,
     dailyServing: '2 capsules daily (do not exceed 4)',
     supplyDays: 30,
